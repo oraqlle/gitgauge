@@ -16,7 +16,7 @@
 | Audrey Phommasone      | apho0008@student.monash.edu | Product Manager  |
 | Jamie Nguyen           | angu0105@student.monash.edu | Product Manager  |
 | Massimo Nodin          | mnod0001@student.monash.edu | RTE              |
-
+| Prisha Verma           | pver0009@student.monash.edu | RTE              |
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
