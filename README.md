@@ -11,6 +11,9 @@
 | Tyler Swann            | tswa0006@student.monash.edu | System Architect |
 | Darcy Bystersky        | dbys0001@student.monash.edu | System Architect |
 | Yali John Lin          | jlin0110@student.monash.edu | Product Manager  |
+| Audrey Phommasone      | apho0008@student.monash.edu | Product Manager  |
+| Jamie Nguyen           | angu0105@student.monash.edu | Product Manager  |
+| Massimo Nodin          | mnod0001@student.monash.edu | RTE              |
 
 ## Contributors
 
@@ -22,4 +25,4 @@
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-[![All Contributors](https://img.shields.io/github/all-contributors/projectOwner/projectName?color=ee8449&style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/github/all-contributors/Monash-FIT3170/2025W1-Commitment?color=ee8449&style=flat-square)](#contributors)
