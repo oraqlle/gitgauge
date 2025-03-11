@@ -1,6 +1,6 @@
 # 2025W1-Commitment
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Team Information
 
@@ -35,6 +35,7 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/oraqlle"><img src="https://avatars.githubusercontent.com/u/41113853?v=4?s=100" width="100px;" alt="Tyler Swann"/><br /><sub><b>Tyler Swann</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=oraqlle" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/npnquang"><img src="https://avatars.githubusercontent.com/u/73055557?v=4?s=100" width="100px;" alt="James Nguyen"/><br /><sub><b>James Nguyen</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=npnquang" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
