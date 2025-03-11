@@ -63,6 +63,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "audreypho",
+      "name": "audrey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111032067?v=4",
+      "profile": "https://github.com/audreypho",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

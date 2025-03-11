@@ -1,6 +1,6 @@
 # 2025W1-Commitment
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Team Information
 
@@ -31,6 +31,7 @@
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jme-nguyen"><img src="https://avatars.githubusercontent.com/u/104990720?v=4?s=100" width="100px;" alt="jme-nguyen"/><br /><sub><b>jme-nguyen</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=jme-nguyen" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ayaniw"><img src="https://avatars.githubusercontent.com/u/202867363?v=4?s=100" width="100px;" alt="ayaniw"/><br /><sub><b>ayaniw</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=ayaniw" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chicomonster03"><img src="https://avatars.githubusercontent.com/u/126570929?v=4?s=100" width="100px;" alt="gkan0011"/><br /><sub><b>gkan0011</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=chicomonster03" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/audreypho"><img src="https://avatars.githubusercontent.com/u/111032067?v=4?s=100" width="100px;" alt="audrey"/><br /><sub><b>audrey</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=audreypho" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
