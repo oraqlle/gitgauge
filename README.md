@@ -11,6 +11,7 @@
 | Tyler Swann            | tswa0006@student.monash.edu | System Architect |
 | Darcy Bystersky        | dbys0001@student.monash.edu | System Architect |
 | Yali John Lin          | jlin0110@student.monash.edu | Product Manager  |
+| Audrey Phommasone      | apho0008@student.monash.edu | Product Manager  |
 
 ## Contributors
 
