@@ -13,6 +13,7 @@
 | Yali John Lin          | jlin0110@student.monash.edu | Product Manager  |
 | Audrey Phommasone      | apho0008@student.monash.edu | Product Manager  |
 | Jamie Nguyen           | angu0105@student.monash.edu | Product Manager  |
+| Massimo Nodin          | mnod0001@student.monash.edu | RTE              |
 
 ## Contributors
 
