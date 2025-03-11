@@ -1,6 +1,6 @@
 # 2025W1-Commitment
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Team Information
 
@@ -27,6 +27,7 @@
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hersheys2604"><img src="https://avatars.githubusercontent.com/u/126170367?v=4?s=100" width="100px;" alt="Harshath Muruganantam"/><br /><sub><b>Harshath Muruganantam</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=Hersheys2604" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JohnYaliLin"><img src="https://avatars.githubusercontent.com/u/110228962?v=4?s=100" width="100px;" alt="JohnYaliLin"/><br /><sub><b>JohnYaliLin</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=JohnYaliLin" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pver0009"><img src="https://avatars.githubusercontent.com/u/140368460?v=4?s=100" width="100px;" alt="pver0009"/><br /><sub><b>pver0009</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=pver0009" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
