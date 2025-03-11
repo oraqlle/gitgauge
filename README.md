@@ -1,6 +1,6 @@
 # 2025W1-Commitment
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Team Information
 
@@ -37,6 +37,7 @@
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/oraqlle"><img src="https://avatars.githubusercontent.com/u/41113853?v=4?s=100" width="100px;" alt="Tyler Swann"/><br /><sub><b>Tyler Swann</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=oraqlle" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/npnquang"><img src="https://avatars.githubusercontent.com/u/73055557?v=4?s=100" width="100px;" alt="James Nguyen"/><br /><sub><b>James Nguyen</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=npnquang" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/massinodinmonash"><img src="https://avatars.githubusercontent.com/u/161279257?v=4?s=100" width="100px;" alt="massinodinmonash"/><br /><sub><b>massinodinmonash</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=massinodinmonash" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thahoa021"><img src="https://avatars.githubusercontent.com/u/202866735?v=4?s=100" width="100px;" alt="thahoa021"/><br /><sub><b>thahoa021</b></sub></a><br /><a href="https://github.com/Monash-FIT3170/2025W1-Commitment/commits?author=thahoa021" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
