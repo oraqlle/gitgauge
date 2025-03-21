@@ -1,0 +1,7 @@
+#!/usr/bin/sh
+
+commit_template="./.gitmessage"
+commit_msg=$(cat $commit_template)
+
+echo -e "$commit_msg\n#$(cat $1)" > $1
+
