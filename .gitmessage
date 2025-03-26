@@ -6,10 +6,7 @@
 # Second topic of longer description seperated by blank line....
 #
 # scope: <scope> eg. ui, server, routing
-# link: <link> <link-desc>
-# closes: #1, #2
-# refs: #3, #4
-# fixes: <12-digit-commit-hash> <commit-summary>
+# refs: CU-{clickup task-ID}, CU-{clickup task-ID}
 # BREAKING-CHANGE: breaking change line 1
 # breaking change line 2
 #
