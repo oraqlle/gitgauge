@@ -3,7 +3,7 @@
 This document outlines the rules for contributing to the project. It covers the
 required commit message format, how to name branches and how to create PRs.
 
-In general it is *highly recommended* that you use the terminal when interecting with
+In general, it is *highly recommended* that you use the terminal when interacting with
 the repository through Git as this will provide a much more unified experience when
 developing and contributing to the project.
 
@@ -14,9 +14,9 @@ developing and contributing to the project.
    being in lower-kebab-case ie. `my-branch`. Keep branch names simple and indicative
    of changes that will be made on the branch.
 
-    ```sh
-    git checkout -b <tag>/<branch> devel
-    ```
+   ```sh
+   git checkout -b <tag>/<branch> devel
+   ```
 
     Available tags include:
 
@@ -48,7 +48,7 @@ developing and contributing to the project.
 
    > You can begin a draft PR before you have finished your changes when using GitHub.
    > Future commits & pushes on the branch you're requesting be 'pulled' will stack into
-   > PR automatically. Once you are done you can un-draft your PR.
+   > PR automatically. Once you are done you can un-draft your PR for review.
 
 7. Once your PR is ready, you can request a review from your team's Software Architect
    (SA). Your SA may request changes be made before accepting the PR. 
@@ -58,24 +58,48 @@ developing and contributing to the project.
 
 8. Once the SA has approved the PR the merge will be issued resulting in your
    changes being visible on `devel`.
-
-   > If you are working on a separate branch but require changes merged into `devel`, you
-   > will need to rebase your branch on the most recent version of `devel` with:
-   > 
-   > ```sh
-   > git pull origin devel
-   > git rebase -i devel <tag>/<other-branch>
-   > ```
-   >
-   > This will interactively apply the changes in `devel` through your branches existing
-   > history, therefore rewriting your branch's history as if the changes had always
-   > been a part of your branch's history.
-   > 
-   > You are free to rebase from another branch that is not `devel` or `main` if said
-   > branch has new functionality you require for your changes and has not been
-   > approved to be merged into `devel` yet.
-
 9. SA's will handle bundling changes made to `devel` into a release PR to `main`.
+
+> ## Note
+>
+> If you are working on a separate branch but require changes merged into `devel`, you
+> will need to either rebase your branch on the most recent version of `devel` or merge
+> the changes from `devel` into your branch with either:
+>
+> ### Merge
+>
+> ```sh
+> git fetch origin devel:devel
+> git merge devel
+> ```
+> Merging will create a new commit where it will mix your changes with the pulled
+> changes. If there are conflicts, these will have to be resolved before the merge can
+> complete.
+> 
+> ### Rebase
+>
+> ```sh
+> git fetch origin devel:devel
+> git rebase -i devel
+> ```
+>
+> This will interactively apply the changes in `devel` through your branches existing
+> history, therefore rewriting your branch's history as if the changes had always been a
+> part of your branch's history.
+> 
+> You are free to rebase from another branch that is not `devel` or `main` if said branch
+> has new functionality you require for your changes and has not been approved to be
+> merged into `devel` yet.
+>
+> Rebasing a public branch is not recommended ie. a branch that has been pushed to a
+> remote repo; like GitHub, as the branch has likely been pulled down before the your
+> rebase. This is because rebasing rewrites the history of a branch which then has to be
+> force-pushed upstream and can affect other developers' copy of the branch. In this
+> regard, only rebase a local branch unless you need to, otherwise, perform a merge.
+>
+> In this regard, only create an upstream ref of a branch if you need it to be shared
+> with other developers ie. you are making a PR for the branch or collaboratively working
+> on a change.
 
 ## Commit Message Guidelines
 
@@ -86,10 +110,42 @@ markers left in messages.
 
 As a minimum, your commit message must have a 'summary' line and a 'description'
 paragraph. The summary line is a simple one-line explanation of the changes made in the
-commit. It must be a maximum of 72 characters long and *not* terminated by a period. It
-must also use an imperative mood/language in the summary and descriptions ie. as if you
-are giving orders to the codebase to change its behaviour.
+commit. It must be a maximum of 72 characters long and must **not** be terminated by a
+period. It must also use an imperative mood/language in the summary and descriptions ie.
+as if you are giving orders to the codebase to change its behaviour.
 
-If you have setup the `.githooks` folder correctly then each commit will have a template
+If you have set up the `.githooks` folder correctly then each commit will have a template
 you can fill out to guide you through making the commit message.
 
+The important part of every commit is the tag which indicates the type of change made in
+your commit.
+
+- `feat` : You made progress towards implementing a feature
+- `fix`  : Fixes were made that address a bug in the project
+- `conf` : Updates to the configuration of the project like build scripts etc.
+- `ci`   : Changes to the CI/CD pipelines and related configuration
+- `docs` : Updated internal or external documentation of the project and app
+- `wip`  : A work in progress commit. Tests may be broken but more changes are expected
+
+You can also add a longer description below the summary title and a blank line. This
+should be used to give more information on what the commit changes and possibly why
+the change was made if clarity is needed. If multiple topics are covered then they
+should be separated by a blank line with lines related to the same topic being adjacent.
+As with the summary line, description lines should be a max of 72 characters long.
+
+You can also add a trailer line; using the `scope: ` prefix, to indicate the 'scope' of
+the change to aid in the lookup of the commit it relation to the scope. A scope is not
+like a tag where it has to be one of a specific value but should be a single word or
+short phrase to indicate what aspect of the project was changed ie. ui
+
+> The scope word/phrase **must** be lowercase.
+
+You can also reference a ClickUp task-ID in the `refs: ` line. Each task-ID **must** be
+prefixed by `CU-` ie. `CU-abc123xyz` with multiple IDs being separated by a comma-space.
+Like every other line, it should be at most 72 characters long. If this is exceeded you
+can add another refs trailer on the line below.
+
+Finally, you can indicate that a change breaks some expected behaviour of the project
+or programmer contract (API changes) using the `BREAKING-CHANGE` trailer. This should
+be followed by a description of what broke so it can be noted by developers who will
+interact with this change. As always, lines should only be 72 characters long.
