@@ -1,7 +1,7 @@
-#!/usr/bin/bash
+#!/bin/sh
 
-pushd
 cd .git/hooks
-ln -sf ../../.githooks/* .
-popd
+ln -sf ../../.githooks/prepare-commit-msg .
+rm prepare-commit-msg.sample
+cd ../../
 
