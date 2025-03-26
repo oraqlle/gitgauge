@@ -1,21 +1,21 @@
 #!/bin/sh
 
-commit_template="./.gitmessage"
+commit_template_f="./.gitmessage"
 old_msg_f="./xx00"
 default_f="./xx01"
 
 if grep -q "^\(feat\|fix\|conf\|ci\|docs\|wip\):" $1; then
-    commit_msg_no_head=$(tail -n +2 $commit_template)
+    commit_msg_no_head=$(tail -n +2 $commit_template_f)
 
-    csplit -q $commit_template /#/
+    csplit -q $1 /#/
     old_msg=$(cat $old_msg_f)
     default=$(cat $default_f)
-    rm "$old_msg_f"
+    rm $old_msg_f
     rm "$default_f"
 
-    printf "$old_msg\n$commit_msg_no_head$default"
+    printf "$old_msg\n$commit_msg_no_head$default" > $1
 else
-    commit_msg=$(cat $commit_template)
-    printf "$commit_msg\n$(cat $1)" > $1
+    commit_msg_template=$(cat $commit_template_f)
+    printf "$commit_msg_template\n$(cat $1)" > $1
 fi
 
