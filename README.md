@@ -4,10 +4,48 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-## Setup
+## Releases
 
-After cloning the repository you will want to run the `git-setup.sh` script to link the
-`.githooks` directory which contains Git workflows for the project.
+Check out our official releases on the releases tab of GitHub!
+
+## Developer Setup
+
+### Prerequisits
+
+- Git
+- Rust v1.84.0
+- Tauri v2.4.0 ([Tauri prereqs](https://v2.tauri.app/start/prerequisites/))
+
+To setup your device for developing gitgauge you will need clone the repo to your device
+and change into the newly created directory.
+
+```sh
+git clone https://github.com/Monash-FIT3170/2025W1-Commitment.git gitgauge
+cd gitgauge
+```
+
+Then you can run the `git-setup.sh` shell script on macOS and Linux or the
+`git-setup.ps1` PowerShell script on Windows to setup the Git Hooks.
+
+macOS and Linux:
+
+```sh
+sh git-setup.sh
+```
+
+Windows PowerShell
+
+```ps
+.\git-setup.ps1
+```
+
+Once you have done that you can setup and run the project up by changing to the repo
+directory and running the following commands.
+
+```sh
+npm i
+npm run tauri dev
+```
 
 ## Team Information
 
