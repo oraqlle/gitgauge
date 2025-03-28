@@ -20,9 +20,9 @@ Define the conditions that must be met for this change to be considered complete
 - [ ] All tests pass  
 - [ ] Documentation for CI/CD updates is complete
 
-## 🔗 Related Issues
+## 🔗 Related ClickUp Tasks
 
 Name and link any related issues. Example:
 
-- Closes CU-{task-id}
+- CU-{task-id}
 

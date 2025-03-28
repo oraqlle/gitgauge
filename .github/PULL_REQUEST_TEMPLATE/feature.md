@@ -21,9 +21,7 @@ Define the conditions that must be met for this feature to be considered complet
 - [ ] All tests pass
 - [ ] Documentation is updated to reflect the new functionality
 
-## 🔗 Related Issues
+## 🔗 Related ClickUp Tasks
 
-Name and link any related issues. Example:
-
-- Closes CU-{task-id}
+- CU-{task-id}
 

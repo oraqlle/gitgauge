@@ -20,9 +20,7 @@ Define the conditions that must be met for this change to be considered complete
 - [ ] All dependent systems are checked for compatibility  
 - [ ] Documentation is updated
 
-## 🔗 Related Issues
+## 🔗 Related ClickUp Tasks
 
-Name and link any related issues. Example:
-
-- Closes CU-{task-id}
+- CU-{task-id}
 

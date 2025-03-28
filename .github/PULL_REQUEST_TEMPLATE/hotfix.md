@@ -19,9 +19,7 @@ Define the conditions that must be met for this hotfix to be considered complete
 - [ ] Hotfix is fast-tracked and merged with minimal disruption  
 - [ ] All tests pass
 
-## 🔗 Related Issues
+## 🔗 Related ClickUp Tasks
 
-Name and link any related issues. Example:
-
-- Closes CU-{task-id}
+- CU-{task-id}
 

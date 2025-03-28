@@ -19,9 +19,7 @@ Define the conditions that must be met for this fix to be considered complete. E
 - [ ] Bug is resolved in all affected environments  
 - [ ] All tests pass  
 
-## 🔗 Related Issues
+## 🔗 Related ClickUp Tasks
 
-Name and link any related issues. Example:
-
-- Closes CU-{task-id}
+- CU-{task-id}
 
