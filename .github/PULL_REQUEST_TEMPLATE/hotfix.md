@@ -8,15 +8,16 @@ Provide a concise summary of the hotfix and the issue it resolves.
 
 Describe the key changes made in this hotfix.
 
-- Critical fix applied  
+- Critical fix applied
 - Files affected
 
 ## ✅ Acceptance Criteria
 
-Define the conditions that must be met for this hotfix to be considered complete. Example:
+Define the conditions that must be met for this hotfix to be considered complete.
+Example:
 
-- [ ] Issue is resolved in all affected environments  
-- [ ] Hotfix is fast-tracked and merged with minimal disruption  
+- [ ] Issue is resolved in all affected environments
+- [ ] Hotfix is fast-tracked and merged with minimal disruption
 - [ ] All tests pass
 
 ## 🔗 Related ClickUp Tasks

@@ -10,10 +10,10 @@ if [ $BRANCH_NAME == '(no branch)' ]; then
     exit 1
 fi
 
-if grep -q "^\(feat\|fix\|conf\|ci\|docs\|wip\):" $1; then
+if grep "^\(feat\|fix\|conf\|ci\|docs\|wip\):" $1; then
     commit_msg_no_head=$(tail -n +2 $commit_template_f)
 
-    csplit -q $1 /#/
+    csplit $1 /#/
     old_msg=$(cat $old_msg_f)
     default=$(cat $default_f)
     rm $old_msg_f

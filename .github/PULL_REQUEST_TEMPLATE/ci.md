@@ -8,16 +8,17 @@ Provide a concise summary of the CI/CD changes made.
 
 Describe the key changes made to the CI/CD pipeline.
 
-- CI/CD pipeline updated  
-- New jobs or steps added  
+- CI/CD pipeline updated
+- New jobs or steps added
 - Changes to build or deploy processes
 
 ## ✅ Acceptance Criteria
 
-Define the conditions that must be met for this change to be considered complete. Example:
+Define the conditions that must be met for this change to be considered complete.
+Example:
 
-- [ ] CI/CD pipelines run without errors  
-- [ ] All tests pass  
+- [ ] CI/CD pipelines run without errors
+- [ ] All tests pass
 - [ ] Documentation for CI/CD updates is complete
 
 ## 🔗 Related ClickUp Tasks
