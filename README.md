@@ -1,7 +1,13 @@
 # 2025W1-Commitment
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+## Setup
+
+After cloning the repository you will want to run the `git-setup.sh` script to link the
+`.githooks` directory which contains Git workflows for the project.
 
 ## Team Information
 
@@ -66,3 +72,4 @@
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
