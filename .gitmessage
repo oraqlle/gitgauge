@@ -1,12 +1,3 @@
-# Commit Message Template
-#
-# Lines starting with '#' will be ignored.
-# Remove '# ' preceding a line to include it in the commit message but be mindful
-# As a minimum, you commit must be tagged with one of the above tags followed by a
-# title eg. 'feat: UI now supports light mode'
-# 
-# Refer to CONTRIBUTING.md for full guidelines.
-#
 <feat|fix|conf|ci|docs|wip>: Title
 #
 # Write longer description here....
@@ -15,9 +6,17 @@
 # Second topic of longer description seperated by blank line....
 #
 # scope: <scope> eg. ui, server, routing
-# link: <link> <link-desc>
-# closes: #1, #2
-# refs: #3, #4
-# fixes: <12-digit-commit-hash> <commit-summary>
+# refs: CU-{clickup task-ID}, CU-{clickup task-ID}
 # BREAKING-CHANGE: breaking change line 1
 # breaking change line 2
+#
+# +-------------------------+
+# | Commit Message Template |
+# +-------------------------+
+#
+# Lines starting with '#' will be ignored.
+# Remove '# ' preceding a line to include it in the commit message but be mindful
+# As a minimum, you commit must be tagged with one of the above tags followed by a
+# title eg. 'feat: UI now supports light mode'
+# 
+# Refer to CONTRIBUTING.md for full guidelines.

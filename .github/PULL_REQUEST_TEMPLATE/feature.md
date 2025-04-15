@@ -8,14 +8,15 @@ Provide a concise summary of the feature being introduced.
 
 Describe the key changes made in this feature.
 
-- New functionality implemented  
-- Relevant documentation updated  
+- New functionality implemented
+- Relevant documentation updated
 - Any files affected
 - New tests added
 
 ## ✅ Acceptance Criteria
 
-Define the conditions that must be met for this feature to be considered complete. Example:
+Define the conditions that must be met for this feature to be considered complete.
+Example:
 
 - [ ] Feature performs as expected in all supported environments
 - [ ] All tests pass

@@ -51,7 +51,7 @@ developing and contributing to the project.
    > PR automatically. Once you are done you can un-draft your PR for review.
 
 7. Once your PR is ready, you can request a review from your team's Software Architect
-   (SA). Your SA may request changes be made before accepting the PR. 
+   (SA). Your SA may request changes be made before accepting the PR.
 
    > Your changes will be validated using the CI/CD pipelines to ensure compliance with
    > existing code and to ensure your change works as expected.
@@ -72,10 +72,11 @@ developing and contributing to the project.
 > git fetch origin devel:devel
 > git merge devel
 > ```
+>
 > Merging will create a new commit where it will mix your changes with the pulled
 > changes. If there are conflicts, these will have to be resolved before the merge can
 > complete.
-> 
+>
 > ### Rebase
 >
 > ```sh
@@ -86,7 +87,7 @@ developing and contributing to the project.
 > This will interactively apply the changes in `devel` through your branches existing
 > history, therefore rewriting your branch's history as if the changes had always been a
 > part of your branch's history.
-> 
+>
 > You are free to rebase from another branch that is not `devel` or `main` if said branch
 > has new functionality you require for your changes and has not been approved to be
 > merged into `devel` yet.
