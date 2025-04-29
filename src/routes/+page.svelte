@@ -1,156 +1,93 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
-
-  let name = $state("");
-  let greetMsg = $state("");
-
-  async function greet(event: Event) {
-    event.preventDefault();
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsg = await invoke("greet", { name });
+  interface RepoOption {
+    value: string,
+    label: string,
+    icon: string
   }
+
+  let sidebarOpen = false;
+  let profileImageURL = "/mock_profile_img.png";
+  let userName = "Baaset Moslih"
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+  }
+
+  let bookmarked_repo = [
+    {repo_name: "fit3170-A1", repo_url: "https://github.com/user/fit3170-A1.git"},
+    {repo_name: "this-is-a-repo", repo_url: "https://gitlab.com/abc0012/this-is-a-repo.git"},
+    {repo_name: "project", repo_url: "https://github.com/example-org/project.git"},
+    {repo_name: "another-project", repo_url: "https://gitlab.com/example-org/another-project.git"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git"}
+  ];
+
+  
 </script>
 
-<main class="container">
-  <h1>Welcome to Tauri + Svelte</h1>
+<header>
+  <div class="mx-auto px-[26px] py-[26px]">
+    <div class="relative flex h-[22px] items-center justify-between">
+      <div class="flex">
+        <a href="/" class="cursor-pointer">
+          <img class="h-[20px] w-auto" src="/secondary_logo.png" alt="Your Company">
+        </a>
+      </div>
 
-  <div class="row">
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo vite" alt="Vite Logo" />
-    </a>
-    <a href="https://tauri.app" target="_blank">
-      <img src="/tauri.svg" class="logo tauri" alt="Tauri Logo" />
-    </a>
-    <a href="https://kit.svelte.dev" target="_blank">
-      <img src="/svelte.svg" class="logo svelte-kit" alt="SvelteKit Logo" />
-    </a>
+      <div class="flex items-center justify-between py-2">
+        <!-- Profile Image -->
+        <h1 class="mt-[3px] body-accent text-white">{userName}</h1>
+        <img
+          src={profileImageURL}
+          alt="Profile"
+          class="h-[22px] w-[22px] mx-[13px] rounded-full object-cover"
+        />
+      
+        <!-- Hamburger Button -->
+        <button
+          class="cursor-pointer"
+          on:click={toggleSidebar}
+        >
+          <!-- Hamburger Icon -->
+          <img src="/hamburger_menu.png" alt="hamburger_menu"/>
+        </button>
+      </div>
+    </div>
   </div>
-  <p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
+</header>
 
-  <form class="row" onsubmit={greet}>
-    <input id="greet-input" placeholder="Enter a name..." bind:value={name} />
-    <button type="submit">Greet</button>
-  </form>
-  <p>{greetMsg}</p>
+<main>
+  
+
+  
 </main>
 
-<style>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
+<!-- Sidebar -->
+<div class={`fixed top-0 right-0 w-[359px] h-full pr-[26px] pl-[25px] pt-[26px] bg-[#222222]/65 backdrop-blur-md rounded-lg border-[1px] border-r-0 border-[#383838] shadow-lg z-50 transform transition-transform duration-500 ease-in-out ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+  <div class="flex items-start justify-between h-[29px] mb-[26px]">
+    <div class="flex h-[29px]">
+      <img src="/setting_icon.png" alt="setting icon">
+      <h1 class="title-1 ml-[6px] text-white">settings</h1>
+    </div>
+    <button class="cursor-pointer" on:click={toggleSidebar}>
+      <img src="/closing_button.png" alt="closing button">
+    </button>
+  </div>
 
-.logo.svelte-kit:hover {
-  filter: drop-shadow(0 0 2em #ff3e00);
-}
+  <div class="grid grid-cols-1 gap-[13px]">
+    <div class="flex items-center h-[22px]">
+      <img src="/bookmark.png" alt="bookmark icon">
+      <h1 class="large-body-text-bold h-[22px] ml-[6px] text-white">bookmarks</h1>
+    </div>
+    
+    {#each bookmarked_repo as repo (repo.repo_url)}
+      <button class="flex flex-col cursor-pointer text-left">
+        <!-- <button class="cursor-pointer"> -->
+          <h1 class="large-body-text text-[#8f8f8f]">{repo.repo_name}</h1>
+          <h1 class="body text-[#8f8f8f]">{repo.repo_url}</h1>
+        <!-- </button> -->
+      </button>
+    {/each}
+  </div>
 
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
-}
-
-</style>
+</div>
