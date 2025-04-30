@@ -26,29 +26,23 @@
 </script>
 
 <header>
-  <div class="mx-auto px-[26px] py-[26px]">
-    <div class="relative flex h-[22px] items-center justify-between">
-      <div class="flex">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-section">
         <a href="/" class="cursor-pointer">
-          <img class="h-[20px] w-auto" src="/secondary_logo.png" alt="Your Company">
+          <img class="logo-img" src="/secondary_logo.png" alt="Your Company">
         </a>
       </div>
 
-      <div class="flex items-center justify-between py-2">
-        <!-- Profile Image -->
-        <h1 class="mt-[3px] body-accent text-white">{userName}</h1>
+      <div class="user-section">
+        <h1 class="user-name body-accent">{userName}</h1>
         <img
-          src={profileImageURL}
+          src="{profileImageURL}"
           alt="Profile"
-          class="h-[22px] w-[22px] mx-[13px] rounded-full object-cover"
+          class="profile-img"
         />
-      
-        <!-- Hamburger Button -->
-        <button
-          class="cursor-pointer"
-          on:click={toggleSidebar}
-        >
-          <!-- Hamburger Icon -->
+
+        <button class="hamburger-btn" on:click={toggleSidebar}>
           <img src="/hamburger_menu.png" alt="hamburger_menu"/>
         </button>
       </div>
@@ -63,31 +57,173 @@
 </main>
 
 <!-- Sidebar -->
-<div class={`fixed top-0 right-0 w-[359px] h-full pr-[26px] pl-[25px] pt-[26px] bg-[#222222]/65 backdrop-blur-md rounded-lg border-[1px] border-r-0 border-[#383838] shadow-lg z-50 transform transition-transform duration-500 ease-in-out ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-  <div class="flex items-start justify-between h-[29px] mb-[26px]">
-    <div class="flex h-[29px]">
+<div class={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+  <div class="sidebar-header">
+    <div class="sidebar-title">
       <img src="/setting_icon.png" alt="setting icon">
-      <h1 class="title-1 ml-[6px] text-white">settings</h1>
+      <h1 class="title-1 sidebar-title-text">settings</h1>
     </div>
-    <button class="cursor-pointer" on:click={toggleSidebar}>
+    <button class="close-button" on:click={toggleSidebar}>
       <img src="/closing_button.png" alt="closing button">
     </button>
   </div>
 
-  <div class="grid grid-cols-1 gap-[13px]">
-    <div class="flex items-center h-[22px]">
+  <div class="bookmark-list">
+    <div class="bookmark-header">
       <img src="/bookmark.png" alt="bookmark icon">
-      <h1 class="large-body-text-bold h-[22px] ml-[6px] text-white">bookmarks</h1>
+      <h1 class="large-body-text-bold bookmark-text">bookmarks</h1>
     </div>
     
     {#each bookmarked_repo as repo (repo.repo_url)}
-      <button class="flex flex-col cursor-pointer text-left">
-        <!-- <button class="cursor-pointer"> -->
-          <h1 class="large-body-text text-[#8f8f8f]">{repo.repo_name}</h1>
-          <h1 class="body text-[#8f8f8f]">{repo.repo_url}</h1>
-        <!-- </button> -->
+      <button class="bookmark-item">
+        <h1 class="large-body-text repo-name">{repo.repo_name}</h1>
+        <h1 class="body repo-url">{repo.repo_url}</h1>
       </button>
     {/each}
   </div>
-
 </div>
+
+
+
+<style>
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 26px;
+  padding-right: 26px;
+  padding-top: 26px;
+  padding-bottom: 26px;
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  height: 22px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-section {
+  display: flex;
+}
+
+.logo-img {
+  height: 20px;
+  width: auto;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.user-name {
+  color: white;
+}
+
+.profile-img {
+  height: 22px;
+  width: 22px;
+  margin-left: 13px;
+  margin-right: 13px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.hamburger-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 359px;
+  height: 100%;
+  padding-right: 26px;
+  padding-left: 25px;
+  padding-top: 26px;
+  background-color: rgba(34, 34, 34, 0.65);
+  backdrop-filter: blur(12px);
+  border-width: 1px;
+  border-style: solid;
+  border-color: #383838;
+  border-right: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar.closed {
+  transform: translateX(100%);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 29px;
+  margin-bottom: 26px;
+}
+
+.sidebar-title {
+  display: flex;
+  height: 29px;
+}
+
+.sidebar-title-text {
+  margin: auto;
+  margin-left: 6px;
+}
+
+.close-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.bookmark-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 13px;
+}
+
+.bookmark-header {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+
+.bookmark-text {
+  padding-left: 6px;
+}
+
+.bookmark-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.repo-name, .repo-url {
+  margin-top: 0px;
+  margin-bottom: 0px
+}
+
+</style>
