@@ -1,28 +1,51 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
-  interface RepoOption {
-    value: string,
-    label: string,
-    icon: string
+  interface RepoBookmark {
+    repo_name: string,
+    repo_url: string
   }
 
   let sidebarOpen = false;
   let profileImageURL = "/mock_profile_img.png";
-  let userName = "Baaset Moslih"
+  let userName = "Baaset Moslih";
 
   function toggleSidebar() {
     sidebarOpen = !sidebarOpen;
   }
 
-  let bookmarked_repo = [
+  let bookmarked_repo: RepoBookmark[] = [
     {repo_name: "fit3170-A1", repo_url: "https://github.com/user/fit3170-A1.git"},
     {repo_name: "this-is-a-repo", repo_url: "https://gitlab.com/abc0012/this-is-a-repo.git"},
     {repo_name: "project", repo_url: "https://github.com/example-org/project.git"},
     {repo_name: "another-project", repo_url: "https://gitlab.com/example-org/another-project.git"},
-    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git"}
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git2"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git3"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git4"},
   ];
 
-  
+  // 
+  interface RepoOption {
+    label: string,
+    icon: string
+  }
+  let dropdownOpen = false;
+  let selected: RepoOption | null = { label: "GitHub", icon: "/github.png" };
+
+  const options: RepoOption[] = [
+    { label: "GitHub", icon: "/github.png" },
+    { label: "GitLab", icon: "/gitlab.png" },
+    { label: "Local", icon: "/folder_code.png" }
+  ];
+
+  function selectOption(option: RepoOption) {
+    selected = option;
+    dropdownOpen = false;
+  }
+
+  function toggleDropdown() {
+    dropdownOpen = !dropdownOpen;
+  }
 </script>
 
 <header>
@@ -50,9 +73,51 @@
   </div>
 </header>
 
-<main>
-  
+<main class="main">
+  <div class="repo-start">
+    <!-- Repo dropdown -->
+    <div class="dropdown">
+      <button type="button" class={`dropdown-btn ${dropdownOpen ? 'show' : 'hide'}`} on:click={toggleDropdown}>
+        {#if selected}
+          <div class="dropdown-show">
+            <img class="dropdown-img" src={selected.icon} alt={selected.label} />
+            <h1 class="large-body-text dropdown-text" >{selected.label}</h1>
+          </div>
+        {:else}
+          Select an option
+        {/if}
+        <img src="/dropdown_icon.png" alt="dropdown icon">
+      </button>
+    
+      {#if dropdownOpen}
+        <div class="dropdown-content">
+          {#each options as option}
+            <button class="dropdown-option" on:click={() => selectOption(option)}>
+              <img class="dropdown-img" src={option.icon} alt={option.label} />
+              <h1 class="large-body-text dropdown-text">{option.label}</h1>
+            </button>
+          {/each}
+        </div>
+      {/if}
+    </div>
+    
+    <!-- Repo link -->
+    <div class="repo-link">
+      <input class="repo-textbox large-body-text" type="text" placeholder="enter a git repo..." />
+      <button class="repo-button">
+        <img class="input-icon" src="/repo_confirm.png" alt="repo confirm icon" />
+      </button>
+    </div>
 
+    <!-- Repo link list -->
+    <div class="repo-bookmark-list">
+      {#each bookmarked_repo as bookmark (bookmark.repo_url)}
+        <button class="repo-list-btn" type="button">
+          <h1 class="large-body-text repo-list-text">{bookmark.repo_url}</h1>
+        </button>
+      {/each}
+    </div>
+  </div>
   
 </main>
 
@@ -84,8 +149,16 @@
 </div>
 
 
-
 <style>
+/* MAIN PAGE CONTENT */
+.main {
+  height: calc(100vh - 76px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* HEADER */
 .container {
   margin-left: auto;
   margin-right: auto;
@@ -140,6 +213,7 @@
   padding: 0;
 }
 
+/* SIDEBAR */
 .sidebar {
   position: fixed;
   top: 0;
@@ -226,4 +300,176 @@
   margin-bottom: 0px
 }
 
+
+/* REPO SECTION */
+.repo-start {
+  /* width: ; */
+  display: grid;
+  grid-template-columns: 161px 441px; /* 2 columns */
+  grid-template-rows: repeat(2, auto);  /* 2 rows */
+  column-gap: 19.5px;
+  row-gap: 10px;
+}
+
+/* REPO DROPDOWN */
+.dropdown {
+  position: relative;
+  width: 161px;
+  height: 42px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.dropdown-btn {
+  width: 100%;
+  height: inherit;
+  padding: 10px 12px 10px 16px;
+  background: #222;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdown-btn.hide {
+  border-radius: 12px;
+}
+
+.dropdown-btn.show {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.dropdown-btn.show::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: #fff;
+}
+
+.dropdown-show {
+  display: flex; 
+  align-items: center;
+}
+
+.dropdown-content {
+  width: inherit;
+  background-color: #222;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.dropdown-option {
+  width: inherit;
+  height: 42px;
+  padding: 10px 12px 10px 16px;
+  background: #222;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.dropdown-text {
+  color: white;
+}
+
+.dropdown-img {
+  width: 19.5px;
+  height: 19.5px;
+  margin-right: 8px;
+}
+
+/* REPO TEXTBOX */
+.repo-link {
+  height: 24px;
+  width: 399px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  background-color: #222;
+  padding: 9px 18px 9px 24px;
+  border-radius: 12px;
+}
+
+.repo-textbox {
+  flex: 1;
+  margin-right: 12px;
+  background-color: #222;
+  border: none;
+  height: 24px;
+  padding: 0px;
+  width: 350px;
+  color: white;
+}
+
+.repo-textbox::placeholder {
+  font-family: "DM Sans", sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: #8f8f8f;
+}
+
+.repo-textbox:focus {
+  outline: none;
+}
+
+.repo-button {
+  background-color: inherit;
+  border: none;
+  padding: 0px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* Repo link list */
+.repo-bookmark-list {
+  grid-column: 2;
+  grid-row: 2;
+  padding-left: 24px;
+  margin-top: 22px;
+  width: 693px;
+  display: grid;
+  grid-template-columns: 441px;
+  row-gap: 13px;
+
+  /* let the list overflow and can be scrolll */
+  max-height: 174px;         /* adjust height to fit your layout */
+  overflow-y: auto;          /* enables vertical scrolling */
+  overflow-x: hidden;
+  padding-right: 8px;
+  /* padding-bottom: 84px;  */
+  scroll-padding-bottom: 174px;
+
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.2) 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.2) 80%, transparent 100%);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+.repo-list-btn {
+  height: 22px;
+  width: 693px;
+  background-color: #181818;
+  border: none;
+  margin: none;
+  padding: 0px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.repo-list-text {
+  margin: 0px;
+}
 </style>
