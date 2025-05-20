@@ -1,5 +1,9 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  let inputRepo = '';
+
   interface RepoBookmark {
     repo_name: string,
     repo_url: string
@@ -46,6 +50,20 @@
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
   }
+
+  function handleSubmit() {
+    if (inputRepo.trim()) {
+      goto(`/overview-page?repo=${encodeURIComponent(inputRepo)}`);
+    }
+  }
+
+  function handleKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  }
+
+
 </script>
 
 <header>
@@ -103,11 +121,18 @@
     
     <!-- Repo link -->
     <div class="repo-link">
-      <input class="repo-textbox large-body-text" type="text" placeholder="enter a git repo..." />
-      <button class="repo-button">
+      <input
+        class="repo-textbox large-body-text"
+        type="text"
+        placeholder="enter a git repo..."
+        bind:value={inputRepo}
+        on:keypress={handleKeyPress}
+      />
+      <button class="repo-button" on:click={handleSubmit}>
         <img class="input-icon" src="/repo_confirm.png" alt="repo confirm icon" />
       </button>
     </div>
+    
 
     <!-- Repo link list -->
     <div class="repo-bookmark-list">
