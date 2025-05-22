@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import Icon from "@iconify/svelte";
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   let inputRepo = '';
@@ -34,12 +35,12 @@
     icon: string
   }
   let dropdownOpen = false;
-  let selected: RepoOption | null = { label: "GitHub", icon: "/github.png" };
+  let selected: RepoOption | null = null;
 
   const options: RepoOption[] = [
-    { label: "GitHub", icon: "/github.png" },
-    { label: "GitLab", icon: "/gitlab.png" },
-    { label: "Local", icon: "/folder_code.png" }
+    { label: "GitHub", icon: "brand-github" },
+    { label: "GitLab", icon: "brand-gitlab" },
+    { label: "Local", icon: "folder-code" }
   ];
 
   function selectOption(option: RepoOption) {
@@ -76,15 +77,19 @@
       </div>
 
       <div class="user-section">
-        <h1 class="user-name body-accent">{userName}</h1>
+        <h6 class="white body-accent">{userName}</h6>
         <img
           src="{profileImageURL}"
           alt="Profile"
           class="profile-img"
         />
 
-        <button class="hamburger-btn" on:click={toggleSidebar}>
-          <img src="/hamburger_menu.png" alt="hamburger_menu"/>
+        <button type='button' class="hamburger-btn" on:click={toggleSidebar}>
+          <Icon
+            icon={"tabler:menu-2"}
+            class="icon-medium"
+            style="color: white"
+          />
         </button>
       </div>
     </div>
@@ -98,11 +103,15 @@
       <button type="button" class={`dropdown-btn ${dropdownOpen ? 'show' : 'hide'}`} on:click={toggleDropdown}>
         {#if selected}
           <div class="dropdown-show">
-            <img class="dropdown-img" src={selected.icon} alt={selected.label} />
-            <h1 class="large-body-text dropdown-text" >{selected.label}</h1>
+            <Icon
+              icon={`tabler:${selected.icon}`}
+              class="icon-medium"
+              style="color: white"
+            />
+            <h6 class="display-body white dropdown-text" >{selected.label}</h6>
           </div>
         {:else}
-          Select an option
+          <h6 class="display-body white">Select an option</h6>
         {/if}
         <img src="/dropdown_icon.png" alt="dropdown icon">
       </button>
@@ -111,8 +120,12 @@
         <div class="dropdown-content">
           {#each options as option}
             <button class="dropdown-option" on:click={() => selectOption(option)}>
-              <img class="dropdown-img" src={option.icon} alt={option.label} />
-              <h1 class="large-body-text dropdown-text">{option.label}</h1>
+              <Icon
+                icon={`tabler:${option.icon}`}
+                class="icon-medium"
+                style="color: white"
+              />
+              <h6 class="display-body white dropdown-text">{option.label}</h6>
             </button>
           {/each}
         </div>
@@ -122,14 +135,18 @@
     <!-- Repo link -->
     <div class="repo-link">
       <input
-        class="repo-textbox large-body-text"
+        class="repo-textbox display-body"
         type="text"
         placeholder="enter a git repo..."
         bind:value={inputRepo}
         on:keypress={handleKeyPress}
       />
       <button class="repo-button" on:click={handleSubmit}>
-        <img class="input-icon" src="/repo_confirm.png" alt="repo confirm icon" />
+        <Icon
+            icon={"tabler:circle-arrow-right"}
+            class="icon-medium"
+            style="color: white"
+          />
       </button>
     </div>
     
@@ -138,7 +155,7 @@
     <div class="repo-bookmark-list">
       {#each bookmarked_repo as bookmark (bookmark.repo_url)}
         <button class="repo-list-btn" type="button">
-          <h1 class="large-body-text repo-list-text">{bookmark.repo_url}</h1>
+          <h6 class="display-body repo-list-text white">{bookmark.repo_url}</h6>
         </button>
       {/each}
     </div>
@@ -150,24 +167,36 @@
 <div class={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
   <div class="sidebar-header">
     <div class="sidebar-title">
-      <img src="/setting_icon.png" alt="setting icon">
-      <h1 class="title-1 sidebar-title-text">settings</h1>
+      <Icon
+        icon={"tabler:chart-line"}
+        class="icon-large"
+        style="color: white"
+      />
+      <h1 class="title sidebar-title-text white">settings</h1>
     </div>
     <button class="close-button" on:click={toggleSidebar}>
-      <img src="/closing_button.png" alt="closing button">
+      <Icon
+        icon={"tabler:x"}
+        class="icon-medium"
+        style="color: white"
+      />
     </button>
   </div>
 
   <div class="bookmark-list">
     <div class="bookmark-header">
-      <img src="/bookmark.png" alt="bookmark icon">
-      <h1 class="large-body-text-bold bookmark-text">bookmarks</h1>
+      <Icon
+        icon={"tabler:star-filled"}
+        class="icon-medium"
+        style="color: white"
+      />
+      <h2 class="heading-1 bookmark-text white">bookmarks</h2>
     </div>
     
     {#each bookmarked_repo as repo (repo.repo_url)}
       <button class="bookmark-item">
-        <h1 class="large-body-text repo-name">{repo.repo_name}</h1>
-        <h1 class="body repo-url">{repo.repo_url}</h1>
+        <h6 class="heading-2 repo-name label-secondary">{repo.repo_name}</h6>
+        <h6 class="caption repo-url label-secondary">{repo.repo_url}</h6>
       </button>
     {/each}
   </div>
@@ -177,7 +206,7 @@
 <style>
 /* MAIN PAGE CONTENT */
 .main {
-  height: calc(100vh - 76px);
+  height: calc(100vh - 4.1875rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -185,18 +214,17 @@
 
 /* HEADER */
 .container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 26px;
-  padding-right: 26px;
-  padding-top: 26px;
-  padding-bottom: 26px;
+  padding: 0px;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 0.8125rem;
 }
 
 .header-content {
   position: relative;
   display: flex;
-  height: 22px;
+  height: 1.375rem;
   align-items: center;
   justify-content: space-between;
 }
@@ -218,16 +246,19 @@
   padding-bottom: 8px;
 }
 
-.user-name {
-  color: white;
+.white {
+  color: var(--white);
+}
+
+.label-secondary {
+  color: var(--label-secondary);
 }
 
 .profile-img {
-  height: 22px;
-  width: 22px;
-  margin-left: 13px;
-  margin-right: 13px;
-  border-radius: 9999px;
+  height: 1.375rem;
+  width: 1.375rem;
+  margin-left: 0.8125rem;
+  margin-right: 0.8125rem;
   object-fit: cover;
 }
 
@@ -236,6 +267,11 @@
   background: none;
   border: none;
   padding: 0;
+  height: 1.375rem;
+  width: 1.375rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* SIDEBAR */
@@ -243,18 +279,16 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 359px;
+  width: 18.4375rem;
   height: 100%;
-  padding-right: 26px;
-  padding-left: 25px;
-  padding-top: 26px;
-  background-color: rgba(34, 34, 34, 0.65);
-  backdrop-filter: blur(12px);
-  border-width: 1px;
-  border-style: solid;
-  border-color: #383838;
-  border-right: none;
-  border-radius: 0.5rem;
+  padding: 2rem;
+  border-radius: 8px 0px 0px 8px;
+  border-top: solid var(--Label-Tertiary, #747474);
+  border-bottom: solid var(--Label-Tertiary, #747474);
+  border-left: solid var(--Label-Tertiary, #747474);
+  border-width: 0.0625rem;
+  background: var(--Background-Tint, rgba(34, 34, 34, 0.70));
+  backdrop-filter: blur(16px);
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
   z-index: 50;
   transform: translateX(100%);
@@ -273,8 +307,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  height: 29px;
-  margin-bottom: 26px;
+  height: 1.8125rem;
+  margin-bottom: 1.5rem;
 }
 
 .sidebar-title {
@@ -284,7 +318,8 @@
 
 .sidebar-title-text {
   margin: auto;
-  margin-left: 6px;
+  margin-left: 0.375rem;
+  height: 1.8125rem
 }
 
 .close-button {
@@ -330,17 +365,17 @@
 .repo-start {
   /* width: ; */
   display: grid;
-  grid-template-columns: 161px 441px; /* 2 columns */
+  grid-template-columns: 13rem 35.5rem; /* 2 columns */
   grid-template-rows: repeat(2, auto);  /* 2 rows */
-  column-gap: 19.5px;
+  column-gap: 1rem;
   row-gap: 10px;
 }
 
 /* REPO DROPDOWN */
 .dropdown {
   position: relative;
-  width: 161px;
-  height: 42px;
+  width: 13rem;
+  height: 2.625em;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -348,7 +383,7 @@
 .dropdown-btn {
   width: 100%;
   height: inherit;
-  padding: 10px 12px 10px 16px;
+  padding: 0.625rem 0.75rem 0.625rem 1rem;
   background: #222;
   border: none;
   cursor: pointer;
@@ -391,7 +426,7 @@
 .dropdown-option {
   width: inherit;
   height: 42px;
-  padding: 10px 12px 10px 16px;
+  padding: 0.625rem 0.75rem 0.625rem 1rem;
   background: #222;
   border: none;
   cursor: pointer;
@@ -403,30 +438,24 @@
 }
 
 .dropdown-text {
-  color: white;
-}
-
-.dropdown-img {
-  width: 19.5px;
-  height: 19.5px;
-  margin-right: 8px;
+  margin-left: 0.5rem;
 }
 
 /* REPO TEXTBOX */
 .repo-link {
-  height: 24px;
-  width: 399px;
+  height: 1.5rem;
+  width: 33rem;
   display: flex;
   justify-content: start;
   align-items: center;
   background-color: #222;
-  padding: 9px 18px 9px 24px;
+  padding: 0.5625rem 1.125rem 0.5625rem 1.5rem;
   border-radius: 12px;
 }
 
 .repo-textbox {
   flex: 1;
-  margin-right: 12px;
+  margin-right: 0.5rem;
   background-color: #222;
   border: none;
   height: 24px;
@@ -436,10 +465,10 @@
 }
 
 .repo-textbox::placeholder {
-  font-family: "DM Sans", sans-serif;
-  font-size: 17px;
+  font-size: 1.063rem;
+  font-family: DM Sans;
   font-weight: 400;
-  color: #8f8f8f;
+  word-wrap: break-word;
 }
 
 .repo-textbox:focus {
@@ -459,20 +488,21 @@
 .repo-bookmark-list {
   grid-column: 2;
   grid-row: 2;
-  padding-left: 24px;
-  margin-top: 22px;
-  width: 693px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  margin: 0px;
+  /* width: 693px; */
   display: grid;
-  grid-template-columns: 441px;
-  row-gap: 13px;
+  grid-template-columns: 32.5rem;
+  grid-template-rows: repeat(5);
+  row-gap: 1rem;
 
   /* let the list overflow and can be scrolll */
-  max-height: 174px;         /* adjust height to fit your layout */
+  max-height: 10.875rem;         /* adjust height to fit your layout */
   overflow-y: auto;          /* enables vertical scrolling */
   overflow-x: hidden;
-  padding-right: 8px;
   /* padding-bottom: 84px;  */
-  scroll-padding-bottom: 174px;
+  scroll-padding-bottom: 10.875rem;
 
   scrollbar-width: none; 
   -ms-overflow-style: none;
@@ -485,7 +515,7 @@
 
 .repo-list-btn {
   height: 22px;
-  width: 693px;
+  width: inherit;
   background-color: #181818;
   border: none;
   margin: none;
@@ -495,6 +525,7 @@
 }
 
 .repo-list-text {
+  height: inherit;
   margin: 0px;
 }
 </style>

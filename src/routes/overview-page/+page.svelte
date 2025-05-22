@@ -1,10 +1,19 @@
-<script lang="ts">
+<script>
     import { page } from '$app/stores';
     import { derived } from 'svelte/store';
   
-    const repoParam = derived(page, $page => $page.url.searchParams.get('repo') || '');
+    const showRepoPage = derived(page, $page => $page.url.searchParams.get('repo') === 'true');
   </script>
   
-  <h1 class="title-1">Welcome to the New Page</h1>
-  <p class="large-body-text">You entered: {$repoParam}</p>
+  {#if $showRepoPage}
+    <div class="repo-container">
+      <h1>Repository Details</h1>
+      <p>This is the repo-specific view.</p>
+    </div>
+  {:else}
+    <div class="landing-container">
+      <h1>Welcome to GitGauge</h1>
+      <a href="/?repo=true">Go to Repo</a>
+    </div>
+  {/if}
   
