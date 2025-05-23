@@ -1,13 +1,7 @@
 <script lang="ts">
     import Icon from '@iconify/svelte';
-  
-    //sidebar toggle state
-    let sidebarOpen = false;
+    import { sidebarOpen, toggleSidebar } from '$lib/stores/sidebar';
 
-    export function toggleSidebar() {
-      sidebarOpen = !sidebarOpen;
-    }
-  
     //dummy user info
     let userName = 'Baaset Moslih';
     let profileImageURL = '/mock_profile_img.png';
@@ -24,6 +18,7 @@
       <Icon icon="tabler:menu-2" class="icon-medium" />
     </button>
   </div>
+  
   
   <style>
     .user-menu {
@@ -63,6 +58,7 @@
       padding: 0.25rem;
       cursor: pointer;
       display: flex;
+      color: var(--label-primary)
     }
   </style>
   

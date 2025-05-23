@@ -15,11 +15,10 @@
 
   </script>
 
-  <!-- banner Component: logo, dynamic repo pathway, bookmark toggle -->
   <div class="topbar">
     <!-- Logo / Home Link -->
     <a href="/" class="logo-section cursor-pointer">
-      <img src="/submark.png" alt="Logo" class="logo-img" />
+      <img src="/submark.png" alt="logo" class="logo-img" color=""/>
     </a>
   
     <!-- repo pathway display -->
@@ -67,7 +66,7 @@
     .repo-pathway {
       font-family: 'DM Mono', monospace;
       font-size: 1rem;
-      color: var(--label-secondary);
+      color: var(--label-primary);
       white-space: nowrap;
       max-width: 200px;
       overflow: hidden;
@@ -85,6 +84,7 @@
       padding: 0.25rem;
       cursor: pointer;
       display: flex;
+      color: var(--label-primary)
     }
   </style>
   
