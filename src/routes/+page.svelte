@@ -4,7 +4,7 @@
   import Icon from "@iconify/svelte";
   interface RepoBookmark {
     repo_name: string,
-    repo_url: string
+    repo_url: string,
   }
 
   let sidebarOpen = false;
@@ -71,14 +71,11 @@
       verificationError = null;
       console.log("Frontend verification successful:", result);
 
-      // If frontend validation is successful, you might want to invoke the backend 
-      // for further processing or to store the verified information.
-      // Example:
-      // const backendResult = await invoke('verify_and_extract_source_info', {
-      //   urlOrPath: repoUrlInput,
-      //   sourceType: sourceType,
-      // });
-      // console.log('Backend verification successful:', backendResult);
+      const backendResult = await invoke('verify_and_extract_source_info', {
+        urlStr: repoUrlInput,
+        sourceType: sourceType,
+      });
+      console.log('Backend verification successful:', backendResult);
 
     } catch (error: any) {
       verificationError = error.message || "Verification failed.";

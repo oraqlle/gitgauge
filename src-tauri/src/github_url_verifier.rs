@@ -6,6 +6,7 @@ use std::path::Path; // Added for local path manipulation
 pub struct SourceInfo { // Renamed from GithubInfo
     pub owner: String, // For git hosts: owner/group. For local: parent directory.
     pub repo: String,  // For git hosts: repo name. For local: file/directory name.
+    pub source_type: i32, // 0 for GitHub, 1 for GitLab, 2 for Local File
 }
 
 #[tauri::command]
@@ -43,7 +44,7 @@ pub fn verify_and_extract_source_info(url_str: &str, source_type: i32) -> Result
             if !repo_regex.is_match(&repo) || repo.starts_with('-') || repo.ends_with('-') || repo.ends_with('.') || no_double_hyphen.is_match(&repo) {
                  return Err(format!("Invalid GitHub repository name: '{}'. Contains invalid characters or patterns.", repo));
             }
-            Ok(SourceInfo { owner, repo })
+            Ok(SourceInfo { owner, repo, source_type })
         }
         1 => { // GitLab
             let url = url::Url::parse(url_str).map_err(|e| format!("Invalid GitLab URL: {}", e))?;
@@ -82,7 +83,7 @@ pub fn verify_and_extract_source_info(url_str: &str, source_type: i32) -> Result
                 return Err(format!("Invalid GitLab project name: '{}'.", repo));
             }
 
-            Ok(SourceInfo { owner, repo })
+            Ok(SourceInfo { owner, repo, source_type })
         }
         2 => { // Local File Path
             let path_obj = Path::new(url_str);
@@ -111,7 +112,7 @@ pub fn verify_and_extract_source_info(url_str: &str, source_type: i32) -> Result
                  return Err(format!("Local path is empty or invalid: '{}'.", url_str));
             }
 
-            Ok(SourceInfo { owner: parent_dir, repo })
+            Ok(SourceInfo { owner: parent_dir, repo, source_type })
         }
         _ => Err("Invalid source type specified. Use 0 for GitHub, 1 for GitLab, 2 for Local File.".to_string()),
     }
