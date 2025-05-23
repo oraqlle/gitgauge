@@ -7,11 +7,11 @@
     import Banner from '$lib/components/overview-page/banner.svelte';
     import UserMenu from '$lib/components/overview-page/user-menu.svelte';
     import Sidebar from '$lib/components/global/sidebar.svelte';
+    import ContributorGrid from '$lib/components/overview-page/contibutor-grid.svelte';
 
     import { toggleSidebar, sidebarOpen } from '$lib/stores/sidebar';
     import { onDestroy } from 'svelte';
 
-    
 
     let institutionName = 'Monash'
     let unitCode = 'FIT3170'
@@ -37,8 +37,18 @@
 <!-- page-specific content -->
 <main class="main">
     <slot />
-    <div class="body">
-        Hello World!
-    </div>
+    <div class="heading-1">Graph goes here!<br><br><br><br><br><br><br><br></div>
+    <section class="contributors-section">
+        <div class="heading-1">Our Contributors</div>
+        <ContributorGrid />
+      </section>
 </main>
   
+
+<style>
+    main {
+      background: #111;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+  </style>
