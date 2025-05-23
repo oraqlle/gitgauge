@@ -1,0 +1,90 @@
+<script lang="ts">
+    import { page } from '$app/stores';
+    import Icon from '@iconify/svelte';
+  
+    //bookmark toggle state
+    let isBookmarked = false;
+
+    function toggleBookmark() {
+      isBookmarked = !isBookmarked;
+    }
+  
+    //find repo pathway from URL query parameter
+    $: repoPath = $page.url.searchParams.get('repo') || '';
+
+
+  </script>
+
+  <!-- banner Component: logo, dynamic repo pathway, bookmark toggle -->
+  <div class="topbar">
+    <!-- Logo / Home Link -->
+    <a href="/" class="logo-section cursor-pointer">
+      <img src="/submark.png" alt="Logo" class="logo-img" />
+    </a>
+  
+    <!-- repo pathway display -->
+    <div class="repo-pathway">
+      {#if repoPath}
+        {repoPath}
+      {:else}
+        <span class="placeholder">Select a repo...</span>
+      {/if}
+    </div>
+  
+    <!-- bookmark toggle -->
+    <button
+      type="button"
+      class="bookmark-btn"
+      on:click={toggleBookmark}
+      aria-pressed={isBookmarked}
+    >
+      <Icon
+        icon={isBookmarked ? 'tabler:star-filled' : 'tabler:star'}
+        class="icon-medium"
+      />
+    </button>
+  </div>
+  
+
+  
+  <style>
+    /* topbar wrapper fixed at top-left */
+    .topbar {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 200;
+    }
+  
+    .logo-img {
+      height: 1.5rem;
+      width: auto;
+    }
+  
+    .repo-pathway {
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      color: var(--label-secondary);
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  
+    .placeholder {
+      font-style: italic;
+      color: var(--label-tertiary);
+    }
+  
+    .bookmark-btn {
+      background: none;
+      border: none;
+      padding: 0.25rem;
+      cursor: pointer;
+      display: flex;
+    }
+  </style>
+  
