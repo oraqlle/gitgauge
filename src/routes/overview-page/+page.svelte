@@ -4,6 +4,7 @@
     import Banner from '$lib/components/overview-page/banner.svelte';
     import UserMenu from '$lib/components/overview-page/user-menu.svelte';
     // import OverviewGraph from '../../components/overview-page/OverviewGraph.svelte';
+    import Header from '$lib/components/overview-page/header.svelte';
 
     //page-specific data or stores
     import { page } from '$app/stores';
@@ -12,6 +13,7 @@
 <!-- Shared header/navigation -->
 <!-- <Banner /> -->
 <!-- <UserMenu /> -->
+<Header />
 
 <!-- Main page content -->
 <main class="main">
