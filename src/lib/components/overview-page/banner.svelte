@@ -1,6 +1,8 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import Icon from '@iconify/svelte';
+
+    export let repoPath: string;
   
     //bookmark toggle state
     let isBookmarked = false;
@@ -8,9 +10,6 @@
     function toggleBookmark() {
       isBookmarked = !isBookmarked;
     }
-  
-    //find repo pathway from URL query parameter
-    $: repoPath = $page.url.searchParams.get('repo') || '';
 
 
   </script>
@@ -23,11 +22,7 @@
   
     <!-- repo pathway display -->
     <div class="repo-pathway">
-      {#if repoPath}
         {repoPath}
-      {:else}
-        <span class="placeholder">Select a repo...</span>
-      {/if}
     </div>
   
     <!-- bookmark toggle -->
@@ -68,9 +63,6 @@
       font-size: 1rem;
       color: var(--label-primary);
       white-space: nowrap;
-      max-width: 200px;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
   
     .placeholder {

@@ -10,8 +10,8 @@
 </script>
 
 <!-- Shared header/navigation -->
-<Banner />
-<UserMenu />
+<!-- <Banner /> -->
+<!-- <UserMenu /> -->
 
 <!-- Main page content -->
 <main class="main">

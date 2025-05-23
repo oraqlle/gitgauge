@@ -16,7 +16,7 @@
     let institutionName = 'Monash'
     let unitCode = 'FIT3170'
     let repoName = '2025W1-Commitment';
-    $: repoPathway = `/${institutionName}/${unitCode}/${repoName}`;
+    $: repoPath = `/${institutionName}/${unitCode}/${repoName}`;
 
     let open = false;
     const unsubscribe = sidebarOpen.subscribe(value => open = value);
@@ -30,15 +30,12 @@
 
 </script>
 <!-- universal page elements -->
-<Banner />
-<UserMenu />
+<Banner {repoPath}/>
+<UserMenu {userName} {profileImageURL}/>
 <Sidebar />
-
-<slot />
 
 <!-- page-specific content -->
 <main class="main">
-    <!-- main stuffffff -->
     <slot />
     <div class="body">
         Hello World!

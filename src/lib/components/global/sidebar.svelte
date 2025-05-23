@@ -62,7 +62,7 @@
       background: var(--Background-Tint, rgba(34, 34, 34, 0.7));
       backdrop-filter: blur(16px);
       box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-      z-index: 50;
+      z-index: 210;
       transform: translateX(100%);
       transition: transform 0.5s ease-in-out;
     }
