@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import { verifyAndExtractSourceInfo } from '$lib/githubUrlVerifier.js';
   import Icon from "@iconify/svelte";
   interface RepoBookmark {
     repo_name: string,
@@ -31,21 +32,77 @@
     icon: string
   }
   let dropdownOpen = false;
-  let selected: RepoOption | null = null;
-
+  
   const options: RepoOption[] = [
     { label: "GitHub", icon: "brand-github" },
     { label: "GitLab", icon: "brand-gitlab" },
     { label: "Local", icon: "folder-code" }
   ];
+  let selected: RepoOption = options[0]; // Default to GitHub
+
+  let repoUrlInput: string = "";
+  let verificationResult: { owner: string; repo: string } | null = null;
+  let verificationError: string | null = null;
+
+  async function handleVerification() {
+    if (!selected || !repoUrlInput.trim()) {
+      verificationError = "Please select a source type and enter a URL/path.";
+      verificationResult = null;
+      return;
+    }
+
+    let sourceType: 0 | 1 | 2;
+    if (selected.label === "GitHub") {
+      sourceType = 0;
+    } else if (selected.label === "GitLab") {
+      sourceType = 1;
+    } else if (selected.label === "Local") {
+      sourceType = 2;
+    } else {
+      verificationError = "Invalid source type selected.";
+      verificationResult = null;
+      return;
+    }
+
+    try {
+      // Try frontend validation first
+      const result = verifyAndExtractSourceInfo(repoUrlInput, sourceType);
+      verificationResult = result;
+      verificationError = null;
+      console.log("Frontend verification successful:", result);
+
+      // If frontend validation is successful, you might want to invoke the backend 
+      // for further processing or to store the verified information.
+      // Example:
+      // const backendResult = await invoke('verify_and_extract_source_info', {
+      //   urlOrPath: repoUrlInput,
+      //   sourceType: sourceType,
+      // });
+      // console.log('Backend verification successful:', backendResult);
+
+    } catch (error: any) {
+      verificationError = error.message || "Verification failed.";
+      verificationResult = null;
+      console.error("Verification failed:", error);
+    }
+  }
 
   function selectOption(option: RepoOption) {
     selected = option;
     dropdownOpen = false;
+    // Reset verification status when option changes
+    verificationResult = null;
+    verificationError = null;
   }
 
   function toggleDropdown() {
     dropdownOpen = !dropdownOpen;
+  }
+
+  function handleInputKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      handleVerification();
+    }
   }
 </script>
 
@@ -93,6 +150,7 @@
             <h6 class="display-body white dropdown-text" >{selected.label}</h6>
           </div>
         {:else}
+          <!-- This case should not happen with a default selected value -->
           <h6 class="display-body white">Select an option</h6>
         {/if}
         <img src="/dropdown_icon.png" alt="dropdown icon">
@@ -116,14 +174,32 @@
     
     <!-- Repo link -->
     <div class="repo-link">
-      <input class="repo-textbox display-body" type="text" placeholder="enter a git repo..." />
-      <button class="repo-button">
+      <input 
+        class="repo-textbox display-body" 
+        type="text" 
+        placeholder="enter a git repo..." 
+        bind:value={repoUrlInput} 
+        on:keydown={handleInputKeydown} 
+      />
+      <button class="repo-button" on:click={handleVerification}>
         <Icon
             icon={"tabler:circle-arrow-right"}
             class="icon-medium"
             style="color: white"
           />
       </button>
+    </div>
+
+    <!-- Verification Feedback -->
+    <div class="verification-feedback">
+      {#if verificationResult}
+        <p class="success-message white">
+          Successfully verified! Owner: {verificationResult.owner}, Repo: {verificationResult.repo}
+        </p>
+      {/if}
+      {#if verificationError}
+        <p class="error-message white">{verificationError}</p>
+      {/if}
     </div>
 
     <!-- Repo link list -->
@@ -341,7 +417,7 @@
   /* width: ; */
   display: grid;
   grid-template-columns: 13rem 35.5rem; /* 2 columns */
-  grid-template-rows: repeat(2, auto);  /* 2 rows */
+  grid-template-rows: auto auto auto;  /* 3 rows for dropdown, input, feedback */
   column-gap: 1rem;
   row-gap: 10px;
 }
@@ -502,5 +578,21 @@
 .repo-list-text {
   height: inherit;
   margin: 0px;
+}
+
+.verification-feedback {
+  grid-column: 1 / -1; /* Span across both columns */
+  /* Add some margin or padding if needed */
+  margin-top: 5px;
+}
+
+.success-message {
+  color: var(--accent-primary); /* Or your desired success color */
+  font-size: 0.875rem;
+}
+
+.error-message {
+  color: var(--functional-red-100); /* Or your desired error color */
+  font-size: 0.875rem;
 }
 </style>
