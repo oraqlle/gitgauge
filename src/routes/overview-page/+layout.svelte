@@ -8,22 +8,22 @@
     import UserMenu from '$lib/components/overview-page/user-menu.svelte';
     import Sidebar from '$lib/components/global/sidebar.svelte';
     import ContributorGrid from '$lib/components/overview-page/contibutor-grid.svelte';
+    // import Graph from '$lib/components/overiew-page/graph.svelte'
 
+    //import functions
     import { toggleSidebar, sidebarOpen } from '$lib/stores/sidebar';
     import { onDestroy } from 'svelte';
-
-
-    let institutionName = 'Monash'
-    let unitCode = 'FIT3170'
-    let repoName = '2025W1-Commitment';
-    $: repoPath = `/${institutionName}/${unitCode}/${repoName}`;
 
     let open = false;
     const unsubscribe = sidebarOpen.subscribe(value => open = value);
     onDestroy(unsubscribe);
 
-    //dummy input variables
-    //dummy values
+    //dummy data for demo
+    let institutionName = 'Monash'
+    let unitCode = 'FIT3170'
+    let repoName = '2025W1-Commitment';
+    $: repoPath = `/${institutionName}/${unitCode}/${repoName}`;
+
     let profileImageURL = '/mock_profile_img.png';
     let userName = 'Baaset Moslih';
 
@@ -37,13 +37,15 @@
 <!-- page-specific content -->
 <main class="main">
     <slot />
-    <div class="heading-1">Graph goes here!<br><br><br><br><br><br><br><br></div>
+    <div class="heading-1">
+        Graph goes here!<br><br><br><br><br><br><br><br>
+    </div>
     <section class="contributors-section">
         <div class="heading-1">Our Contributors</div>
         <ContributorGrid />
-      </section>
+    </section>
 </main>
-  
+
 
 <style>
     main {

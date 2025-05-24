@@ -17,26 +17,32 @@
       background: var(--background-tile, #222);
       border-radius: 8px;
       padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
       text-align: center;
       color: var(--white, #fff);
-      width: 280px;
+      /* width: 100%; */
+      width: 450px;
+      height: 240px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+  
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 0.75rem;
     }
+  
     .name {
       margin: 0;
       font-size: 1.2rem;
       font-weight: 600;
     }
+  
     .role {
       margin: 0.25rem 0 0;
       font-size: 0.9rem;
