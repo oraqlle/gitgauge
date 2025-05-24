@@ -39,6 +39,13 @@
         gap: 1rem;
       }
     }
+
+    .tile-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
   
   </style>
   
