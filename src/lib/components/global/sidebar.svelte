@@ -47,21 +47,21 @@
   </div>
   
 
-  
+
   <style>
     .sidebar {
       position: fixed;
       top: 0;
       right: 0;
       width: 18.4375rem;
-      height: 100%;
+      min-height: 93vh;
       padding: 2rem;
       border-radius: 8px 0 0 8px;
       border-top: solid var(--Label-Tertiary, #747474);
       border-bottom: solid var(--Label-Tertiary, #747474);
       border-left: solid var(--Label-Tertiary, #747474);
       border-width: 0.0625rem;
-      background: var(--Background-Tint, rgba(34, 34, 34, 0.7));
+      background: var(--Background-Tint, rgba(34, 34, 34));
       backdrop-filter: blur(16px);
       box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
       z-index: 210;

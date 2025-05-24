@@ -29,28 +29,45 @@
 
 
 </script>
-<!-- universal page elements -->
-<Banner {repoPath}/>
-<UserMenu {userName} {profileImageURL}/>
-<Sidebar />
-
-<!-- page-specific content -->
-<main class="main">
-    <slot />
-    <div class="heading-1">
-        Graph goes here!<br><br><br><br><br><br><br><br>
+<div class="page">
+    <!-- fixed -->
+    <div class="header">
+        <Banner {repoPath}/>
+        <UserMenu {userName} {profileImageURL}/>
+        <Sidebar />
     </div>
-    <section class="contributors-section">
-        <div class="heading-1">Our Contributors</div>
-        <ContributorGrid />
-    </section>
-</main>
 
+    <!-- scrollable content -->
+    <div class="main">
+        <slot />
+        Graph goes here!<br><br><br><br><br><br><br><br>
+        {#each Array(50) as _}
+        <p>Filler content to test background scrolling</p>
+        {/each}
+
+        <section class="contributors-section">
+            <div class="heading-1">Our Contributors</div>
+            <ContributorGrid />
+        </section>
+    </div>
+</div>
 
 <style>
-    main {
-      background: #111;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-  </style>
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90%;
+    z-index: 1000;
+    background: inherit;
+    backdrop-filter: blur(6px);
+    padding: 5rem;
+}
+
+.main {
+    padding: 12rem 2rem 2rem;
+    color: white;
+    background: transparent;
+}
+</style>

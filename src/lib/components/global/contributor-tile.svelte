@@ -91,14 +91,6 @@
         color: var(--label-tertiary, #aaa);
         line-height: 1.8;
     }
-/* 
-    .contributor-stats > * {
-        margin-bottom: 0.8rem; 
-    }
-
-    .contributor-stats > *:last-child {
-        margin-bottom: 0; 
-    } */
 
     .git-changes {
         display: flex;

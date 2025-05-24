@@ -8,6 +8,7 @@
       { name: "Dana", avatar_url: "/git_profile.png", profile: "#", role: "Developer" },
       { name: "Eve", avatar_url: "/git_profile.png", profile: "#", role: "Developer" },
       { name: "Frank", avatar_url: "/git_profile.png", profile: "#", role: "" },
+
     ];
   </script>
   

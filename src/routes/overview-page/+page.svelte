@@ -1,29 +1,18 @@
 <!-- src/routes/overview-page/+page.svelte -->
-<script lang="ts">
+<!-- <script lang="ts">
     //import shared layout components
-    import Banner from '$lib/components/overview-page/banner.svelte';
-    import UserMenu from '$lib/components/overview-page/user-menu.svelte';
-    // import OverviewGraph from '../../components/overview-page/OverviewGraph.svelte';
-    import Header from '$lib/components/overview-page/header.svelte';
 
     //page-specific data or stores
     import { page } from '$app/stores';
-</script>
+</script> -->
 
-<!-- Shared header/navigation -->
-<!-- <Banner /> -->
-<!-- <UserMenu /> -->
-<Header />
-
-<!-- Main page content -->
+<!-- 
 <main class="main">
     <section class="overview-stats">
-    <!-- Replace with your actual graph/component -->
-    <!-- <OverviewGraph /> -->
     </section>
-</main>
+</main> -->
 
-
+<!-- 
 <style>
 /* Scoped styles for overview page */
 .main {
@@ -42,4 +31,4 @@
     padding: 2rem;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
-</style>
+</style> -->
