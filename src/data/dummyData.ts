@@ -1,28 +1,28 @@
 // Types
 export type Branch = Readonly<{
   commits: Commit[],
-  dateRange: String
+  dateRange: string
 }>
 
 export type File = Readonly<{
-  status: String,
+  status: string,
   added: number,
   deleted: number,
   changed: number,
-  path: String
+  path: string
 }>
 
 export type Commit = Readonly<{
-  date: String,
-  time: String,
-  branch: String,
+  date: string,
+  time: string,
+  branch: string,
   filesChanged: File[]
 }>
 
 export type User = Readonly<{
-  username: String,
-  image: String,
-  userEmails: String[],
+  username: string,
+  image: string,
+  userEmails: string[],
   commits: Commit[]
 }>;
 
