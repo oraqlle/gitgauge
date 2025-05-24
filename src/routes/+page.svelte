@@ -161,6 +161,116 @@
     </div>
   </div>
   
+  <script>
+  import { onMount } from 'svelte';
+  import * as echarts from 'echarts';
+
+  let chartContainer: HTMLElement;
+  let chart: echarts.ECharts;
+
+  // Reference points for vertical lines
+  const refPoints = [
+    { label: '-2σ', value: 15 },
+    { label: '-σ', value: 35 },
+    { label: 'mean', value: 50 },
+    { label: '+σ', value: 70 },
+    { label: '+2σ', value: 85 }
+  ];
+
+  // Dummy data for people (aggregate x-values)
+  const people = [
+    { name: 'A', color: '#6fcf97', x: 15 },
+    { name: 'B', color: '#e0e0e0', x: 20 },
+    { name: 'C', color: '#bb6bd9', x: 28 },
+    { name: 'D', color: '#6fcf97', x: 38 },
+    { name: 'E', color: '#f2994a', x: 40 },
+    { name: 'F', color: '#2d9cdb', x: 52 },
+    { name: 'G', color: '#f2994a', x: 54 },
+    { name: 'H', color: '#6fcf97', x: 60 },
+    { name: 'I', color: '#27ae60', x: 70 },
+    { name: 'J', color: '#bb6bd9', x: 80 },
+    { name: 'K', color: '#b7e4c7', x: 85 }
+  ];
+
+  onMount(() => {
+    const option = {
+      backgroundColor: '#222',
+      grid: {
+        top: '30%',
+        bottom: '30%',
+        left: 40,
+        right: 40,
+        containLabel: false
+      },
+      xAxis: {
+        type: 'value',
+        name: 'Total Commits',
+        nameLocation: 'middle',
+        nameGap: 40,
+        axisLine: {
+          lineStyle: {
+            color: '#fff',
+            width: 2
+          }
+        },
+        axisLabel: {
+          color: '#fff',
+          fontSize: 16,
+          margin: 16
+        },
+        splitLine: { show: false },
+        axisTick: {
+          lineStyle: {
+            color: '#fff',
+            width: 2
+          }
+        },
+        position: 'bottom'
+      },
+      yAxis: {
+        show: false,
+        min: 0,
+        max: 2
+      },
+      series: [
+        // Scatter points for people
+        {
+          type: 'scatter',
+          data: people.map(p => [p.x, 1]),
+          symbolSize: 48,
+          itemStyle: {
+            color: function(params: { dataIndex: number }) {
+              return people[params.dataIndex].color;
+            },
+            borderColor: function(params: { dataIndex: number }) {
+              return people[params.dataIndex].color;
+            },
+            borderWidth: 4,
+            shadowBlur: 0
+          },
+          label: {
+            show: false
+          },
+          z: 3
+        }
+      ],
+      graphic: [] // Will be set after chart is initialized
+    };
+
+    chart = echarts.init(chartContainer);
+    chart.setOption(option);
+
+    
+
+    return () => {
+      window.removeEventListener('resize', updateGraphics);
+      chart.dispose();
+    };
+  });
+</script>
+
+<main class="container">
+  <div bind:this={chartContainer} style="width: 100%; height: 200px;"></div>
 </main>
 
 <!-- Sidebar -->
