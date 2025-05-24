@@ -63,9 +63,11 @@
         handleSubmit();
       }
     }
-</script>
-
-<header>
+  
+  
+  </script>
+  
+  <header>
     <div class="container">
       <div class="header-content">
         <div class="logo-section">
@@ -158,145 +160,372 @@
         {/each}
       </div>
     </div>
+    
   </main>
-
+  
+  <!-- Sidebar -->
+  <div class={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <Icon
+          icon={"tabler:chart-line"}
+          class="icon-large"
+          style="color: white"
+        />
+        <h1 class="title sidebar-title-text white">settings</h1>
+      </div>
+      <button class="close-button" on:click={toggleSidebar}>
+        <Icon
+          icon={"tabler:x"}
+          class="icon-medium"
+          style="color: white"
+        />
+      </button>
+    </div>
+  
+    <div class="bookmark-list">
+      <div class="bookmark-header">
+        <Icon
+          icon={"tabler:star-filled"}
+          class="icon-medium"
+          style="color: white"
+        />
+        <h2 class="heading-1 bookmark-text white">bookmarks</h2>
+      </div>
+      
+      {#each bookmarked_repo as repo (repo.repo_url)}
+        <button class="bookmark-item">
+          <h6 class="heading-2 repo-name label-secondary">{repo.repo_name}</h6>
+          <h6 class="caption repo-url label-secondary">{repo.repo_url}</h6>
+        </button>
+      {/each}
+    </div>
+  </div>
+  
+  
   <style>
-    .container {
-      margin: 0;
-      padding: 1rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      min-height: auto;
-    }
+  /* MAIN PAGE CONTENT */
+  .main {
+    height: calc(100vh - 4.1875rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   
-    .title {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 2rem;
-      color: #f6f6f6;
-    }
+  /* HEADER */
+  .container {
+    padding: 0px;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 0.8125rem;
+  }
   
-    .header-row {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
+  .header-content {
+    position: relative;
+    display: flex;
+    height: 1.375rem;
+    align-items: center;
+    justify-content: space-between;
+  }
   
-    .branch-select {
-      background-color: #333;
-      color: #f6f6f6;
-      border: 1px solid #444;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+  .logo-section {
+    display: flex;
+  }
   
-    .branch-select:hover {
-      border-color: #666;
-    }
+  .logo-img {
+    height: 20px;
+    width: auto;
+  }
   
-    .branch-select:focus {
-      border-color: #888;
-    }
+  .user-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
   
-    /* Sidebar styles */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 18.4375rem;
-      height: 100%;
-      padding: 2rem;
-      border-radius: 8px 0px 0px 8px;
-      border-top: solid var(--Label-Tertiary, #747474);
-      border-bottom: solid var(--Label-Tertiary, #747474);
-      border-left: solid var(--Label-Tertiary, #747474);
-      border-width: 0.0625rem;
-      background: var(--Background-Tint, rgba(34, 34, 34, 0.70));
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-      z-index: 50;
-      transform: translateX(100%);
-      transition: transform 0.5s ease-in-out;
-    }
+  .white {
+    color: var(--white);
+  }
   
-    .sidebar.open {
-      transform: translateX(0);
-    }
+  .label-secondary {
+    color: var(--label-secondary);
+  }
   
-    .sidebar.closed {
-      transform: translateX(100%);
-    }
+  .profile-img {
+    height: 1.375rem;
+    width: 1.375rem;
+    margin-left: 0.8125rem;
+    margin-right: 0.8125rem;
+    object-fit: cover;
+  }
   
-    .sidebar-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      height: 1.8125rem;
-      margin-bottom: 1.5rem;
-    }
+  .hamburger-btn {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    height: 1.375rem;
+    width: 1.375rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   
-    .sidebar-title {
-      display: flex;
-      height: 29px;
-    }
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 18.4375rem;
+    height: 100%;
+    padding: 2rem;
+    border-radius: 8px 0px 0px 8px;
+    border-top: solid var(--Label-Tertiary, #747474);
+    border-bottom: solid var(--Label-Tertiary, #747474);
+    border-left: solid var(--Label-Tertiary, #747474);
+    border-width: 0.0625rem;
+    background: var(--Background-Tint, rgba(34, 34, 34, 0.70));
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.5s ease-in-out;
+  }
   
-    .sidebar-title-text {
-      margin: auto;
-      margin-left: 0.375rem;
-      height: 1.8125rem
-    }
+  .sidebar.open {
+    transform: translateX(0);
+  }
   
-    .close-button {
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-    }
+  .sidebar.closed {
+    transform: translateX(100%);
+  }
   
-    .bookmark-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 13px;
-    }
+  .sidebar-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 1.8125rem;
+    margin-bottom: 1.5rem;
+  }
   
-    .bookmark-header {
-      display: flex;
-      align-items: center;
-      height: 22px;
-    }
+  .sidebar-title {
+    display: flex;
+    height: 29px;
+  }
   
-    .bookmark-text {
-      padding-left: 6px;
-    }
+  .sidebar-title-text {
+    margin: auto;
+    margin-left: 0.375rem;
+    height: 1.8125rem
+  }
   
-    .bookmark-item {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 0;
-    }
+  .close-button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
   
-    .repo-name, .repo-url {
-      margin-top: 0px;
-      margin-bottom: 0px
-    }
+  .bookmark-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
   
-    .white {
-      color: var(--white);
-    }
+  .bookmark-header {
+    display: flex;
+    align-items: center;
+    height: 22px;
+  }
   
-    .label-secondary {
-      color: var(--label-secondary);
-    }
+  .bookmark-text {
+    padding-left: 6px;
+  }
+  
+  .bookmark-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  
+  .repo-name, .repo-url {
+    margin-top: 0px;
+    margin-bottom: 0px
+  }
+  
+  
+  /* REPO SECTION */
+  .repo-start {
+    /* width: ; */
+    display: grid;
+    grid-template-columns: 13rem 35.5rem; /* 2 columns */
+    grid-template-rows: repeat(2, auto);  /* 2 rows */
+    column-gap: 1rem;
+    row-gap: 10px;
+  }
+  
+  /* REPO DROPDOWN */
+  .dropdown {
+    position: relative;
+    width: 13rem;
+    height: 2.625em;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  .dropdown-btn {
+    width: 100%;
+    height: inherit;
+    padding: 0.625rem 0.75rem 0.625rem 1rem;
+    background: #222;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .dropdown-btn.hide {
+    border-radius: 12px;
+  }
+  
+  .dropdown-btn.show {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  .dropdown-btn.show::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: #fff;
+  }
+  
+  .dropdown-show {
+    display: flex; 
+    align-items: center;
+  }
+  
+  .dropdown-content {
+    width: inherit;
+    background-color: #222;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  
+  .dropdown-option {
+    width: inherit;
+    height: 42px;
+    padding: 0.625rem 0.75rem 0.625rem 1rem;
+    background: #222;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  
+  .dropdown-text {
+    margin-left: 0.5rem;
+  }
+  
+  /* REPO TEXTBOX */
+  .repo-link {
+    height: 1.5rem;
+    width: 33rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #222;
+    padding: 0.5625rem 1.125rem 0.5625rem 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .repo-textbox {
+    flex: 1;
+    margin-right: 0.5rem;
+    background-color: #222;
+    border: none;
+    height: 24px;
+    padding: 0px;
+    width: 350px;
+    color: white;
+  }
+  
+  .repo-textbox::placeholder {
+    font-size: 1.063rem;
+    font-family: DM Sans;
+    font-weight: 400;
+    word-wrap: break-word;
+  }
+  
+  .repo-textbox:focus {
+    outline: none;
+  }
+  
+  .repo-button {
+    background-color: inherit;
+    border: none;
+    padding: 0px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Repo link list */
+  .repo-bookmark-list {
+    grid-column: 2;
+    grid-row: 2;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    margin: 0px;
+    /* width: 693px; */
+    display: grid;
+    grid-template-columns: 32.5rem;
+    grid-template-rows: repeat(5);
+    row-gap: 1rem;
+  
+    /* let the list overflow and can be scrolll */
+    max-height: 10.875rem;         /* adjust height to fit your layout */
+    overflow-y: auto;          /* enables vertical scrolling */
+    overflow-x: hidden;
+    /* padding-bottom: 84px;  */
+    scroll-padding-bottom: 10.875rem;
+  
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+  
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.2) 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.2) 80%, transparent 100%);
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+  }
+  
+  .repo-list-btn {
+    height: 22px;
+    width: inherit;
+    background-color: #181818;
+    border: none;
+    margin: none;
+    padding: 0px;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .repo-list-text {
+    height: inherit;
+    margin: 0px;
+  }
   </style>
