@@ -1,43 +1,32 @@
 <script lang="ts">
-  import type { User } from '../../../data/dummyData';
   import {
     getUserTotalCommits,
     getUserTotalLinesOfCode,
     getUserLinesPerCommit,
-    getUserCommitsPerDay,
     getUserTotalAdditions,
     getUserTotalDeletions,
     calculateScalingFactor,
     getAverageCommits,
-    getSD
+    getSD,
+    type Contributor
   } from '../../metrics';
 
-  export let users: User[] = [];
-  export let selectedBranch: string = 'all';
-
-  // Filter users based on selected branch
-  $: filteredUsers = selectedBranch === 'all' 
-    ? users 
-    : users.map(user => ({
-        ...user,
-        commits: user.commits.filter(commit => commit.branch === selectedBranch)
-      })).filter(user => user.commits.length > 0);
+  let { users, selectedBranch } = $props();
 
   // Calculate metrics for each user
-  $: commit_mean = getAverageCommits(filteredUsers);
-  $: sd = getSD(filteredUsers);
+  let commit_mean = getAverageCommits(users);
+  let sd = getSD(users);
   
-  $: peopleWithMetrics = filteredUsers.map(user => {
+  let peopleWithMetrics = users.map((user: Contributor) => {
     const numCommits = getUserTotalCommits(user);
     const scalingFactor = calculateScalingFactor(numCommits, commit_mean, sd);
     
     return {
-      username: user.username,
-      image: user.image,
+      username: user.author.login,
+      image: null,
       numCommits,
       totalLinesOfCode: getUserTotalLinesOfCode(user),
       linesPerCommit: getUserLinesPerCommit(user),
-      commitsPerDay: getUserCommitsPerDay(user),
       totalAdditions: getUserTotalAdditions(user),
       totalDeletions: getUserTotalDeletions(user),
       scalingFactor: scalingFactor.toFixed(1)

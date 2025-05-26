@@ -1,6 +1,19 @@
-import type { User } from '../data/dummyData';
+//import type { User } from '../data/dummyData';
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
+
+export type Author = Readonly<{
+    login: string,
+    avatar_url: string 
+}>;
+
+export type Contributor = Readonly<{
+    author: Author,
+    total_commits: number,
+    additions: number,
+    deletions: number
+}>;
+
 
 // Load branches for a repository
 export async function loadBranches(owner: string, repo: string): Promise<string[]> {
@@ -14,82 +27,73 @@ export async function loadBranches(owner: string, repo: string): Promise<string[
     }
 }
 
-export async function loadCommitData(owner: string, repo: string, branch?: string): Promise<any> {
+export async function loadCommitData(owner: string, repo: string, branch?: string): Promise<Contributor[]> {
     info(`Loading contributor data for ${owner}/${repo}...`);
 
     try {
-        const commitData = await invoke<string[]>('get_contributor_data', { owner, repo });
+        const commitData = await invoke<Contributor[]>('get_contributor_info', { owner, repo });
+        info(`${commitData}`);
         return commitData;
     } catch (err) {
+        info(`Failed to get contributor data`)
         console.error('Failed to load contributor data: ', err);
+        return [];
     }
 }
 
 // 1. Total Commits for a user
-export function getUserTotalCommits(user: User): number {
-    return user.commits.length;
+export function getUserTotalCommits(user: Contributor): number {
+    return user.total_commits;
 }
 
 // 2. Total Lines of Code (additions + deletions) for a user
-export function getUserTotalLinesOfCode(user: User): number {
-    return user.commits.reduce((commitAcc, commit) =>
-        commitAcc + commit.filesChanged.reduce((fileAcc, file) =>
-            fileAcc + file.added + file.deleted, 0
-        ), 0
-    );
+export function getUserTotalLinesOfCode(user: Contributor): number {
+    return user.additions + user.deletions;
 }
 
 // 3. Lines per Commit for a user
-export function getUserLinesPerCommit(user: User): number {
+export function getUserLinesPerCommit(user: Contributor): number {
     const totalCommits = getUserTotalCommits(user);
     const totalLines = getUserTotalLinesOfCode(user);
     return totalCommits === 0 ? 0 : Math.round(totalLines / totalCommits);
 }
 
 // 4. Commits per Day for a user
-export function getUserCommitsPerDay(user: User): number {
-    const allDates = user.commits.map(commit => commit.date);
-    const uniqueDates = new Set(allDates);
-    const totalCommits = getUserTotalCommits(user);
-    return uniqueDates.size === 0 ? 0 : +(totalCommits / uniqueDates.size).toFixed(2);
-}
+// export function getUserCommitsPerDay(user: User): number {
+//     const allDates = user.commits.map(commit => commit.date);
+//     const uniqueDates = new Set(allDates);
+//     const totalCommits = getUserTotalCommits(user);
+//     return uniqueDates.size === 0 ? 0 : +(totalCommits / uniqueDates.size).toFixed(2);
+// }
 
 // 5. Total Additions for a user
-export function getUserTotalAdditions(user: User): number {
-    return user.commits.reduce((commitAcc, commit) =>
-        commitAcc + commit.filesChanged.reduce((fileAcc, file) =>
-            fileAcc + file.added, 0
-        ), 0
-    );
+export function getUserTotalAdditions(user: Contributor): number {
+    return user.additions;
 }
 
 // 6. Total Deletions for a user
-export function getUserTotalDeletions(user: User): number {
-    return user.commits.reduce((commitAcc, commit) =>
-        commitAcc + commit.filesChanged.reduce((fileAcc, file) =>
-            fileAcc + file.deleted, 0
-        ), 0
-    );
+export function getUserTotalDeletions(user: Contributor): number {
+    return user.deletions;
 }
 
 // Calculate average commits
-export function getAverageCommits(users: User[]): number {
+export function getAverageCommits(users: Contributor[]): number {
     if (users.length === 0) return 0;
     const commit_mean: number = users.reduce((acc, curr) => {
-        return acc + curr.commits.length;
+        return acc + curr.total_commits;
     }, 0) / users.length;
 
     return commit_mean;
 }
 
 // Calculate standard deviation
-export function getSD(users: User[]): number {
+export function getSD(users: Contributor[]): number {
     if (users.length === 0) return 0;
     let commits: number[] = [];
 
     // Get the list of total commits for each user
     users.forEach(user => {
-        commits.push(user.commits.length);
+        commits.push(user.total_commits);
     });
 
     // Creating the mean with Array.reduce

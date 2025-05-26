@@ -1,13 +1,15 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { users } from "../data/dummyData";
     import CommitGraph from "../lib/components/overview-page/Graph.svelte";
     import ContributorCards from "../lib/components/overview-page/ContributorCards.svelte";
     import Icon from "@iconify/svelte";
-    import { loadBranches, loadCommitData } from "../lib/metrics";
+    import { loadBranches, loadCommitData, type Contributor } from "../lib/metrics";
+    import { info } from "@tauri-apps/plugin-log";
+
 
     let repo = "clap";
     let owner = "clap-rs";
+    let contributors: Contributor[] = $state([]);
     let branches: string[] = $state([]);
     let selectedBranch = $state("all");
     let sidebarOpen = $state(false);
@@ -17,24 +19,21 @@
         sidebarOpen = !sidebarOpen;
     }
 
-    $effect(() => {
-        if (selectedBranch === 'all') {
-            const commitData = await loadCommitData(owner, repo, null);
-        } else {
-            const commitData = await loadCommitData(owner, repo, selectedBranch);
-        }
-    });
-
     onMount(async () => {
+        info("here");
+
+
         const loadedBranches = await loadBranches(owner, repo);
         branches = loadedBranches;
         if (!branches.includes(selectedBranch)) {
             selectedBranch = "all";
         }
+
+        contributors = await loadCommitData(owner, repo, undefined);
     });
 </script>
 
-<main class="container">
+<!-- <main class="container">
     <div class="header-row">
         <h1 class="title">Overview Page</h1>
         <select bind:value={selectedBranch} class="branch-select">
@@ -46,9 +45,9 @@
         </select>
     </div>
 
-    <CommitGraph {users} {selectedBranch} />
-    <ContributorCards {users} {selectedBranch} />
-</main>
+    <CommitGraph selectedBranch contributors />
+    <ContributorCards selectedBranch users={contributors} />
+</main> -->
 
 <!-- Sidebar -->
 <div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
