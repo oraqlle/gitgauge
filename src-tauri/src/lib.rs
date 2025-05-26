@@ -75,9 +75,23 @@ async fn get_branch_names(repo: String, owner: String) -> Result2<Vec<String>> {
 }
 
 #[tauri::command]
-async fn get_contributor_info(repo: String, owner: String) -> Result2<Vec<ContributorInfo>> {
+async fn get_contributor_info(repo: String, owner: String, branch: Option<String>) -> Result2<Vec<ContributorInfo>> {
     log::info!("Starting Contributors");
-    let url = format!("https://api.github.com/repos/{}/{}/stats/contributors", owner, repo);
+
+    let url = match branch {
+        Some(b) => format!(
+            "https://api.github.com/repos/{}/{}/stats/contributors&sha={}",
+            owner,
+            repo,
+            b
+        ),
+        None => format!(
+            "https://api.github.com/repos/{}/{}/stats/contributors",
+            owner,
+            repo
+        )
+    };
+
     let headers = construct_headers();
     let client = Client::new();
 

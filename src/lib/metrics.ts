@@ -14,6 +14,17 @@ export async function loadBranches(owner: string, repo: string): Promise<string[
     }
 }
 
+export async function loadCommitData(owner: string, repo: string, branch?: string): Promise<any> {
+    info(`Loading contributor data for ${owner}/${repo}...`);
+
+    try {
+        const commitData = await invoke<string[]>('get_contributor_data', { owner, repo });
+        return commitData;
+    } catch (err) {
+        console.error('Failed to load contributor data: ', err);
+    }
+}
+
 // 1. Total Commits for a user
 export function getUserTotalCommits(user: User): number {
     return user.commits.length;
