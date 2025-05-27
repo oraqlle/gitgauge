@@ -2,7 +2,7 @@
     import { invoke } from "@tauri-apps/api/core";
     import { verifyAndExtractSourceInfo } from "$lib/githubUrlVerifier.js";
     import Icon from "@iconify/svelte";
-    import { loadBranches, loadCommitData } from "$lib/metrics";
+    import { load_branches, load_commit_data } from "$lib/metrics";
     import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
     interface RepoBookmark {
@@ -115,12 +115,9 @@
 
             // Call loadBranches and loadCommitData and wait for both to complete
             const [branches, commitData] = await Promise.all([
-                loadBranches(backendResult.owner, backendResult.repo),
-                loadCommitData(backendResult.owner, backendResult.repo),
+                load_branches(backendResult.owner, backendResult.repo),
+                load_commit_data(backendResult.owner, backendResult.repo),
             ]);
-
-            console.log("Branches:", branches);
-            console.log("Commit Data:", commitData);
 
             // Navigate to the overview page
             goto(`/overview-page`, {

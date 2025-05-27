@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import Icon from "@iconify/svelte";
     import {
-        loadBranches,
-        loadCommitData,
+        load_branches,
+        load_commit_data,
         type Contributor,
     } from "../../lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
@@ -19,35 +18,24 @@
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);
     let branches: string[] = $state(($page.state as any).branches || []);
     
-    let selectedBranch = $state("all");
-    if (branches.length > 0 && !branches.includes(selectedBranch)) {
-        selectedBranch = "all"; // Ensure "all" is an option or default to the first branch if "all" isn't explicitly passed
+    let selected_branch = $state("all");
+    if (branches.length > 0 && !branches.includes(selected_branch)) {
+        selected_branch = "all"; // Ensure "all" is an option or default to the first branch if "all" isn't explicitly passed
     }
 
 
-    let sidebarOpen = $state(false);
+    let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
 
     function toggleSidebar() {
-        sidebarOpen = !sidebarOpen;
+        sidebar_open = !sidebar_open;
     }
-
-    // Remove onMount as data is passed via state
-    // onMount(async () => {
-    //     const loadedBranches = await loadBranches(owner, repo);
-    //     branches = loadedBranches;
-    //     if (!branches.includes(selectedBranch)) {
-    //         selectedBranch = "all";
-    //     }
-    //
-    //     contributors = await loadCommitData(owner, repo, undefined);
-    // });
 </script>
 
 <main class="container">
     <div class="header-row">
         <h1 class="title">Overview Page</h1>
-        <select bind:value={selectedBranch} class="branch-select">
+        <select bind:value={selected_branch} class="branch-select">
             {#each branches as branch}
                 <option value={branch}
                     >{branch === "all" ? "All Branches" : branch}</option
@@ -56,12 +44,12 @@
         </select>
     </div>
 
-    <Graph {selectedBranch} {contributors} />
-    <ContributorCards {selectedBranch} users={contributors} />
+    <Graph {contributors} />
+    <ContributorCards {selected_branch} users={contributors} />
 </main>
 
 <!-- Sidebar -->
-<div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+<div class={`sidebar ${sidebar_open ? "open" : "closed"}`}>
     <div class="sidebar-header">
         <div class="sidebar-title">
             <Icon
