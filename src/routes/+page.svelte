@@ -2,6 +2,7 @@
   import { invoke } from "@tauri-apps/api/core";
   import { verifyAndExtractSourceInfo } from '$lib/githubUrlVerifier.js';
   import Icon from "@iconify/svelte";
+  import { loadBranches, loadCommitData } from "$lib/metrics";
   import { redirect } from '@sveltejs/kit';
     import { goto } from "$app/navigation";
   interface RepoBookmark {
@@ -78,7 +79,26 @@
         urlStr: repoUrlInput,
         sourceType: sourceType,
       });
-      goto(`/overview-page?owner=${backendResult.owner}&repo=${backendResult.repo}`);
+    verificationResult = { owner: backendResult.owner, repo: backendResult.repo };
+    verificationError = null;
+
+    // Call loadBranches and loadCommitData and wait for both to complete
+    const [branches, commitData] = await Promise.all([
+      loadBranches(backendResult.owner, backendResult.repo),
+      loadCommitData(backendResult.owner, backendResult.repo)
+    ]);
+
+    console.log("Branches:", branches);
+    console.log("Commit Data:", commitData);
+
+
+    // Navigate to the overview page
+    goto(`/overview-page`, {
+      state: {
+        branches: branches,
+        commitData: commitData,
+      }
+    });
     } catch (error: any) {
       verificationError = error.message || "Verification failed.";
       verificationResult = null;

@@ -139,9 +139,9 @@ pub fn run() {
         .plugin(tauri_plugin_log::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             get_branch_names,
-            get_contributor_info
+            get_contributor_info,
+            github_url_verifier::verify_and_extract_source_info
         ])
-        .invoke_handler(tauri::generate_handler![github_url_verifier::verify_and_extract_source_info])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

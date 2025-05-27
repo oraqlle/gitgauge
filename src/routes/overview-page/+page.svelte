@@ -9,12 +9,22 @@
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { info } from "@tauri-apps/plugin-log";
+    import { page } from "$app/stores"; // Import the $page store
 
-    let repo = "clap";
-    let owner = "clap-rs";
-    let contributors: Contributor[] = $state([]);
-    let branches: string[] = $state([]);
+    // Remove hardcoded owner and repo
+    // let repo = "clap";
+    // let owner = "clap-rs";
+
+    // Initialize from $page.state
+    let contributors: Contributor[] = $state(($page.state as any).commitData || []);
+    let branches: string[] = $state(($page.state as any).branches || []);
+    
     let selectedBranch = $state("all");
+    if (branches.length > 0 && !branches.includes(selectedBranch)) {
+        selectedBranch = "all"; // Ensure "all" is an option or default to the first branch if "all" isn't explicitly passed
+    }
+
+
     let sidebarOpen = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
 
@@ -22,15 +32,16 @@
         sidebarOpen = !sidebarOpen;
     }
 
-    onMount(async () => {
-        const loadedBranches = await loadBranches(owner, repo);
-        branches = loadedBranches;
-        if (!branches.includes(selectedBranch)) {
-            selectedBranch = "all";
-        }
-
-        contributors = await loadCommitData(owner, repo, undefined);
-    });
+    // Remove onMount as data is passed via state
+    // onMount(async () => {
+    //     const loadedBranches = await loadBranches(owner, repo);
+    //     branches = loadedBranches;
+    //     if (!branches.includes(selectedBranch)) {
+    //         selectedBranch = "all";
+    //     }
+    //
+    //     contributors = await loadCommitData(owner, repo, undefined);
+    // });
 </script>
 
 <main class="container">
