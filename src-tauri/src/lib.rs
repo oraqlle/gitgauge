@@ -70,7 +70,6 @@ async fn get_branch_names(repo: String, owner: String) -> Result2<Vec<String>> {
         }
     };
 
-    log::info!("Branches: {:?}", branches);
     return Ok(branches.into());
 }
 
@@ -125,7 +124,6 @@ async fn get_contributor_info(repo: String, owner: String, branch: Option<String
 
     let contributors_info = contributors.into();
 
-    log::info!("Contributors: {:?}", contributors_info);
     return Ok(contributors_info);
     // Err("error")
 }

@@ -7,10 +7,11 @@
         type Contributor,
     } from "../lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
+    import { info } from "@tauri-apps/plugin-log";
 
     let repo = "clap";
     let owner = "clap-rs";
-    let contributors: Contributor[] = $state([]);
+    let contributors: Contributor[] = [];
     let branches: string[] = $state([]);
     let selectedBranch = $state("all");
     let sidebarOpen = $state(false);
@@ -28,6 +29,7 @@
         }
 
         contributors = await loadCommitData(owner, repo, undefined);
+        info(contributors.toString());
     });
 </script>
 
@@ -43,7 +45,7 @@
         </select>
     </div>
 
-    <Graph selectedBranch contributors />
+    <!-- <Graph selectedBranch contributors />
     <!-- <ContributorCards selectedBranch users={contributors} /> -->
 </main>
 
