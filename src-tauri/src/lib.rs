@@ -29,6 +29,9 @@ fn construct_headers() -> HeaderMap {
 }
 
 // Stubb for future call that will load data for in-memory model of repo
+mod github_url_verifier;
+
+// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn load_data_from(_repo: Repo) -> Result<(), &'static str> {
     Ok(())
@@ -128,6 +131,7 @@ async fn get_contributor_info(repo: String, owner: String, branch: Option<String
     // Err("error")
 }
 
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -137,6 +141,7 @@ pub fn run() {
             get_branch_names,
             get_contributor_info
         ])
+        .invoke_handler(tauri::generate_handler![greet, github_url_verifier::verify_and_extract_source_info])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
