@@ -23,13 +23,7 @@
 
 <main class="body">
     <slot />
-    Graph goes here!<br><br><br><br><br><br><br><br>
     
-
-    <section class="contributors-section">
-        <div class="heading-1">Our Contributors</div>
-        <ContributorGrid />
-    </section>
 </main>
 
 <Sidebar />
