@@ -1,56 +1,287 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/core";
+    import { verifyAndExtractSourceInfo } from "$lib/githubUrlVerifier.js";
     import Icon from "@iconify/svelte";
-    import {
-        load_branches,
-        load_commit_data,
-        type Contributor,
-    } from "../lib/metrics";
-    import Graph from "$lib/components/overview-page/Graph.svelte";
-    import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import { info } from "@tauri-apps/plugin-log";
-
-    let owner = "clap-rs";
-    let repo = "clap";
-    let contributors: Contributor[] = $state([]);
-    let branches: string[] = $state([]);
-    let selected_branch = $state("all");
-    let sidebar_open = $state(false);
-    let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
-
-    function toggleSidebar() {
-        sidebar_open = !sidebar_open;
+    import { loadBranches, loadCommitData } from "$lib/metrics";
+    import { redirect } from "@sveltejs/kit";
+    import { goto } from "$app/navigation";
+    interface RepoBookmark {
+        repo_name: string;
+        repo_url: string;
     }
 
-    onMount(async () => {
-        const loaded_branches = await load_branches(owner, repo);
-        branches = loaded_branches;
-        if (!branches.includes(selected_branch)) {
-            selected_branch = "all";
+    let sidebarOpen = false;
+    let profileImageURL = "/mock_profile_img.png";
+    let userName = "Baaset Moslih";
+
+    function toggleSidebar() {
+        sidebarOpen = !sidebarOpen;
+    }
+
+    let bookmarked_repo: RepoBookmark[] = [
+        {
+            repo_name: "fit3170-A1",
+            repo_url: "https://github.com/user/fit3170-A1.git",
+        },
+        {
+            repo_name: "this-is-a-repo",
+            repo_url: "https://gitlab.com/abc0012/this-is-a-repo.git",
+        },
+        {
+            repo_name: "project",
+            repo_url: "https://github.com/example-org/project.git",
+        },
+        {
+            repo_name: "another-project",
+            repo_url: "https://gitlab.com/example-org/another-project.git",
+        },
+        {
+            repo_name: "assignment",
+            repo_url: "https://gitlab.com/xyz0001/assignment.git",
+        },
+        {
+            repo_name: "assignment",
+            repo_url: "https://gitlab.com/xyz0001/assignment.git2",
+        },
+        {
+            repo_name: "assignment",
+            repo_url: "https://gitlab.com/xyz0001/assignment.git3",
+        },
+        {
+            repo_name: "assignment",
+            repo_url: "https://gitlab.com/xyz0001/assignment.git4",
+        },
+    ];
+
+    //
+    interface RepoOption {
+        label: string;
+        icon: string;
+    }
+    let dropdownOpen = false;
+
+    const options: RepoOption[] = [
+        { label: "GitHub", icon: "brand-github" },
+        { label: "GitLab", icon: "brand-gitlab" },
+        { label: "Local", icon: "folder-code" },
+    ];
+    let selected: RepoOption = options[0]; // Default to GitHub
+
+    let repoUrlInput: string = "";
+    let verificationResult: { owner: string; repo: string } | null = null;
+    let verificationError: string | null = null;
+
+    interface BackendVerificationResult {
+        owner: string;
+        repo: string;
+    }
+
+    async function handleVerification() {
+        if (!selected || !repoUrlInput.trim()) {
+            verificationError =
+                "Please select a source type and enter a URL/path.";
+            verificationResult = null;
+            return;
         }
 
-        contributors = await load_commit_data(owner, repo, undefined);
-    });
+        let sourceType: 0 | 1 | 2;
+        if (selected.label === "GitHub") {
+            sourceType = 0;
+        } else if (selected.label === "GitLab") {
+            sourceType = 1;
+        } else if (selected.label === "Local") {
+            sourceType = 2;
+        } else {
+            verificationError = "Invalid source type selected.";
+            verificationResult = null;
+            return;
+        }
+
+        try {
+            // Try frontend validation first
+            const result = verifyAndExtractSourceInfo(repoUrlInput, sourceType);
+            const backendResult = await invoke<BackendVerificationResult>(
+                "verify_and_extract_source_info",
+                {
+                    urlStr: repoUrlInput,
+                    sourceType: sourceType,
+                },
+            );
+            verificationResult = {
+                owner: backendResult.owner,
+                repo: backendResult.repo,
+            };
+            verificationError = null;
+
+            // Call loadBranches and loadCommitData and wait for both to complete
+            const [branches, commitData] = await Promise.all([
+                loadBranches(backendResult.owner, backendResult.repo),
+                loadCommitData(backendResult.owner, backendResult.repo),
+            ]);
+
+            console.log("Branches:", branches);
+            console.log("Commit Data:", commitData);
+
+            // Navigate to the overview page
+            goto(`/overview-page`, {
+                state: {
+                    branches: branches,
+                    commitData: commitData,
+                },
+            });
+        } catch (error: any) {
+            verificationError = error.message || "Verification failed.";
+            verificationResult = null;
+            console.error("Verification failed:", error);
+        }
+    }
+
+    function selectOption(option: RepoOption) {
+        selected = option;
+        dropdownOpen = false;
+        // Reset verification status when option changes
+        verificationResult = null;
+        verificationError = null;
+    }
+
+    function toggleDropdown() {
+        dropdownOpen = !dropdownOpen;
+    }
+
+    function handleInputKeydown(event: KeyboardEvent) {
+        if (event.key === "Enter") {
+            handleVerification();
+        }
+    }
 </script>
 
-<main class="container">
-    <div class="header-row">
-        <h1 class="title">Overview Page</h1>
-        <select bind:value={selected_branch} class="branch-select">
-            {#each branches as branch}
-                <option value={branch}
-                    >{branch === "all" ? "All Branches" : branch}</option
-                >
-            {/each}
-        </select>
-    </div>
+<header>
+    <div class="container">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="/" class="cursor-pointer">
+                    <img
+                        class="logo-img"
+                        src="/secondary_logo.png"
+                        alt="Your Company"
+                    />
+                </a>
+            </div>
 
-    <Graph {contributors} />
-    <ContributorCards {selected_branch} users={contributors} />
+            <div class="user-section">
+                <h6 class="white body-accent">{userName}</h6>
+                <img src={profileImageURL} alt="Profile" class="profile-img" />
+
+                <button
+                    type="button"
+                    class="hamburger-btn"
+                    on:click={toggleSidebar}
+                >
+                    <Icon
+                        icon={"tabler:menu-2"}
+                        class="icon-medium"
+                        style="color: white"
+                    />
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="repo-start">
+        <!-- Repo dropdown -->
+        <div class="dropdown">
+            <button
+                type="button"
+                class={`dropdown-btn ${dropdownOpen ? "show" : "hide"}`}
+                on:click={toggleDropdown}
+            >
+                {#if selected}
+                    <div class="dropdown-show">
+                        <Icon
+                            icon={`tabler:${selected.icon}`}
+                            class="icon-medium"
+                            style="color: white"
+                        />
+                        <h6 class="display-body white dropdown-text">
+                            {selected.label}
+                        </h6>
+                    </div>
+                {:else}
+                    <!-- This case should not happen with a default selected value -->
+                    <h6 class="display-body white">Select an option</h6>
+                {/if}
+                <img src="/dropdown_icon.png" alt="dropdown icon" />
+            </button>
+
+            {#if dropdownOpen}
+                <div class="dropdown-content">
+                    {#each options as option}
+                        <button
+                            class="dropdown-option"
+                            on:click={() => selectOption(option)}
+                        >
+                            <Icon
+                                icon={`tabler:${option.icon}`}
+                                class="icon-medium"
+                                style="color: white"
+                            />
+                            <h6 class="display-body white dropdown-text">
+                                {option.label}
+                            </h6>
+                        </button>
+                    {/each}
+                </div>
+            {/if}
+        </div>
+
+        <!-- Repo link -->
+        <div class="repo-link">
+            <input
+                class="repo-textbox display-body"
+                type="text"
+                placeholder="enter a git repo..."
+                bind:value={repoUrlInput}
+                on:keydown={handleInputKeydown}
+            />
+            <button class="repo-button" on:click={handleVerification}>
+                <Icon
+                    icon={"tabler:circle-arrow-right"}
+                    class="icon-medium"
+                    style="color: white"
+                />
+            </button>
+        </div>
+
+        <!-- Verification Feedback -->
+        <div class="verification-feedback">
+            {#if verificationResult}
+                <p class="success-message white">
+                    Successfully verified! Owner: {verificationResult.owner},
+                    Repo: {verificationResult.repo}
+                </p>
+            {/if}
+            {#if verificationError}
+                <p class="error-message white">{verificationError}</p>
+            {/if}
+        </div>
+
+        <!-- Repo link list -->
+        <div class="repo-bookmark-list">
+            {#each bookmarked_repo as bookmark (bookmark.repo_url)}
+                <button class="repo-list-btn" type="button">
+                    <h6 class="display-body repo-list-text white">
+                        {bookmark.repo_url}
+                    </h6>
+                </button>
+            {/each}
+        </div>
+    </div>
 </main>
 
 <!-- Sidebar -->
-<div class={`sidebar ${sidebar_open ? "open" : "closed"}`}>
+<div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
     <div class="sidebar-header">
         <div class="sidebar-title">
             <Icon
@@ -60,7 +291,7 @@
             />
             <h1 class="title sidebar-title-text white">settings</h1>
         </div>
-        <button class="close-button" onclick={toggleSidebar}>
+        <button class="close-button" on:click={toggleSidebar}>
             <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
         </button>
     </div>
@@ -89,52 +320,77 @@
 </div>
 
 <style>
+    /* MAIN PAGE CONTENT */
+    .main {
+        height: calc(100vh - 4.1875rem);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* HEADER */
     .container {
-        margin: 0;
-        padding: 1rem 2rem;
+        padding: 0px;
+        margin-left: 2rem;
+        margin-right: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 0.8125rem;
+    }
+
+    .header-content {
+        position: relative;
         display: flex;
-        flex-direction: column;
+        height: 1.375rem;
         align-items: center;
-        text-align: center;
-        min-height: auto;
-    }
-
-    .title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 2rem;
-        color: #f6f6f6;
-    }
-
-    .header-row {
-        width: 100%;
-        display: flex;
         justify-content: space-between;
+    }
+
+    .logo-section {
+        display: flex;
+    }
+
+    .logo-img {
+        height: 20px;
+        width: auto;
+    }
+
+    .user-section {
+        display: flex;
         align-items: center;
-        margin-bottom: 2rem;
+        justify-content: space-between;
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
 
-    .branch-select {
-        background-color: #333;
-        color: #f6f6f6;
-        border: 1px solid #444;
-        border-radius: 6px;
-        padding: 8px 12px;
-        font-size: 14px;
+    .white {
+        color: var(--white);
+    }
+
+    .label-secondary {
+        color: var(--label-secondary);
+    }
+
+    .profile-img {
+        height: 1.375rem;
+        width: 1.375rem;
+        margin-left: 0.8125rem;
+        margin-right: 0.8125rem;
+        object-fit: cover;
+    }
+
+    .hamburger-btn {
         cursor: pointer;
-        outline: none;
-        transition: border-color 0.2s;
+        background: none;
+        border: none;
+        padding: 0;
+        height: 1.375rem;
+        width: 1.375rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    .branch-select:hover {
-        border-color: #666;
-    }
-
-    .branch-select:focus {
-        border-color: #888;
-    }
-
-    /* Sidebar styles */
+    /* SIDEBAR */
     .sidebar {
         position: fixed;
         top: 0;
@@ -221,11 +477,198 @@
         margin-bottom: 0px;
     }
 
-    .white {
-        color: var(--white);
+    /* REPO SECTION */
+    .repo-start {
+        /* width: ; */
+        display: grid;
+        grid-template-columns: 13rem 35.5rem; /* 2 columns */
+        grid-template-rows: auto auto auto; /* 3 rows for dropdown, input, feedback */
+        column-gap: 1rem;
+        row-gap: 10px;
     }
 
-    .label-secondary {
-        color: var(--label-secondary);
+    /* REPO DROPDOWN */
+    .dropdown {
+        position: relative;
+        width: 13rem;
+        height: 2.625em;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .dropdown-btn {
+        width: 100%;
+        height: inherit;
+        padding: 0.625rem 0.75rem 0.625rem 1rem;
+        background: #222;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dropdown-btn.hide {
+        border-radius: 12px;
+    }
+
+    .dropdown-btn.show {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .dropdown-btn.show::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background-color: #fff;
+    }
+
+    .dropdown-show {
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-content {
+        width: inherit;
+        background-color: #222;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .dropdown-option {
+        width: inherit;
+        height: 42px;
+        padding: 0.625rem 0.75rem 0.625rem 1rem;
+        background: #222;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .dropdown-text {
+        margin-left: 0.5rem;
+    }
+
+    /* REPO TEXTBOX */
+    .repo-link {
+        height: 1.5rem;
+        width: 33rem;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        background-color: #222;
+        padding: 0.5625rem 1.125rem 0.5625rem 1.5rem;
+        border-radius: 12px;
+    }
+
+    .repo-textbox {
+        flex: 1;
+        margin-right: 0.5rem;
+        background-color: #222;
+        border: none;
+        height: 24px;
+        padding: 0px;
+        width: 350px;
+        color: white;
+    }
+
+    .repo-textbox::placeholder {
+        font-size: 1.063rem;
+        font-family: DM Sans;
+        font-weight: 400;
+        word-wrap: break-word;
+    }
+
+    .repo-textbox:focus {
+        outline: none;
+    }
+
+    .repo-button {
+        background-color: inherit;
+        border: none;
+        padding: 0px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Repo link list */
+    .repo-bookmark-list {
+        grid-column: 2;
+        grid-row: 2;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        margin: 0px;
+        /* width: 693px; */
+        display: grid;
+        grid-template-columns: 32.5rem;
+        grid-template-rows: repeat(5);
+        row-gap: 1rem;
+
+        /* let the list overflow and can be scrolll */
+        max-height: 10.875rem; /* adjust height to fit your layout */
+        overflow-y: auto; /* enables vertical scrolling */
+        overflow-x: hidden;
+        /* padding-bottom: 84px;  */
+        scroll-padding-bottom: 10.875rem;
+
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            black 0%,
+            rgba(0, 0, 0, 0.2) 80%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            to bottom,
+            black 0%,
+            rgba(0, 0, 0, 0.2) 80%,
+            transparent 100%
+        );
+        mask-size: 100% 100%;
+        mask-repeat: no-repeat;
+    }
+
+    .repo-list-btn {
+        height: 22px;
+        width: inherit;
+        background-color: #181818;
+        border: none;
+        margin: none;
+        padding: 0px;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .repo-list-text {
+        height: inherit;
+        margin: 0px;
+    }
+
+    .verification-feedback {
+        grid-column: 1 / -1; /* Span across both columns */
+        /* Add some margin or padding if needed */
+        margin-top: 5px;
+    }
+
+    .success-message {
+        color: var(--accent-primary); /* Or your desired success color */
+        font-size: 0.875rem;
+    }
+
+    .error-message {
+        color: var(--functional-red-100); /* Or your desired error color */
+        font-size: 0.875rem;
     }
 </style>
+
