@@ -99,6 +99,83 @@
         if (!chart) return;
         const gridTop = chart.convertToPixel({gridIndex: 0}, [0, 2])[1];
         const xAxisY = chart.convertToPixel({gridIndex: 0}, [0, 0])[1];
+
+        const fullHeight = xAxisY - gridTop;
+        const tintHeight = fullHeight * 0.8;
+
+        const marginLeft = 40; // px
+        const marginRight = 40; // px
+        const containerWidth = chartContainer.clientWidth;
+        const drawableWidth = containerWidth - marginLeft - marginRight;
+
+        function xScale(value: number) {
+            return marginLeft + ((value - xMin) / (xMax - xMin)) * drawableWidth;
+    }
+
+        // Clamp function to ensure tints stay inside drawable area
+        function clampTint(x: number, width: number) {
+            const clampedX = Math.max(x, marginLeft);
+            const maxWidth = Math.min(width - (clampedX - x), containerWidth - marginRight - clampedX);
+            return { x: clampedX, width: maxWidth };
+        }
+
+        // Calculate pixel positions of ref points (commit counts)
+        const xMinus2Sigma = xScale(ref_point_values[0]);
+        const xMinusSigma = xScale(ref_point_values[1]);
+        const xPlusSigma = xScale(ref_point_values[3]);
+        const xPlus2Sigma = xScale(ref_point_values[4]);
+
+        // Clamp tints within bounds
+        const leftTint = clampTint(xMinus2Sigma, xMinusSigma - xMinus2Sigma);
+        const middleTint = clampTint(xMinusSigma, xPlusSigma - xMinusSigma);
+        const rightTint = clampTint(xPlusSigma, xPlus2Sigma - xPlusSigma);
+
+        // White tint between -σ and +σ
+        const tintBetween1Sigma = {
+            type: 'rect',
+            shape: {
+                x: middleTint.x,
+                y: xAxisY-tintHeight,
+                width: middleTint.width,
+                height: tintHeight
+            },
+            style: {
+                fill: 'rgba(255, 255, 255, 0.20)'
+            },
+            silent: true,
+            z: 1
+        };
+
+        const tintBetween2SigmaLeft = {
+            type: 'rect',
+            shape: {
+                x: leftTint.x,
+                y: xAxisY-tintHeight,
+                width: leftTint.width,
+                height: tintHeight
+            },
+            style: {
+                fill: 'rgba(255, 255, 255, 0.1)'
+            },
+            silent: true,
+            z: 1
+        };
+
+        const tintBetween2SigmaRight = {
+            type: 'rect',
+            shape: {
+                x: rightTint.x,
+                y: xAxisY-tintHeight,
+                width: rightTint.width,
+                height: tintHeight
+            },
+            style: {
+                fill: 'rgba(255, 255, 255, 0.1)'
+            },
+            silent: true,
+            z: 1
+        };
+
         const refLineGraphics = refPoints.map((ref) => {
             const x = chart.convertToPixel({gridIndex: 0}, [ref.value, 0])[0];
             return {
@@ -131,7 +208,8 @@
                             textVerticalAlign: 'bottom'
                         },
                         x: x,
-                        y: gridTop - 8 
+                        y: gridTop - 8,
+                        z:2
                     }
                 ]
             };
@@ -151,6 +229,7 @@
                         },
                         x: x - 20,
                         y: y - 20,
+                        z: 3,
                         silent: false,
                         clipPath: {
                             type: 'circle',
@@ -164,12 +243,18 @@
                 ]
             };
         });
-        chart.setOption({ graphic: [...refLineGraphics, ...userGraphics] });
+        chart.setOption({ graphic: [
+            tintBetween2SigmaLeft,
+            tintBetween1Sigma,
+            tintBetween2SigmaRight, 
+            ...refLineGraphics, 
+            ...userGraphics
+        ] });
     }
 
     function setChartOptions() {
         const option = {
-            backgroundColor: '#222',
+            backgroundColor: 'transparent',  //#222',
             grid: {
                 top: '10%',
                 bottom: '25%',
@@ -279,9 +364,9 @@
 
 <style>
     .chart-container {
-        margin-top: 10rem;
+        margin-top: 8rem;
         width: 100%;
-        height: 200px;
+        height: 300px;
     }
 </style>
 
