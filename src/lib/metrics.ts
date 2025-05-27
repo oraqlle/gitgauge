@@ -32,7 +32,7 @@ export async function loadCommitData(owner: string, repo: string, branch?: strin
 
     try {
         const commitData = await invoke<Contributor[]>('get_contributor_info', { owner, repo });
-        info(`${commitData}`);
+        // info(`${commitData}`);
         return commitData;
     } catch (err) {
         info(`Failed to get contributor data`)

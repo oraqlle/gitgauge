@@ -20,9 +20,6 @@
     }
 
     onMount(async () => {
-        info("here");
-
-
         const loadedBranches = await loadBranches(owner, repo);
         branches = loadedBranches;
         if (!branches.includes(selectedBranch)) {

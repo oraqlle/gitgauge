@@ -8,6 +8,7 @@
     calculateScalingFactor,
     type Contributor,
   } from "../../metrics";
+  import { info } from "@tauri-apps/plugin-log";
 
   let { selectedBranch, contributors } = $props();
 
@@ -179,6 +180,7 @@
   let xMax = minCommits === maxCommits ? maxCommits + 1 : maxCommits + 1;
 
   onMount(() => {
+    info(`HERE`);
     let chart: echarts.ECharts = echarts.init(chartContainer);
 
     // Update the chart config to use xMin and xMax

@@ -53,7 +53,7 @@
             <div class="profile-metrics-row">
               <span>{person.linesPerCommit} lines/commit</span>
               <span class="metrics-separator">&nbsp;&nbsp;</span>
-              <span>{person.commitsPerDay} commits/day</span>
+              <span class="metrics-seperator">&nbsp;&nbsp;</span>
             </div>
             <div class="profile-metrics-row">
               <span class="metrics-additions">{person.totalAdditions}++ additions</span>
