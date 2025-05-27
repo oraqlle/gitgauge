@@ -17,6 +17,10 @@
         contributors,
     }: { selectedBranch: string; contributors: Contributor[] } = $props();
 
+    let __users = getUserCommits(contributors);
+
+    info("Graph....");
+    info(contributors.toString());
     type User = Readonly<{
         contributor: Contributor;
         offsetIndex: number;
@@ -24,6 +28,7 @@
 
     function getUserCommits(users: Contributor[]) {
         if (users.length === 0) return [];
+
         let userTotalCommits: any[] = [];
         users.forEach((user) => {
             userTotalCommits.push({
@@ -34,16 +39,16 @@
 
         // Sort by number of commits
         const sortedCommits = userTotalCommits.sort(
-            (a, b) => a.numCommits - b.numCommits,
+            (a, b) => a.total_commits - b.total_commits,
         );
 
         // Group by numCommits and apply horizontal offset
         const groups = new Map<number, any[]>();
         sortedCommits.forEach((user) => {
-            if (!groups.has(user.numCommits)) {
-                groups.set(user.numCommits, []);
+            if (!groups.has(user.total_commits)) {
+                groups.set(user.total_commits, []);
             }
-            groups.get(user.numCommits)!.push(user);
+            groups.get(user.total_commits)!.push(user);
         });
 
         // Apply horizontal offset to overlapping points
@@ -233,24 +238,25 @@
     //    };
 
     let options = {
+        backgroundColor: "#222",
+        grid: {
+            top: "10%",
+            bottom: "25%",
+            left: 40,
+            right: 40,
+            containLabel: false,
+        },
         xAxis: {
-            type: "value",
-            min: 0,
-            max: 100000,
-            name: "Total Commits",
-            nameGap: 40,
-            nameLocation: "middle",
-            position: "bottom",
         },
         yAxis: {
             show: false,
             min: 0,
-            max: 2,
+            max: 10,
         },
         series: [
             {
                 type: "scatter",
-                data: contributors.map((p: Contributor) => p.total_commits),
+                data: contributors.map((p: Contributor) => [p.total_commits, 1])
             },
         ],
     };
@@ -262,7 +268,7 @@
 
 <style>
     .app {
-        width: 100vw;
-        height: 100vh;
+        width: 90vw;
+        height: 90vh;
     }
 </style>

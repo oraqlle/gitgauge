@@ -20,6 +20,7 @@ export async function loadBranches(owner: string, repo: string): Promise<string[
     info(`Loading branches for ${owner}/${repo}...`);
     try {
         const realBranches = await invoke<string[]>('get_branch_names', { owner, repo });
+        info(`Done branches for ${owner}/${repo}...`);
         return ['All', ...realBranches];
     } catch (err) {
         console.error('Failed to load branches: ', err);
@@ -32,7 +33,7 @@ export async function loadCommitData(owner: string, repo: string, branch?: strin
 
     try {
         const commitData = await invoke<Contributor[]>('get_contributor_info', { owner, repo });
-        // info(`${commitData}`);
+        info(`Done contributor data for ${owner}/${repo}...`);
         return commitData;
     } catch (err) {
         info(`Failed to get contributor data`)
