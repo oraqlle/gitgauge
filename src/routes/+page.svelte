@@ -1,58 +1,33 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import Icon from "@iconify/svelte";
-    import {
-        loadBranches,
-        loadCommitData,
-        type Contributor,
-    } from "../lib/metrics";
-    import Graph from "$lib/components/overview-page/Graph.svelte";
-    import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import { info } from "@tauri-apps/plugin-log";
   import { invoke } from "@tauri-apps/api/core";
   import { verifyAndExtractSourceInfo } from '$lib/githubUrlVerifier.js';
+  import Icon from "@iconify/svelte";
+  import { redirect } from '@sveltejs/kit';
+    import { goto } from "$app/navigation";
   interface RepoBookmark {
     repo_name: string,
     repo_url: string,
   }
 
-    let repo = "clap";
-    let owner = "clap-rs";
-    let contributors: Contributor[] = $state([]);
-    let branches: string[] = $state([]);
-    let selectedBranch = $state("all");
-    let sidebarOpen = $state(false);
-    let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
+  let sidebarOpen = false;
+  let profileImageURL = "/mock_profile_img.png";
+  let userName = "Baaset Moslih";
 
-    function toggleSidebar() {
-        sidebarOpen = !sidebarOpen;
-    }
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+  }
 
-    onMount(async () => {
-        const loadedBranches = await loadBranches(owner, repo);
-        branches = loadedBranches;
-        if (!branches.includes(selectedBranch)) {
-            selectedBranch = "all";
-        }
+  let bookmarked_repo: RepoBookmark[] = [
+    {repo_name: "fit3170-A1", repo_url: "https://github.com/user/fit3170-A1.git"},
+    {repo_name: "this-is-a-repo", repo_url: "https://gitlab.com/abc0012/this-is-a-repo.git"},
+    {repo_name: "project", repo_url: "https://github.com/example-org/project.git"},
+    {repo_name: "another-project", repo_url: "https://gitlab.com/example-org/another-project.git"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git2"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git3"},
+    {repo_name: "assignment", repo_url: "https://gitlab.com/xyz0001/assignment.git4"},
+  ];
 
-        contributors = await loadCommitData(owner, repo, undefined);
-    });
-</script>
-
-<main class="container">
-    <div class="header-row">
-        <h1 class="title">Overview Page</h1>
-        <select bind:value={selectedBranch} class="branch-select">
-            {#each branches as branch}
-                <option value={branch}
-                    >{branch === "all" ? "All Branches" : branch}</option
-                >
-            {/each}
-        </select>
-    </div>
-
-    <Graph {selectedBranch} {contributors} />
-    <ContributorCards {selectedBranch} users={contributors} />
   // 
   interface RepoOption {
     label: string,
@@ -70,6 +45,11 @@
   let repoUrlInput: string = "";
   let verificationResult: { owner: string; repo: string } | null = null;
   let verificationError: string | null = null;
+
+  interface BackendVerificationResult {
+    owner: string;
+    repo: string;
+  }
 
   async function handleVerification() {
     if (!selected || !repoUrlInput.trim()) {
@@ -94,16 +74,11 @@
     try {
       // Try frontend validation first
       const result = verifyAndExtractSourceInfo(repoUrlInput, sourceType);
-      verificationResult = result;
-      verificationError = null;
-      console.log("Frontend verification successful:", result);
-
-      const backendResult = await invoke('verify_and_extract_source_info', {
+      const backendResult = await invoke<BackendVerificationResult>('verify_and_extract_source_info', {
         urlStr: repoUrlInput,
         sourceType: sourceType,
       });
-      console.log('Backend verification successful:', backendResult);
-
+      goto(`/overview-page?owner=${backendResult.owner}&repo=${backendResult.repo}`);
     } catch (error: any) {
       verificationError = error.message || "Verification failed.";
       verificationResult = null;
@@ -239,184 +214,183 @@
 </main>
 
 <!-- Sidebar -->
-<div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
-    <div class="sidebar-header">
-        <div class="sidebar-title">
-            <Icon
-                icon={"tabler:chart-line"}
-                class="icon-large"
-                style="color: white"
-            />
-            <h1 class="title sidebar-title-text white">settings</h1>
-        </div>
-        <button class="close-button" onclick={toggleSidebar}>
-            <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
-        </button>
+<div class={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+  <div class="sidebar-header">
+    <div class="sidebar-title">
+      <Icon
+        icon={"tabler:chart-line"}
+        class="icon-large"
+        style="color: white"
+      />
+      <h1 class="title sidebar-title-text white">settings</h1>
     </div>
+    <button class="close-button" on:click={toggleSidebar}>
+      <Icon
+        icon={"tabler:x"}
+        class="icon-medium"
+        style="color: white"
+      />
+    </button>
+  </div>
 
-    <div class="bookmark-list">
-        <div class="bookmark-header">
-            <Icon
-                icon={"tabler:star-filled"}
-                class="icon-medium"
-                style="color: white"
-            />
-            <h2 class="heading-1 bookmark-text white">bookmarks</h2>
-        </div>
-
-        {#each bookmarked_repo as repo (repo.repo_url)}
-            <button class="bookmark-item">
-                <h6 class="heading-2 repo-name label-secondary">
-                    {repo.repo_name}
-                </h6>
-                <h6 class="caption repo-url label-secondary">
-                    {repo.repo_url}
-                </h6>
-            </button>
-        {/each}
+  <div class="bookmark-list">
+    <div class="bookmark-header">
+      <Icon
+        icon={"tabler:star-filled"}
+        class="icon-medium"
+        style="color: white"
+      />
+      <h2 class="heading-1 bookmark-text white">bookmarks</h2>
     </div>
+    
+    {#each bookmarked_repo as repo (repo.repo_url)}
+      <button class="bookmark-item">
+        <h6 class="heading-2 repo-name label-secondary">{repo.repo_name}</h6>
+        <h6 class="caption repo-url label-secondary">{repo.repo_url}</h6>
+      </button>
+    {/each}
+  </div>
 </div>
 
+
 <style>
-    .container {
-        margin: 0;
-        padding: 1rem 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        min-height: auto;
-    }
+/* MAIN PAGE CONTENT */
+.main {
+  height: calc(100vh - 4.1875rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 2rem;
-        color: #f6f6f6;
-    }
+/* HEADER */
+.container {
+  padding: 0px;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 0.8125rem;
+}
 
-    .header-row {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
+.header-content {
+  position: relative;
+  display: flex;
+  height: 1.375rem;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .branch-select {
-        background-color: #333;
-        color: #f6f6f6;
-        border: 1px solid #444;
-        border-radius: 6px;
-        padding: 8px 12px;
-        font-size: 14px;
-        cursor: pointer;
-        outline: none;
-        transition: border-color 0.2s;
-    }
+.logo-section {
+  display: flex;
+}
 
-    .branch-select:hover {
-        border-color: #666;
-    }
+.logo-img {
+  height: 20px;
+  width: auto;
+}
 
-    .branch-select:focus {
-        border-color: #888;
-    }
+.user-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
 
-    /* Sidebar styles */
-    .sidebar {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 18.4375rem;
-        height: 100%;
-        padding: 2rem;
-        border-radius: 8px 0px 0px 8px;
-        border-top: solid var(--Label-Tertiary, #747474);
-        border-bottom: solid var(--Label-Tertiary, #747474);
-        border-left: solid var(--Label-Tertiary, #747474);
-        border-width: 0.0625rem;
-        background: var(--Background-Tint, rgba(34, 34, 34, 0.7));
-        backdrop-filter: blur(16px);
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-        z-index: 50;
-        transform: translateX(100%);
-        transition: transform 0.5s ease-in-out;
-    }
+.white {
+  color: var(--white);
+}
 
-    .sidebar.open {
-        transform: translateX(0);
-    }
+.label-secondary {
+  color: var(--label-secondary);
+}
 
-    .sidebar.closed {
-        transform: translateX(100%);
-    }
+.profile-img {
+  height: 1.375rem;
+  width: 1.375rem;
+  margin-left: 0.8125rem;
+  margin-right: 0.8125rem;
+  object-fit: cover;
+}
 
-    .sidebar-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        height: 1.8125rem;
-        margin-bottom: 1.5rem;
-    }
+.hamburger-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  height: 1.375rem;
+  width: 1.375rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .sidebar-title {
-        display: flex;
-        height: 29px;
-    }
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 18.4375rem;
+  height: 100%;
+  padding: 2rem;
+  border-radius: 8px 0px 0px 8px;
+  border-top: solid var(--Label-Tertiary, #747474);
+  border-bottom: solid var(--Label-Tertiary, #747474);
+  border-left: solid var(--Label-Tertiary, #747474);
+  border-width: 0.0625rem;
+  background: var(--Background-Tint, rgba(34, 34, 34, 0.70));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-in-out;
+}
 
-    .sidebar-title-text {
-        margin: auto;
-        margin-left: 0.375rem;
-        height: 1.8125rem;
-    }
+.sidebar.open {
+  transform: translateX(0);
+}
 
-    .close-button {
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-    }
+.sidebar.closed {
+  transform: translateX(100%);
+}
 
-    .bookmark-list {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 13px;
-    }
+.sidebar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 1.8125rem;
+  margin-bottom: 1.5rem;
+}
 
-    .bookmark-header {
-        display: flex;
-        align-items: center;
-        height: 22px;
-    }
+.sidebar-title {
+  display: flex;
+  height: 29px;
+}
 
-    .bookmark-text {
-        padding-left: 6px;
-    }
+.sidebar-title-text {
+  margin: auto;
+  margin-left: 0.375rem;
+  height: 1.8125rem
+}
 
-    .bookmark-item {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-    }
+.close-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
 
-    .repo-name,
-    .repo-url {
-        margin-top: 0px;
-        margin-bottom: 0px;
-    }
+.bookmark-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 13px;
+}
 
-    .white {
-        color: var(--white);
-    }
+.bookmark-header {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
 
-    .label-secondary {
-        color: var(--label-secondary);
-    }
 .bookmark-text {
   padding-left: 6px;
 }
