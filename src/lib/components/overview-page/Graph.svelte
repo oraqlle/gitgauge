@@ -97,11 +97,11 @@
 
     function updateGraphics() {
         if (!chart) return;
-        const gridTop = chart.convertToPixel({gridIndex: 0}, [0, 2])[1];
+        const gridTop = chart.convertToPixel({gridIndex: 0}, [0, 6])[1];
         const xAxisY = chart.convertToPixel({gridIndex: 0}, [0, 0])[1];
 
         const fullHeight = xAxisY - gridTop;
-        const tintHeight = fullHeight * 0.8;
+        const tintHeight = fullHeight * 0.9;
 
         const marginLeft = 40; // px
         const marginRight = 40; // px
@@ -201,9 +201,9 @@
                         type: 'text',
                         style: {
                             text: ref.label,
-                            fontSize: 12,
+                            fontSize: 14,
                             fill: '#fff',
-                            font: 'bold 16px sans-serif',
+                            font: 'bold 16px "DM Sans", sans-serif',
                             textAlign: 'center',
                             textVerticalAlign: 'bottom'
                         },
@@ -256,8 +256,8 @@
         const option = {
             backgroundColor: 'transparent',  //#222',
             grid: {
-                top: '10%',
-                bottom: '25%',
+                top: '50%',
+                bottom: 100,
                 left: 40,
                 right: 40,
                 containLabel: false
@@ -267,8 +267,13 @@
                 min: xMin,
                 max: xMax,
                 name: 'Total Commits',
+                nameTextStyle: {
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    fontFamily: 'DM Sans, sans-serif',
+                },
                 nameLocation: 'middle',
-                nameGap: 40,
+                nameGap: 60,
                 axisLine: {
                     lineStyle: {
                         color: '#fff',
@@ -277,11 +282,12 @@
                 },
                 axisLabel: {
                     color: '#fff',
-                    fontSize: 16,
-                    margin: 16
+                    fontSize: 15,
+                    margin: 30
                 },
                 splitLine: { show: false },
                 axisTick: {
+                    length: 20,
                     lineStyle: {
                         color: '#fff',
                         width: 2
@@ -292,7 +298,7 @@
             yAxis: {
                 show: false,
                 min: 0,
-                max: 2,
+                max: 2.5,
             },
             series: [
                 {
@@ -364,9 +370,11 @@
 
 <style>
     .chart-container {
-        margin-top: 8rem;
         width: 100%;
-        height: 300px;
+        height: 500px;
+        font-family: 'DM Sans', sans-serif;
+        padding-bottom: 2rem;
     }
+
 </style>
 

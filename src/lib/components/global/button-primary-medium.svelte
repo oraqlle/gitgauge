@@ -7,7 +7,7 @@
     {#if icon}
         <Icon
             icon={`tabler:${icon}`}
-            class="icon-small"
+            class="icon-medium"
             style="color: currentColor"
         />
     {/if}

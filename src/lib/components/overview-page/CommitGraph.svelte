@@ -11,6 +11,7 @@
     import { page } from "$app/stores"; // Import the $page store
     import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte"
     import { createDropdownSelection } from "$lib/stores/dropdown";
+    import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
 
     // Initialize from $page.state
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);
@@ -35,6 +36,24 @@
 
     <div class="header-row">
         <!-- Removed branch select dropdown -->
+
+        <!-- faking the dropdown button -->
+        <ButtonTintedMedium
+            label="commits"
+            labelClass="body"
+            iconFirst={false}
+            icon="chevron-down"
+            width=12rem
+        />
+
+        <ButtonTintedMedium
+            label="mean"
+            labelClass="body"
+            iconFirst={false}
+            icon="chevron-down"
+            width=12rem
+        />
+
     </div>
 
     <Graph {contributors} />
@@ -82,8 +101,9 @@
 
 <style>
     .container {
-        margin: 0;
-        padding: 1rem 2rem;
+        /* margin: 2rem;
+        margin-right: 2rem; */
+        padding: 2rem;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -101,10 +121,12 @@
     .header-row {
         width: 100%;
         display: flex;
-        justify-content: space-between;
-        flex-direction: column-reverse;
+        justify-content: flex-end;
+        flex-direction: row;
         align-items: end;
         margin-bottom: 2rem;
+        padding: 10rem;
+        
     }
 
     .branch-select {

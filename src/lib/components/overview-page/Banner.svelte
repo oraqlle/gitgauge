@@ -53,6 +53,7 @@
     display: flex;
     align-items: center;
     height: inherit;
+    background: transparent;
   }
 
   .logo-section {
