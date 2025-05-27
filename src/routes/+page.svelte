@@ -7,6 +7,7 @@
         type Contributor,
     } from "../lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
+    import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { info } from "@tauri-apps/plugin-log";
 
     let repo = "clap";
@@ -45,7 +46,7 @@
     </div>
 
     <Graph {selectedBranch} {contributors} />
-    <!-- <ContributorCards selectedBranch users={contributors} /> -->
+    <ContributorCards {selectedBranch} users={contributors} />
 </main>
 
 <!-- Sidebar -->
