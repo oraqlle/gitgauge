@@ -2,41 +2,41 @@
     import { onMount } from "svelte";
     import Icon from "@iconify/svelte";
     import {
-        loadBranches,
-        loadCommitData,
+        load_branches,
+        load_commit_data,
         type Contributor,
     } from "../lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { info } from "@tauri-apps/plugin-log";
 
-    let repo = "clap";
     let owner = "clap-rs";
+    let repo = "clap";
     let contributors: Contributor[] = $state([]);
     let branches: string[] = $state([]);
-    let selectedBranch = $state("all");
-    let sidebarOpen = $state(false);
+    let selected_branch = $state("all");
+    let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
 
     function toggleSidebar() {
-        sidebarOpen = !sidebarOpen;
+        sidebar_open = !sidebar_open;
     }
 
     onMount(async () => {
-        const loadedBranches = await loadBranches(owner, repo);
-        branches = loadedBranches;
-        if (!branches.includes(selectedBranch)) {
-            selectedBranch = "all";
+        const loaded_branches = await load_branches(owner, repo);
+        branches = loaded_branches;
+        if (!branches.includes(selected_branch)) {
+            selected_branch = "all";
         }
 
-        contributors = await loadCommitData(owner, repo, undefined);
+        contributors = await load_commit_data(owner, repo, undefined);
     });
 </script>
 
 <main class="container">
     <div class="header-row">
         <h1 class="title">Overview Page</h1>
-        <select bind:value={selectedBranch} class="branch-select">
+        <select bind:value={selected_branch} class="branch-select">
             {#each branches as branch}
                 <option value={branch}
                     >{branch === "all" ? "All Branches" : branch}</option
@@ -45,12 +45,12 @@
         </select>
     </div>
 
-    <Graph {selectedBranch} {contributors} />
-    <ContributorCards {selectedBranch} users={contributors} />
+    <Graph {contributors} />
+    <ContributorCards {selected_branch} users={contributors} />
 </main>
 
 <!-- Sidebar -->
-<div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+<div class={`sidebar ${sidebar_open ? "open" : "closed"}`}>
     <div class="sidebar-header">
         <div class="sidebar-title">
             <Icon

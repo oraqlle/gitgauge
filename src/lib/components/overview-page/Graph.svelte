@@ -1,50 +1,43 @@
 <script lang="ts">
     import { Chart } from "svelte-echarts";
-    import { init, use } from "echarts/core";
+    import { init, use, util as eUtils } from "echarts/core";
     import { ScatterChart } from "echarts/charts";
     import {
-        getAverageCommits,
-        getSD,
-        getRefPoints,
+        get_average_commits,
+        get_sd,
+        get_ref_points,
         type Contributor,
     } from "../../metrics";
     import { GridComponent, TitleComponent } from "echarts/components";
     import { CanvasRenderer } from "echarts/renderers";
     import { info } from "@tauri-apps/plugin-log";
 
-    let {
-        selectedBranch,
-        contributors,
-    }: { selectedBranch: string; contributors: Contributor[] } = $props();
+    let { contributors }: { contributors: Contributor[] } = $props();
 
-    let __users = getUserCommits(contributors);
-
-    info("Graph....");
-    info(contributors.toString());
     type User = Readonly<{
         contributor: Contributor;
         offsetIndex: number;
     }>;
 
-    function getUserCommits(users: Contributor[]) {
+    function get_user_commits(users: Contributor[]) {
         if (users.length === 0) return [];
 
-        let userTotalCommits: any[] = [];
+        let user_total_commits: any[] = [];
         users.forEach((user) => {
-            userTotalCommits.push({
+            user_total_commits.push({
                 username: user.author.login,
                 image: user.author.avatar_url,
             });
         });
 
         // Sort by number of commits
-        const sortedCommits = userTotalCommits.sort(
+        const sorted_commits = user_total_commits.sort(
             (a, b) => a.total_commits - b.total_commits,
         );
 
         // Group by numCommits and apply horizontal offset
         const groups = new Map<number, any[]>();
-        sortedCommits.forEach((user) => {
+        sorted_commits.forEach((user) => {
             if (!groups.has(user.total_commits)) {
                 groups.set(user.total_commits, []);
             }
@@ -53,7 +46,7 @@
 
         // Apply horizontal offset to overlapping points
         const result: User[] = [];
-        groups.forEach((users, commits) => {
+        groups.forEach((users, _) => {
             if (users.length === 1) {
                 result.push(users[0]);
             } else {
@@ -70,33 +63,51 @@
     }
 
     // Reactive declarations for derived values
-    //    let commit_mean = getAverageCommits(contributors);
-    //    let sd = getSD(contributors);
-    //    let refPointValues = getRefPoints(commit_mean, sd);
-    //    let _contributors = getUserCommits(contributors);
-    //
-    //    // Reference points for vertical lines
-    //    let refPoints =
-    //        sd === 0
-    //            ? [{ label: "mean", value: refPointValues[2] }]
-    //            : [
-    //                  { label: "-2σ", value: refPointValues[0] },
-    //                  { label: "-σ", value: refPointValues[1] },
-    //                  { label: "mean", value: refPointValues[2] },
-    //                  { label: "+σ", value: refPointValues[3] },
-    //                  { label: "+2σ", value: refPointValues[4] },
-    //              ];
+    let commit_mean = $state(get_average_commits(contributors));
+    let sd = $state(get_sd(contributors));
+    let ref_point_values = $derived(get_ref_points(commit_mean, sd));
+    //let contributor_data = $state(get_user_commits(contributors));
 
-    //    function updateGraphics(chart: echarts.ECharts) {
-    //        if (!chart) return;
-    //
-    //        // Use y=2 as the top of the y-axis for gridTop
-    //        const gridTop = chart.convertToPixel({ gridIndex: 0 }, [0, 2])[1];
-    //        const xAxisY = chart.convertToPixel({ gridIndex: 0 }, [0, 0])[1];
-    //
-    //        // Create graphics for reference lines
-    //        const refLineGraphics = refPoints.map((ref) => {
-    //            const x = chart.convertToPixel({ gridIndex: 0 }, [ref.value, 0])[0];
+    // Reference points for vertical lines
+    let ref_points = $derived(
+        sd === 0
+            ? [{ label: "mean", value: ref_point_values[2] }]
+            : [
+                  { label: "-2σ", value: ref_point_values[0] },
+                  { label: "-σ", value: ref_point_values[1] },
+                  { label: "mean", value: ref_point_values[2] },
+                  { label: "+σ", value: ref_point_values[3] },
+                  { label: "+2σ", value: ref_point_values[4] },
+              ],
+    );
+
+    type min_max = Readonly<{
+        min: number;
+        max: number;
+    }>;
+
+    // Calculate min and max number of commits for filteredPeople
+    let { min: min_commits_x, max: max_commits_x } = contributors.reduce(
+        (a: min_max, p: Contributor) => {
+            return {
+                min: Math.min(a.min, p.total_commits),
+                max: Math.max(a.max, p.total_commits),
+            };
+        },
+        { min: Infinity, max: 1 },
+    );
+
+    use([ScatterChart, GridComponent, CanvasRenderer, TitleComponent]);
+
+    let commit_data = $derived(
+        contributors.map((p: Contributor) => [p.total_commits, 1])
+    );
+
+    let contributor_data = $derived(
+        contributors.map((p: Contributor) => [p.total_commits, 1, p.author.login])
+    );
+
+    // const ref_line_graphics = $derived( ref_points.map((ref) => { const x = chart.convertToPixel({ gridIndex: 0 }, [ref.value, 0])[0];
     //            return {
     //                type: "group",
     //                children: [
@@ -104,9 +115,9 @@
     //                        type: "line",
     //                        shape: {
     //                            x1: x,
-    //                            y1: gridTop,
+    //                            y1: grid_top,
     //                            x2: x,
-    //                            y2: xAxisY,
+    //                            y2: x_axis_Y,
     //                        },
     //                        style: {
     //                            stroke: "#fff",
@@ -127,117 +138,32 @@
     //                            textVerticalAlign: "bottom",
     //                        },
     //                        x: x,
-    //                        y: gridTop - 8,
+    //                        y: grid_top - 8,
     //                    },
     //                ],
     //            };
-    //        });
+    //        }),
+    //    );
     //
-    //        // Create graphics for user images with fixed pixel offset
-    //        const userGraphics = _contributors.map((person: User) => {
-    //            // Convert the base position to pixels
-    //            const [baseX, y] = chart.convertToPixel({ gridIndex: 0 }, [
-    //                person.contributor.total_commits,
-    //                1,
-    //            ]);
-    //            // Apply fixed 16px offset if there's an offsetIndex
-    //            const x =
-    //                baseX + (person.offsetIndex ? person.offsetIndex * 16 : 0);
+    //    // Use y=2 as the top of the y-axis for gridTop
+    //    const grid_top = chart.convertToPixel({ gridIndex: 0 }, [0, 2])[1];
+    //    const x_axis_Y = chart.convertToPixel({ gridIndex: 0 }, [0, 0])[1];
     //
-    //            return {
-    //                type: "group",
-    //                children: [
-    //                    {
-    //                        type: "image",
-    //                        style: {
-    //                            image: person.contributor.author.avatar_url,
-    //                            width: 40,
-    //                            height: 40,
-    //                        },
-    //                        x: x - 20, // Center the image
-    //                        y: y - 20, // Center the image
-    //                        silent: false,
-    //                        clipPath: {
-    //                            type: "circle",
-    //                            shape: {
-    //                                cx: 20,
-    //                                cy: 20,
-    //                                r: 20,
-    //                            },
-    //                        },
-    //                    },
-    //                ],
-    //            };
-    //        });
+    //    // Create graphics for reference lines
     //
-    //        // Combine all graphics
-    //        chart.setOption({
-    //            graphic: [...refLineGraphics, ...userGraphics],
-    //        });
-    //    }
+    //    // Create graphics for user images with fixed pixel offset
+    //    const user_graphics = contributor_data.map((person: User) => {
+    //        // Convert the base position to pixels
+    //        const [baseX, y] = chart.convertToPixel({ gridIndex: 0 }, [
+    //            person.contributor.total_commits,
+    //            1,
+    //        ]);
+    //        // Apply fixed 16px offset if there's an offsetIndex
+    //        const x = baseX + (person.offsetIndex ? person.offsetIndex * 16 : 0);
     //
-    //    // Calculate min and max number of commits for filteredPeople
-    //    let minCommits =
-    //        contributors.length > 0
-    //            ? Math.min(...contributors.map((p: Contributor) => p.total_commits))
-    //            : 0;
-    //    let maxCommits =
-    //        contributors.length > 0
-    //            ? Math.max(...contributors.map((p: Contributor) => p.total_commits))
-    //            : 1;
-    //    let xMin = minCommits === maxCommits ? minCommits - 1 : minCommits - 1;
-    //    let xMax = minCommits === maxCommits ? maxCommits + 1 : maxCommits + 1;
-    //
-    //    onMount(() => {
-    //        info(`HERE`);
-    //        let chart: echarts.ECharts = echarts.init(chartContainer);
-    //
-    //        // Update the chart config to use xMin and xMax
-    //        $effect(() => {
-    //            if (chart && selectedBranch) {
-    //
-    //                chart.setOption(option, true);
-    //                updateGraphics(chart);
-    //            }
-    //        });
-    //
-    //        window.addEventListener("resize", () => {
-    //            chart.resize();
-    //            updateGraphics(chart);
-    //        });
-    //
-    //        let cleanup: (() => void) | undefined = () => {
-    //            window.removeEventListener("resize", () => updateGraphics(chart));
-    //            chart.dispose();
-    //        };
-    //
-    //        return () => {
-    //            if (cleanup) cleanup();
-    //        };
     //    });
 
-    use([ScatterChart, GridComponent, CanvasRenderer, TitleComponent]);
-
-    //    let options = {
-    //        title: {
-    //            text: "ECharts Example",
-    //        },
-    //        xAxis: {
-    //            type: "category",
-    //            data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    //        },
-    //        yAxis: {
-    //            type: "value",
-    //        },
-    //        series: [
-    //            {
-    //                type: "bar",
-    //                data: [120, 200, 150, 80, 70, 110, 130],
-    //            },
-    //        ],
-    //    };
-
-    let options = {
+    let options = $derived({
         backgroundColor: "#222",
         grid: {
             top: "10%",
@@ -247,19 +173,112 @@
             containLabel: false,
         },
         xAxis: {
+            type: "value",
+            min: min_commits_x,
+            max: max_commits_x,
+            name: "Total Commits",
+            nameGap: 40,
+            nameLocation: "middle",
+            position: "bottom",
+            axisLine: {
+                lineStyle: {
+                    color: "#fff",
+                    width: 2,
+                },
+            },
+            axisLabel: {
+                color: "#fff",
+                fontSize: 16,
+                margin: 16,
+            },
+            splitLine: { show: false },
+            axisTick: {
+                lineStyle: {
+                    color: "#fff",
+                    width: 2,
+                },
+            },
         },
         yAxis: {
             show: false,
             min: 0,
-            max: 10,
+            max: 2,
         },
         series: [
             {
                 type: "scatter",
-                data: contributors.map((p: Contributor) => [p.total_commits, 1])
+                data: commit_data,
+                symbolSize: 3,
+                z: 3,
+            },
+            {
+                name: "hover_points",
+                type: "scatter",
+                data: contributor_data,
+                symbolSize: 32,
+                z: 0,
+                itemStyle: {
+                    color: "transparent",
+                },
+                emphasis: {
+                    focus: "series",
+                    itemStyle: {
+                        color: "transparent",
+                        borderColor: "#fff",
+                        borderWidth: 2,
+                        shadowBlur: 10,
+                        shadowColor: "rgba(255, 255, 255, 0.7)",
+                    },
+                },
             },
         ],
-    };
+        tooltip: {
+            trigger: "item",
+            formatter: function (params: any) {
+                if (params.seriesName === "hover_points") {
+                    const username = params.data[2];
+                    const person = contributors.find(
+                        (p) => p.author.login === username,
+                    );
+                    if (!person) return username;
+                    return `
+              <div style="text-align: left;">
+                <strong>${username}</strong><br/>
+                Total Commits: ${params.data[0]}
+              </div>
+            `;
+                }
+
+                return "";
+            },
+        },
+        graphics: eUtils.map(contributor_data, (p: User) => {
+            return {
+                type: "group",
+                children: [
+                    {
+                        type: "image",
+                        style: {
+                            image: p.contributor.author.avatar_url,
+                            width: 40,
+                            height: 40,
+                        },
+                        x: x - 20, // Center the image
+                        y: y - 20, // Center the image
+                        silent: false,
+                        clipPath: {
+                            type: "circle",
+                            shape: {
+                                cx: 20,
+                                cy: 20,
+                                r: 20,
+                            },
+                        },
+                    },
+                ],
+            };
+        }),
+    });
 </script>
 
 <div class="app">
