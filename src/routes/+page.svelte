@@ -1,7 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Icon from "@iconify/svelte";
-    import { loadBranches, loadCommitData, type Contributor } from "../lib/metrics";
+    import {
+        loadBranches,
+        loadCommitData,
+        type Contributor,
+    } from "../lib/metrics";
+    import Graph from "$lib/components/overview-page/Graph.svelte";
 
     let repo = "clap";
     let owner = "clap-rs";
@@ -26,7 +31,7 @@
     });
 </script>
 
-<!-- <main class="container">
+<main class="container">
     <div class="header-row">
         <h1 class="title">Overview Page</h1>
         <select bind:value={selectedBranch} class="branch-select">
@@ -38,9 +43,9 @@
         </select>
     </div>
 
-    <CommitGraph selectedBranch contributors />
-    <ContributorCards selectedBranch users={contributors} />
-</main> -->
+    <Graph selectedBranch contributors />
+    <!-- <ContributorCards selectedBranch users={contributors} /> -->
+</main>
 
 <!-- Sidebar -->
 <div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
@@ -222,4 +227,3 @@
         color: var(--label-secondary);
     }
 </style>
-
