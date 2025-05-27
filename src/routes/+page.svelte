@@ -7,11 +7,12 @@
         type Contributor,
     } from "../lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
+    import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { info } from "@tauri-apps/plugin-log";
 
     let repo = "clap";
     let owner = "clap-rs";
-    let contributors: Contributor[] = [];
+    let contributors: Contributor[] = $state([]);
     let branches: string[] = $state([]);
     let selectedBranch = $state("all");
     let sidebarOpen = $state(false);
@@ -45,8 +46,8 @@
         </select>
     </div>
 
-    <!-- <Graph selectedBranch contributors />
-    <!-- <ContributorCards selectedBranch users={contributors} /> -->
+    <!-- <Graph {selectedBranch} {contributors} /> -->
+    <ContributorCards {selectedBranch} users={contributors} />
 </main>
 
 <!-- Sidebar -->
