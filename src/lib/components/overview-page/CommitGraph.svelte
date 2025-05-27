@@ -125,7 +125,7 @@
         flex-direction: row;
         align-items: end;
         margin-bottom: 2rem;
-        padding: 10rem;
+        padding: 1rem;
         
     }
 
