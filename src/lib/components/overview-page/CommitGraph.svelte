@@ -10,19 +10,13 @@
     import { info } from "@tauri-apps/plugin-log";
     import { page } from "$app/stores"; // Import the $page store
 
-    // Remove hardcoded owner and repo
-    // let repo = "clap";
-    // let owner = "clap-rs";
-
     // Initialize from $page.state
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);
-    let branches: string[] = $state(($page.state as any).branches || []);
-    
-    let selected_branch = $state("all");
-    if (branches.length > 0 && !branches.includes(selected_branch)) {
-        selected_branch = "all"; // Ensure "all" is an option or default to the first branch if "all" isn't explicitly passed
-    }
-
+    // let branches: string[] = $state(($page.state as any).branches || []);
+    // let selected_branch = $state("all");
+    // if (branches.length > 0 && !branches.includes(selected_branch)) {
+    //     selected_branch = "all";
+    // }
 
     let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
@@ -34,17 +28,11 @@
 
 <main class="container">
     <div class="header-row">
-        <select bind:value={selected_branch} class="branch-select">
-            {#each branches as branch}
-                <option value={branch}
-                    >{branch === "all" ? "All Branches" : branch}</option
-                >
-            {/each}
-        </select>
+        <!-- Removed branch select dropdown -->
     </div>
 
     <Graph {contributors} />
-    <ContributorCards {selected_branch} users={contributors} />
+    <ContributorCards users={contributors} />
 </main>
 
 <!-- Sidebar -->

@@ -6,13 +6,12 @@
   import ButtonTintedMedium from "$lib/components/global/button-tinted-medium.svelte";
   import ButtonUnderlineMedium from "$lib/components/global/button-underline-medium.svelte"
   import Calendar from '$lib/components/global/calendar.svelte';
+  import { page } from "$app/stores";
 
+  const { repoPath, repoType = "github" } = $props();
 
-  export let repoPath: string;
-  export let repoType = "github";
-
-  let branchOptions = ["main", "devel", "feat/components"];
-  let branchSelection = createDropdownSelection(branchOptions[1]);
+  let branches: string[] = $state(($page.state as any).branches || []);
+  let branchSelection = createDropdownSelection(branches[0] || "All");
 
   let startDate = '01-01-25';
   let endDate   = '20-01-25';
@@ -65,7 +64,7 @@
 
       <!-- branch dropdown btn -->
       <DropdownTintedMedium 
-        options={branchOptions} 
+        options={branches} 
         selected={branchSelection.selected}
       />
 
