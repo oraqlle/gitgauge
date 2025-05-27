@@ -113,7 +113,7 @@
                 repo: backendResult.repo,
             };
             verificationError = null;
-            
+
             // Update the repo store with the new URL
             setRepoUrl(repoUrlInput);
             // Call loadBranches and loadCommitData and wait for both to complete
@@ -154,168 +154,170 @@
         }
     }
 </script>
+<div class="page">
 
-<header>
-    <div class="container">
-        <div class="header-content">
-            <div class="logo-section">
-                <a href="/" class="cursor-pointer">
-                    <img
-                        class="logo-img"
-                        src="/secondary_logo.png"
-                        alt="Your Company"
-                    />
-                </a>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="/" class="cursor-pointer">
+                        <img
+                            class="logo-img"
+                            src="/secondary_logo.png"
+                            alt="Your Company"
+                        />
+                    </a>
+                </div>
+    
+                <div class="user-section">
+                    <h6 class="white body-accent">{userName}</h6>
+                    <img src={profileImageURL} alt="Profile" class="profile-img" />
+    
+                    <button
+                        type="button"
+                        class="hamburger-btn"
+                        on:click={toggleSidebar}
+                    >
+                        <Icon
+                            icon={"tabler:menu-2"}
+                            class="icon-medium"
+                            style="color: white"
+                        />
+                    </button>
+                </div>
             </div>
-
-            <div class="user-section">
-                <h6 class="white body-accent">{userName}</h6>
-                <img src={profileImageURL} alt="Profile" class="profile-img" />
-
+        </div>
+    </header>
+    
+    <main class="main">
+        <div class="repo-start">
+            <!-- Repo dropdown -->
+            <div class="dropdown">
                 <button
                     type="button"
-                    class="hamburger-btn"
-                    on:click={toggleSidebar}
+                    class={`dropdown-btn ${dropdownOpen ? "show" : "hide"}`}
+                    on:click={toggleDropdown}
                 >
+                    {#if selected}
+                        <div class="dropdown-show">
+                            <Icon
+                                icon={`tabler:${selected.icon}`}
+                                class="icon-medium"
+                                style="color: white"
+                            />
+                            <h6 class="display-body white dropdown-text">
+                                {selected.label}
+                            </h6>
+                        </div>
+                    {:else}
+                        <!-- This case should not happen with a default selected value -->
+                        <h6 class="display-body white">Select an option</h6>
+                    {/if}
+                    <img src="/dropdown_icon.png" alt="dropdown icon" />
+                </button>
+    
+                {#if dropdownOpen}
+                    <div class="dropdown-content">
+                        {#each options as option}
+                            <button
+                                class="dropdown-option"
+                                on:click={() => selectOption(option)}
+                            >
+                                <Icon
+                                    icon={`tabler:${option.icon}`}
+                                    class="icon-medium"
+                                    style="color: white"
+                                />
+                                <h6 class="display-body white dropdown-text">
+                                    {option.label}
+                                </h6>
+                            </button>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
+    
+            <!-- Repo link -->
+            <div class="repo-link">
+                <input
+                    class="repo-textbox display-body"
+                    type="text"
+                    placeholder="enter a git repo..."
+                    bind:value={repoUrlInput}
+                    on:keydown={handleInputKeydown}
+                />
+                <button class="repo-button" on:click={handleVerification}>
                     <Icon
-                        icon={"tabler:menu-2"}
+                        icon={"tabler:circle-arrow-right"}
                         class="icon-medium"
                         style="color: white"
                     />
                 </button>
             </div>
-        </div>
-    </div>
-</header>
-
-<main class="main">
-    <div class="repo-start">
-        <!-- Repo dropdown -->
-        <div class="dropdown">
-            <button
-                type="button"
-                class={`dropdown-btn ${dropdownOpen ? "show" : "hide"}`}
-                on:click={toggleDropdown}
-            >
-                {#if selected}
-                    <div class="dropdown-show">
-                        <Icon
-                            icon={`tabler:${selected.icon}`}
-                            class="icon-medium"
-                            style="color: white"
-                        />
-                        <h6 class="display-body white dropdown-text">
-                            {selected.label}
-                        </h6>
-                    </div>
-                {:else}
-                    <!-- This case should not happen with a default selected value -->
-                    <h6 class="display-body white">Select an option</h6>
+    
+            <!-- Verification Feedback -->
+            <div class="verification-feedback">
+                {#if verificationResult}
+                    <p class="success-message white">
+                        Successfully verified! Owner: {verificationResult.owner},
+                        Repo: {verificationResult.repo}
+                    </p>
                 {/if}
-                <img src="/dropdown_icon.png" alt="dropdown icon" />
-            </button>
-
-            {#if dropdownOpen}
-                <div class="dropdown-content">
-                    {#each options as option}
-                        <button
-                            class="dropdown-option"
-                            on:click={() => selectOption(option)}
-                        >
-                            <Icon
-                                icon={`tabler:${option.icon}`}
-                                class="icon-medium"
-                                style="color: white"
-                            />
-                            <h6 class="display-body white dropdown-text">
-                                {option.label}
-                            </h6>
-                        </button>
-                    {/each}
-                </div>
-            {/if}
+                {#if verificationError}
+                    <p class="error-message white">{verificationError}</p>
+                {/if}
+            </div>
+    
+            <!-- Repo link list -->
+            <div class="repo-bookmark-list">
+                {#each bookmarked_repo as bookmark (bookmark.repo_url)}
+                    <button class="repo-list-btn" type="button">
+                        <h6 class="display-body repo-list-text white">
+                            {bookmark.repo_url}
+                        </h6>
+                    </button>
+                {/each}
+            </div>
         </div>
-
-        <!-- Repo link -->
-        <div class="repo-link">
-            <input
-                class="repo-textbox display-body"
-                type="text"
-                placeholder="enter a git repo..."
-                bind:value={repoUrlInput}
-                on:keydown={handleInputKeydown}
-            />
-            <button class="repo-button" on:click={handleVerification}>
+    </main>
+    
+    <!-- Sidebar -->
+    <div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+        <div class="sidebar-header">
+            <div class="sidebar-title">
                 <Icon
-                    icon={"tabler:circle-arrow-right"}
+                    icon={"tabler:chart-line"}
+                    class="icon-large"
+                    style="color: white"
+                />
+                <h1 class="title sidebar-title-text white">settings</h1>
+            </div>
+            <button class="close-button" on:click={toggleSidebar}>
+                <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
+            </button>
+        </div>
+    
+        <div class="bookmark-list">
+            <div class="bookmark-header">
+                <Icon
+                    icon={"tabler:star-filled"}
                     class="icon-medium"
                     style="color: white"
                 />
-            </button>
-        </div>
-
-        <!-- Verification Feedback -->
-        <div class="verification-feedback">
-            {#if verificationResult}
-                <p class="success-message white">
-                    Successfully verified! Owner: {verificationResult.owner},
-                    Repo: {verificationResult.repo}
-                </p>
-            {/if}
-            {#if verificationError}
-                <p class="error-message white">{verificationError}</p>
-            {/if}
-        </div>
-
-        <!-- Repo link list -->
-        <div class="repo-bookmark-list">
-            {#each bookmarked_repo as bookmark (bookmark.repo_url)}
-                <button class="repo-list-btn" type="button">
-                    <h6 class="display-body repo-list-text white">
-                        {bookmark.repo_url}
+                <h2 class="heading-1 bookmark-text white">bookmarks</h2>
+            </div>
+    
+            {#each bookmarked_repo as repo (repo.repo_url)}
+                <button class="bookmark-item">
+                    <h6 class="heading-2 repo-name label-secondary">
+                        {repo.repo_name}
+                    </h6>
+                    <h6 class="caption repo-url label-secondary">
+                        {repo.repo_url}
                     </h6>
                 </button>
             {/each}
         </div>
-    </div>
-</main>
-
-<!-- Sidebar -->
-<div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
-    <div class="sidebar-header">
-        <div class="sidebar-title">
-            <Icon
-                icon={"tabler:chart-line"}
-                class="icon-large"
-                style="color: white"
-            />
-            <h1 class="title sidebar-title-text white">settings</h1>
-        </div>
-        <button class="close-button" on:click={toggleSidebar}>
-            <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
-        </button>
-    </div>
-
-    <div class="bookmark-list">
-        <div class="bookmark-header">
-            <Icon
-                icon={"tabler:star-filled"}
-                class="icon-medium"
-                style="color: white"
-            />
-            <h2 class="heading-1 bookmark-text white">bookmarks</h2>
-        </div>
-
-        {#each bookmarked_repo as repo (repo.repo_url)}
-            <button class="bookmark-item">
-                <h6 class="heading-2 repo-name label-secondary">
-                    {repo.repo_name}
-                </h6>
-                <h6 class="caption repo-url label-secondary">
-                    {repo.repo_url}
-                </h6>
-            </button>
-        {/each}
     </div>
 </div>
 
@@ -326,6 +328,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 500;
     }
 
     /* HEADER */
@@ -335,6 +338,8 @@
         margin-right: 2rem;
         margin-top: 2rem;
         margin-bottom: 0.8125rem;
+        z-index: 500;
+
     }
 
     .header-content {
@@ -343,15 +348,21 @@
         height: 1.375rem;
         align-items: center;
         justify-content: space-between;
+        z-index: 500;
+
     }
 
     .logo-section {
         display: flex;
+        z-index: 500;
+
     }
 
     .logo-img {
         height: 20px;
         width: auto;
+        z-index: 500;
+
     }
 
     .user-section {
@@ -360,14 +371,20 @@
         justify-content: space-between;
         padding-top: 8px;
         padding-bottom: 8px;
+        z-index: 500;
+
     }
 
     .white {
         color: var(--white);
+        z-index: 500;
+
     }
 
     .label-secondary {
         color: var(--label-secondary);
+        z-index: 500;
+
     }
 
     .profile-img {
@@ -376,6 +393,8 @@
         margin-left: 0.8125rem;
         margin-right: 0.8125rem;
         object-fit: cover;
+        z-index: 500;
+
     }
 
     .hamburger-btn {
@@ -388,6 +407,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 500;
+
     }
 
     /* SIDEBAR */
@@ -406,7 +427,7 @@
         background: var(--Background-Tint, rgba(34, 34, 34, 0.7));
         backdrop-filter: blur(16px);
         box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-        z-index: 50;
+        z-index: 5000;
         transform: translateX(100%);
         transition: transform 0.5s ease-in-out;
     }
@@ -602,6 +623,7 @@
 
     /* Repo link list */
     .repo-bookmark-list {
+        background: transparent;
         grid-column: 2;
         grid-row: 2;
         padding-left: 1.5rem;
@@ -642,10 +664,10 @@
     .repo-list-btn {
         height: 22px;
         width: inherit;
-        background-color: #181818;
+        background-color: transparent; /*#181818; */
         border: none;
         margin: none;
-        padding: 0px;
+        padding: 0.5rem;
         text-align: left;
         cursor: pointer;
     }

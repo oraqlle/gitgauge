@@ -66,6 +66,7 @@
       <DropdownTintedMedium 
         options={branches} 
         selected={branchSelection.selected}
+        disabled={false}
       />
 
       <!-- calendar btn -->
