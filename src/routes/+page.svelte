@@ -1,11 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import CommitGraph from "../lib/components/overview-page/Graph.svelte";
-    import ContributorCards from "../lib/components/overview-page/ContributorCards.svelte";
     import Icon from "@iconify/svelte";
     import { loadBranches, loadCommitData, type Contributor } from "../lib/metrics";
-    import { info } from "@tauri-apps/plugin-log";
-
 
     let repo = "clap";
     let owner = "clap-rs";
