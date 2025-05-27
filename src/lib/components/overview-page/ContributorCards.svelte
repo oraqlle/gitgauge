@@ -22,14 +22,13 @@
   let commit_mean = getAverageCommits(users);
   let sd = getSD(users);
   
-  info(`HERE`);
 
-  let peopleWithMetrics = users.map((user: Contributor) => {
+  let peopleWithMetrics = $derived(users.map((user: Contributor) => {
     const numCommits = getUserTotalCommits(user);
     const scalingFactor = calculateScalingFactor(numCommits, commit_mean, sd);
     return {
       username: user.author.login,
-      image: null,
+      image: user.author.avatar_url,
       numCommits,
       totalLinesOfCode: getUserTotalLinesOfCode(user),
       linesPerCommit: getUserLinesPerCommit(user),
@@ -37,7 +36,7 @@
       totalDeletions: getUserTotalDeletions(user),
       scalingFactor: scalingFactor.toFixed(1)
     };
-  });
+  }));
 </script>
 
 <div class="cards-row">
