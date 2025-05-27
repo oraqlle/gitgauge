@@ -21,37 +21,22 @@
 
     let bookmarked_repo: RepoBookmark[] = [
         {
-            repo_name: "fit3170-A1",
-            repo_url: "https://github.com/user/fit3170-A1.git",
+            repo_name: "GitGuage",
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-Commitment",
         },
         {
-            repo_name: "this-is-a-repo",
-            repo_url: "https://gitlab.com/abc0012/this-is-a-repo.git",
+            repo_name: "QualAI",
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-QualAI",
         },
         {
-            repo_name: "project",
-            repo_url: "https://github.com/example-org/project.git",
+            repo_name: "PressUp",
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-PressUp"
         },
         {
-            repo_name: "another-project",
-            repo_url: "https://gitlab.com/example-org/another-project.git",
-        },
-        {
-            repo_name: "assignment",
-            repo_url: "https://gitlab.com/xyz0001/assignment.git",
-        },
-        {
-            repo_name: "assignment",
-            repo_url: "https://gitlab.com/xyz0001/assignment.git2",
-        },
-        {
-            repo_name: "assignment",
-            repo_url: "https://gitlab.com/xyz0001/assignment.git3",
-        },
-        {
-            repo_name: "assignment",
-            repo_url: "https://gitlab.com/xyz0001/assignment.git4",
-        },
+            repo_name: "FindingNibbles",
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-FindingNibbles"
+        }
+
     ];
 
     //
@@ -75,6 +60,11 @@
     interface BackendVerificationResult {
         owner: string;
         repo: string;
+    }
+
+    async function bookmarkedRepo(repoUrl: string) {
+        repoUrlInput = repoUrl;
+        handleVerification();
     }
 
     async function handleVerification() {
@@ -271,7 +261,7 @@
             <!-- Repo link list -->
             <div class="repo-bookmark-list">
                 {#each bookmarked_repo as bookmark (bookmark.repo_url)}
-                    <button class="repo-list-btn" type="button">
+                    <button class="repo-list-btn" type="button" on:click={() => bookmarkedRepo(bookmark.repo_url)}>
                         <h6 class="display-body repo-list-text white">
                             {bookmark.repo_url}
                         </h6>
@@ -308,7 +298,7 @@
             </div>
     
             {#each bookmarked_repo as repo (repo.repo_url)}
-                <button class="bookmark-item">
+                <button class="bookmark-item" type="button" on:click={() => bookmarkedRepo(repo.repo_url)}>
                     <h6 class="heading-2 repo-name label-secondary">
                         {repo.repo_name}
                     </h6>
