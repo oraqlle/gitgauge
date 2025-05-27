@@ -17,6 +17,7 @@
     "@tauri-apps/plugin-log": "^2.4.0",
     "@tauri-apps/plugin-opener": "^2",
     "echarts": "^5.6.0",
+    "flatpickr": "^4.6.13",
     "svelte-echarts": "^1.0.0"
   },
   "devDependencies": {
