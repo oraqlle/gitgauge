@@ -5,6 +5,7 @@
     import { load_branches, load_commit_data } from "$lib/metrics";
     import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
+    import { setRepoUrl } from "$lib/stores/repo";
     interface RepoBookmark {
         repo_name: string;
         repo_url: string;
@@ -112,7 +113,9 @@
                 repo: backendResult.repo,
             };
             verificationError = null;
-
+            
+            // Update the repo store with the new URL
+            setRepoUrl(repoUrlInput);
             // Call loadBranches and loadCommitData and wait for both to complete
             const [branches, commitData] = await Promise.all([
                 load_branches(backendResult.owner, backendResult.repo),
