@@ -1,5 +1,36 @@
 # Contributing Guidelines
 
+## Coding Style
+
+### Svelte
+
+For this project only Svelte 5 concepts should be used. This includes the use of
+[Runes](https://svelte.dev/docs/svelte/what-are-runes) instead of Svelte 4's (and lower)
+reactive statements with `$:`.
+
+This project will use the [prescribed project layout for a SvelteKit project](https://svelte.dev/docs/kit/project-structure)
+as recommend by the Svelte developers.
+
+Svelte components and TypeScript types and named objects should be in _PascalCase_ with
+functions, type methods and variables being in _snake\_case_, imports should be ordered
+alphabetically and code should habe 4 space indenting.
+
+### CSS
+
+~
+
+### Rust
+
+Rust code should be styled according to the [Rust Style Guide](https://doc.rust-lang.org/nightly/style-guide/)
+but the TL;DR is as follows:
+
+Variables, functions and associated methods of structs should be in _snake\_case_ with
+trait and struct names being in _PascalCase_.
+
+You can run `cargo fmt` to format the project correctly when in the `src-tauri` directory.
+
+## Git Tracking
+
 This document outlines the rules for contributing to the project. It covers the
 required commit message format, how to name branches and how to create PRs.
 
