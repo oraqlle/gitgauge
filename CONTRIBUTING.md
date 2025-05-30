@@ -13,11 +13,16 @@ as recommend by the Svelte developers.
 
 Svelte components and TypeScript types and named objects should be in _PascalCase_ with
 functions, type methods and variables being in _snake\_case_, imports should be ordered
-alphabetically and code should habe 4 space indenting.
+alphabetically and code should have 4 space indenting.
 
-### CSS
+### HTML and CSS
+HTML and CSS code should follow the [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html#CSS_Style_Rules).
 
-~
+For a responsive design, the CSS unit is `rem`, with the ratio between `rem` and `px` being: `1rem = 16px`.
+
+The `global.css` file is located under `static\` defining the fonts and color theme used in the project. Any styling relating color and fonts should follow these pre-defined CSS classes.
+
+A component should determine its own styling, such as width, height. Apart from the location, a parent component should not control the style of its children components (e.g. height, widths, etc.) 
 
 ### Rust
 
