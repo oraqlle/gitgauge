@@ -16,6 +16,8 @@ functions, type methods and variables being in _snake\_case_, imports should be 
 alphabetically and code should have 4 space indenting.
 
 ### HTML and CSS
+Although we use `.svelte` files in this project, we still write HTML-like markups. Hence HTML guidelines can be followed in this case.
+
 HTML and CSS code should follow the [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html#CSS_Style_Rules).
 
 For a responsive design, the CSS unit is `rem`, with the ratio between `rem` and `px` being: `1rem = 16px`.
