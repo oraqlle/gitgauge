@@ -119,6 +119,35 @@ async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Opti
 }
 
 
+async fn clone_progress(progress: git2::Progress) {
+    println!("Progress: {}/{}", progress.received_objects(), progress.total_objects());
+}
+
+#[tauri::command]
+async fn bare_clone(url: &str, path: &str) -> Result<(), git2::Error> {
+    //Check if path is a valid directory
+    if std::path::Path::new(path).exists() {
+        return Err(git2::Error::from_str("Path already exists"));
+    }
+    let mut callbacks = RemoteCallbacks::new();
+    callbacks.transfer_progress(|progress| {
+        // Run the progress callback in the main thread
+        tauri::async_runtime::spawn(async move {
+            clone_progress(progress).await;
+        });
+        true
+    });
+
+    let mut fetch_opts = git2::FetchOptions::new();
+    fetch_opts.remote_callbacks(callbacks);
+
+    let repo = RepoBuilder::new()
+        .bare(true) // Set to true for a bare clone
+        .fetch_options(fetch_opts)
+        .clone(url, std::path::Path::new(path))?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
