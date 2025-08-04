@@ -28,6 +28,7 @@ chrono = { version = "0.4.41", features = ["serde"] }
 tauri-plugin-log = "2"
 log = "0.4"
 
-git2 = { version = "0.18", features = ["blocking", "serde"] }
+git2 = { version = "0.18" }
+md5 = "0.8"
 url = { version = "2", features = ["serde"] }
 regex = { version = "1", features = ["unicode"] }

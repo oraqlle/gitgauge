@@ -1,33 +1,11 @@
-use reqwest::{header::HeaderMap, Client, StatusCode};
+use std::collections::HashMap;
 
-use git2::Repository;
+use git2::{build::RepoBuilder, BranchType, RemoteCallbacks, Repository, Sort};
 use model::repo::Repo;
-use response::{branch::BranchReponse, contributor::{ContributorData, ContributorResponse}};
-use tauri::http::HeaderValue;
-use crate::response::contributor::ContributorInfo;
+use crate::response::contributor::{Author, ContributorInfo};
 
 mod model;
 mod response;
-
-type Result2<T> = Result<T, &'static str>;
-
-fn construct_headers() -> HeaderMap {
-    let mut headers = HeaderMap::new();
-
-    headers.insert(
-        reqwest::header::ACCEPT,
-        HeaderValue::from_static("application/vnd.github+json")
-    );
-
-    headers.insert(
-        "X-GitHub-Api-Version",
-        HeaderValue::from_static("2022-11-28")
-    );
-
-    headers.insert(reqwest::header::USER_AGENT, HeaderValue::from_static("gitgauge"));
-
-    return headers;
-}
 
 // Stubb for future call that will load data for in-memory model of repo
 mod github_url_verifier;
@@ -39,13 +17,14 @@ fn load_data_from(_repo: Repo) -> Result<(), &'static str> {
 }
 
 #[tauri::command]
-async fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
-    let repo = Repository::open(path)?;
+async fn get_branch_names(path: &str) -> Result<Vec<String>, String> {
+
+    let repo = Repository::open(path).map_err(|e| e.to_string())?;
     let mut branches = Vec::new();
 
-    for branch in repo.branches(None)? {
-        let (branch, _branch_type) = branch?;
-        if let Some(name) = branch.name()? {
+    for branch in repo.branches(None).map_err(|e| e.to_string())? {
+        let (branch, _branch_type) = branch.map_err(|e| e.to_string())?;
+        if let Some(name) = branch.name().map_err(|e| e.to_string())? {
             branches.push(name.to_string());
         }
     }
@@ -54,26 +33,26 @@ async fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
 }
 
 #[tauri::command]
-async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Option<(i64, i64)>) -> Result<HashMap<String, ContributorInfo>, git2::Error> {
+async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Option<(i64, i64)>) -> Result<HashMap<String, ContributorInfo>, String> {
     /*
     date_range: Option<(i64, i64)> - Optional date range in UNIX timestamp format.
      */
-    let repo = Repository::open(path)?;
+    let repo = Repository::open(path).map_err(|e| e.to_string())?;
 
     // Resolve branch reference
-    let mut revwalk = repo.revwalk()?;
+    let mut revwalk = repo.revwalk().map_err(|e| e.to_string())?;
     let head = match branch {
-        Some(b) => repo.find_branch(b, BranchType::Local)?.get().target().ok_or(git2::Error::from_str("Invalid branch head"))?,
-        None => repo.head()?.target().ok_or(git2::Error::from_str("Invalid HEAD"))?,
+        Some(b) => repo.find_branch(b, BranchType::Local).map_err(|e| e.to_string())?.get().target().ok_or(git2::Error::from_str("Invalid branch head")).map_err(|e| e.to_string())?,
+        None => repo.head().map_err(|e| e.to_string())?.target().ok_or(git2::Error::from_str("Invalid HEAD")).map_err(|e| e.to_string())?,
     };
 
-    revwalk.push(head)?;
-    revwalk.set_sorting(Sort::TIME)?;
+    revwalk.push(head).map_err(|e| e.to_string())?;
+    revwalk.set_sorting(Sort::TIME).map_err(|e| e.to_string())?;
 
     let mut contributors: HashMap<String, ContributorInfo> = HashMap::new();
     for oid_result in revwalk {
-        let oid = oid_result?;
-        let commit = repo.find_commit(oid)?;
+        let oid = oid_result.map_err(|e| e.to_string())?;
+        let commit = repo.find_commit(oid).map_err(|e| e.to_string())?;
         let time = commit.time().seconds();
         if let Some((start, end)) = date_range {
             if time < start || time > end {
@@ -90,15 +69,15 @@ async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Opti
             avatar_url: format!("https://www.gravatar.com/avatar/{:x}?d=identicon", gravatar_hash),
         };
 
-        let commit_tree = commit.tree()?;
+        let commit_tree = commit.tree().map_err(|e| e.to_string())?;
         let parent_tree = if commit.parent_count() > 0 {
-            Some(commit.parent(0)?.tree()?)
+            Some(commit.parent(0).map_err(|e| e.to_string())?.tree().map_err(|e| e.to_string())?)
         } else {
             None
         };
 
-        let diff = repo.diff_tree_to_tree(parent_tree.as_ref(), Some(&commit_tree), None)?;
-        let stats = diff.stats()?;
+        let diff = repo.diff_tree_to_tree(parent_tree.as_ref(), Some(&commit_tree), None).map_err(|e| e.to_string())?;
+        let stats = diff.stats().map_err(|e| e.to_string())?;
         
         let additions = stats.insertions() as u64;
         let deletions = stats.deletions() as u64;
@@ -118,9 +97,8 @@ async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Opti
 
 }
 
-
-async fn clone_progress(progress: git2::Progress) {
-    println!("Progress: {}/{}", progress.received_objects(), progress.total_objects());
+fn clone_progress(cur_progress: usize, total_progress: usize) {
+    println!("Progress: {}/{}", cur_progress, total_progress);
 }
 
 #[tauri::command]
@@ -131,10 +109,7 @@ async fn bare_clone(url: &str, path: &str) -> Result<(), git2::Error> {
     }
     let mut callbacks = RemoteCallbacks::new();
     callbacks.transfer_progress(|progress| {
-        // Run the progress callback in the main thread
-        tauri::async_runtime::spawn(async move {
-            clone_progress(progress).await;
-        });
+        clone_progress(progress.received_objects(), progress.total_objects());
         true
     });
 
