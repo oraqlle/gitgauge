@@ -39,7 +39,7 @@ fn load_data_from(_repo: Repo) -> Result<(), &'static str> {
 }
 
 #[tauri::command]
-fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
+async fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
     let repo = Repository::open(path)?;
     let mut branches = Vec::new();
 
@@ -54,58 +54,68 @@ fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
 }
 
 #[tauri::command]
-async fn get_contributor_info(repo: String, owner: String, branch: Option<String>) -> Result2<Vec<ContributorInfo>> {
-    log::info!("Starting Contributors");
+async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Option<(i64, i64)>) -> Result<HashMap<String, ContributorInfo>, git2::Error> {
+    /*
+    date_range: Option<(i64, i64)> - Optional date range in UNIX timestamp format.
+     */
+    let repo = Repository::open(path)?;
 
-    let url = match branch {
-        Some(b) => format!(
-            "https://api.github.com/repos/{}/{}/stats/contributors&sha={}",
-            owner,
-            repo,
-            b
-        ),
-        None => format!(
-            "https://api.github.com/repos/{}/{}/stats/contributors",
-            owner,
-            repo
-        )
+    // Resolve branch reference
+    let mut revwalk = repo.revwalk()?;
+    let head = match branch {
+        Some(b) => repo.find_branch(b, BranchType::Local)?.get().target().ok_or(git2::Error::from_str("Invalid branch head"))?,
+        None => repo.head()?.target().ok_or(git2::Error::from_str("Invalid HEAD"))?,
     };
 
-    let headers = construct_headers();
-    let client = Client::new();
+    revwalk.push(head)?;
+    revwalk.set_sorting(Sort::TIME)?;
 
-    let contributor_analytics = client.get(url).headers(headers).send().await;
-    
-    let contributor_response = match contributor_analytics {
-        Ok(json) => {
-            if json.status() != StatusCode::OK {
-                log::error!("Error fetching contributor analytics");
-                return Err("Error fetching contributor analytics");
+    let mut contributors: HashMap<String, ContributorInfo> = HashMap::new();
+    for oid_result in revwalk {
+        let oid = oid_result?;
+        let commit = repo.find_commit(oid)?;
+        let time = commit.time().seconds();
+        if let Some((start, end)) = date_range {
+            if time < start || time > end {
+                continue; // Skip commits outside the date range
             }
-
-            json
-        },
-        Err(e) => {
-            log::error!("{}", e);
-            return Err("Error sending contributor analytics request");
-        },
-    };
-
-    let contributor_data= contributor_response.json::<ContributorResponse>().await;
-
-    let contributors = match contributor_data {
-        Ok(c) => c,
-        Err(e) => {
-            log::error!("{}", e);
-            log::error!("Error parsing contributors response JSON");
-            return Err("Error parsing contiributors response JSON");
         }
-    };
+        let author_signature = commit.author();
+        
+        let email = author_signature.email().unwrap_or("").to_string();
+        let gravatar_hash = md5::compute(email.trim().to_lowercase());
+        
+        let author = Author {
+            login: author_signature.name().unwrap_or("Unknown").to_string(),
+            avatar_url: format!("https://www.gravatar.com/avatar/{:x}?d=identicon", gravatar_hash),
+        };
 
-    let contributors_info = contributors.into();
+        let commit_tree = commit.tree()?;
+        let parent_tree = if commit.parent_count() > 0 {
+            Some(commit.parent(0)?.tree()?)
+        } else {
+            None
+        };
 
-    return Ok(contributors_info);
-    // Err("error")
+        let diff = repo.diff_tree_to_tree(parent_tree.as_ref(), Some(&commit_tree), None)?;
+        let stats = diff.stats()?;
+        
+        let additions = stats.insertions() as u64;
+        let deletions = stats.deletions() as u64;
+
+        let entry = contributors.entry(email).or_insert_with(|| ContributorInfo {
+            author: author.clone(),
+            total_commits: 0,
+            additions: 0,
+            deletions: 0,
+        });
+
+        entry.total_commits += 1;
+        entry.additions += additions;
+        entry.deletions += deletions;
+    }
+    Ok(contributors)
+
 }
 
 
