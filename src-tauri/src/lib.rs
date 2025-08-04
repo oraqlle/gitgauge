@@ -1,5 +1,6 @@
 use reqwest::{header::HeaderMap, Client, StatusCode};
 
+use git2::Repository;
 use model::repo::Repo;
 use response::{branch::BranchReponse, contributor::{ContributorData, ContributorResponse}};
 use tauri::http::HeaderValue;
@@ -38,42 +39,18 @@ fn load_data_from(_repo: Repo) -> Result<(), &'static str> {
 }
 
 #[tauri::command]
-async fn get_branch_names(repo: String, owner: String) -> Result2<Vec<String>> {
-    log::info!("Starting branches....");
-    let url = format!("https://api.github.com/repos/{}/{}/branches", owner, repo);
-    let headers = construct_headers();
-    let client = Client::new();
+fn get_branch_names(path: &str) -> Result<Vec<String>, git2::Error> {
+    let repo = Repository::open(path)?;
+    let mut branches = Vec::new();
 
-    let branch_request = client.get(url).headers(headers).send().await;
-
-    let branch_response = match branch_request {
-        Ok(response) => response,
-        Err(e) => {
-            log::error!("{}", e);
-            return Err("Error sending branches request");
-        },
-    };
-
-    match branch_response.status() {
-        StatusCode::OK => {},
-        _ => {
-            log::error!("Error fetching branches");
-            return Err("Error fetching branches");
+    for branch in repo.branches(None)? {
+        let (branch, _branch_type) = branch?;
+        if let Some(name) = branch.name()? {
+            branches.push(name.to_string());
         }
-    };
+    }
 
-    let branch_data = branch_response.json::<BranchReponse>().await;
-
-    let branches = match branch_data {
-        Ok(b) => b,
-        Err(e) => {
-            log::error!("{}", e);
-            log::error!("Error parsing branches response JSON");
-            return Err("Error parsing branches response JSON");
-        }
-    };
-
-    return Ok(branches.into());
+    Ok(branches)
 }
 
 #[tauri::command]
