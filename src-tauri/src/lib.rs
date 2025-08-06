@@ -102,10 +102,10 @@ fn clone_progress(cur_progress: usize, total_progress: usize) {
 }
 
 #[tauri::command]
-async fn bare_clone(url: &str, path: &str) -> Result<(), git2::Error> {
+async fn bare_clone(url: &str, path: &str) -> Result<(), String> {
     //Check if path is a valid directory
     if std::path::Path::new(path).exists() {
-        return Err(git2::Error::from_str("Path already exists"));
+        return Err("Path already exists".to_string());
     }
     let mut callbacks = RemoteCallbacks::new();
     callbacks.transfer_progress(|progress| {
@@ -119,8 +119,13 @@ async fn bare_clone(url: &str, path: &str) -> Result<(), git2::Error> {
     let repo = RepoBuilder::new()
         .bare(true) // Set to true for a bare clone
         .fetch_options(fetch_opts)
-        .clone(url, std::path::Path::new(path))?;
+        .clone(url, std::path::Path::new(path))
+        .map_err(|e| e.to_string())?;
     Ok(())
+}
+#[tauri::command]
+fn is_repo_cloned(path: &str) -> bool {
+    std::path::Path::new(path).exists()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -131,7 +136,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_branch_names,
             get_contributor_info,
-            github_url_verifier::verify_and_extract_source_info
+            github_url_verifier::verify_and_extract_source_info,
+            bare_clone,
+            is_repo_cloned
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
