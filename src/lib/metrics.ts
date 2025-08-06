@@ -28,11 +28,13 @@ export async function load_branches(owner: string, repo: string): Promise<string
     }
 }
 
-export async function load_commit_data(owner: string, repo: string, branch?: string): Promise<Contributor[]> {
+export async function load_commit_data(owner: string, repo: string, branch: string = 'main'): Promise<Contributor[]> {
     info(`Loading contributor data for ${owner}/${repo}...`);
 
+    const clonePath = `gitgauge/${repo}/${owner}`;
+
     try {
-        const commit_data = await invoke<Contributor[]>('get_contributor_info', { owner, repo });
+        const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: clonePath, branch });
         info(`Done contributor data for ${owner}/${repo}...`);
         return commit_data;
     } catch (err) {
