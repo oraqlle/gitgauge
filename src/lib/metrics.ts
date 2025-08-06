@@ -18,8 +18,9 @@ export type Contributor = Readonly<{
 // Load branches for a repository
 export async function load_branches(owner: string, repo: string): Promise<string[]> {
     info(`Loading branches for ${owner}/${repo}...`);
+    const repoPath = `gitgauge/${repo}/${owner}`;
     try {
-        const real_branches = await invoke<string[]>('get_branch_names', { owner, repo });
+        const real_branches = await invoke<string[]>('get_branch_names', { path: repoPath });
         info(`Done branches for ${owner}/${repo}...`);
         return ['All', ...real_branches];
     } catch (err) {
@@ -28,14 +29,24 @@ export async function load_branches(owner: string, repo: string): Promise<string
     }
 }
 
-export async function load_commit_data(owner: string, repo: string, branch: string = 'main'): Promise<Contributor[]> {
+export async function load_commit_data(owner: string, repo: string, branch?: string): Promise<Contributor[]> {
     info(`Loading contributor data for ${owner}/${repo}...`);
 
-    const clonePath = `gitgauge/${repo}/${owner}`;
+    const repoPath = `gitgauge/${repo}/${owner}`;
+    try {
+        await invoke('bare_clone', { url: `https://github.com/${owner}/${repo}`, path: repoPath });
+        info(`Repository is cloned or already exists at ${repoPath}`);
+    } catch (err) {
+        info(`Failed to clone the repository: ${err}`);
+        console.error("Failed to clone repository:", err);
+        return [];
+    }
+    console.log('repo: ',repoPath);
 
     try {
-        const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: clonePath, branch });
+        const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: repoPath, branch: branch || 'devel' });
         info(`Done contributor data for ${owner}/${repo}...`);
+        console.log("Contributor Data:", commit_data);
         return commit_data;
     } catch (err) {
         info(`Failed to get contributor data`)
