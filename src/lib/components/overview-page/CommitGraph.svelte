@@ -7,22 +7,11 @@
     } from "$lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import { info } from "@tauri-apps/plugin-log";
     import { page } from "$app/stores"; // Import the $page store
-    import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte"
-    import { createDropdownSelection } from "$lib/stores/dropdown";
     import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
 
     // Initialize from $page.state
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);
-    // let branches: string[] = $state(($page.state as any).branches || []);
-    // let selected_branch = $state("all");
-    // if (branches.length > 0 && !branches.includes(selected_branch)) {
-    //     selected_branch = "all";
-    // }
-
-    let criteria = ["total commits", "lines of code", "lines/commit"];
-    let selectedCriteria = criteria[0];
 
     let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
@@ -57,7 +46,7 @@
     </div>
 
     <Graph {contributors} />
-    <ContributorCards users={contributors} />
+    <ContributorCards users={contributors} selected_branch={""} />
 </main>
 
 <!-- Sidebar -->

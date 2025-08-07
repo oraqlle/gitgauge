@@ -4,8 +4,6 @@
     import Banner from '$lib/components/overview-page/Banner.svelte';
     import UserMenu from '$lib/components/overview-page/UserMenu.svelte';
     import Sidebar from '$lib/components/global/sidebar.svelte';
-    import ContributorGrid from '$lib/components/overview-page/ContributorGrid.svelte';
-    import Heading from '$lib/components/overview-page/Heading.svelte';
 
     //dummy data for demo
     import { currentRepo } from '$lib/stores/repo';
