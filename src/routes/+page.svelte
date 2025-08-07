@@ -1,25 +1,25 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
-    import { verifyAndExtractSourceInfo } from "$lib/githubUrlVerifier.js";
+    import { verify_and_extract_source_info } from "$lib/github_url_verifier.js";
     import Icon from "@iconify/svelte";
     import { load_branches, load_commit_data } from "$lib/metrics";
     import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
-    import { setRepoUrl } from "$lib/stores/repo";
+    import { set_repo_url } from "$lib/stores/repo";
     interface RepoBookmark {
         repo_name: string;
         repo_url: string;
     }
 
-    let sidebarOpen = false;
-    let profileImageURL = "/mock_profile_img.png";
+    let sidebar_open = false;
+    let profile_image_url = "/mock_profile_img.png";
     let userName = "Baaset Moslih";
 
-    function toggleSidebar() {
-        sidebarOpen = !sidebarOpen;
+    function toggle_sidebar() {
+        sidebar_open = !sidebar_open;
     }
 
-    let bookmarked_repo: RepoBookmark[] = [
+    let bookmarked_repos: RepoBookmark[] = [
         {
             repo_name: "GitGuage",
             repo_url: "https://github.com/Monash-FIT3170/2025W1-Commitment",
@@ -30,13 +30,12 @@
         },
         {
             repo_name: "PressUp",
-            repo_url: "https://github.com/Monash-FIT3170/2025W1-PressUp"
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-PressUp",
         },
         {
             repo_name: "FindingNibbles",
-            repo_url: "https://github.com/Monash-FIT3170/2025W1-FindingNibbles"
-        }
-
+            repo_url: "https://github.com/Monash-FIT3170/2025W1-FindingNibbles",
+        },
     ];
 
     //
@@ -44,35 +43,35 @@
         label: string;
         icon: string;
     }
-    let dropdownOpen = false;
+
+    let dropdown_open = false;
 
     const options: RepoOption[] = [
         { label: "GitHub", icon: "brand-github" },
         { label: "GitLab", icon: "brand-gitlab" },
         { label: "Local", icon: "folder-code" },
     ];
+
     let selected: RepoOption = options[0]; // Default to GitHub
 
-    let repoUrlInput: string = "";
-    let verificationResult: { owner: string; repo: string } | null = null;
-    let verificationError: string | null = null;
+    let repo_url_input: string = "";
+    let verification_result: { owner: string; repo: string } | null = null;
+    let verification_error: string | null = null;
 
     interface BackendVerificationResult {
         owner: string;
         repo: string;
     }
-    
 
-    async function bookmarkedRepo(repoUrl: string) {
-        repoUrlInput = repoUrl;
-        handleVerification();
+    async function bookmarked_repo(repo_url: string) {
+        repo_url_input = repo_url;
+        handle_verification();
     }
 
-    async function handleVerification() {
-        if (!selected || !repoUrlInput.trim()) {
-            verificationError =
-                "Please select a source type and enter a URL/path.";
-            verificationResult = null;
+    async function handle_verification() {
+        if (!selected || !repo_url_input.trim()) {
+            verification_error = "Please select a source type and enter a URL/path.";
+            verification_result = null;
             return;
         }
 
@@ -84,35 +83,39 @@
         } else if (selected.label === "Local") {
             sourceType = 2;
         } else {
-            verificationError = "Invalid source type selected.";
-            verificationResult = null;
+            verification_error = "Invalid source type selected.";
+            verification_result = null;
             return;
         }
-        
+
         try {
             // Try frontend validation first
-            const result = verifyAndExtractSourceInfo(repoUrlInput, sourceType);
-            const backendResult = await invoke<BackendVerificationResult>(
+            const result = verify_and_extract_source_info(
+                repo_url_input,
+                sourceType,
+            );
+            const backend_result = await invoke<BackendVerificationResult>(
                 "verify_and_extract_source_info",
                 {
-                    urlStr: repoUrlInput,
+                    urlStr: repo_url_input,
                     sourceType: sourceType,
                 },
             );
-            verificationResult = {
-                owner: backendResult.owner,
-                repo: backendResult.repo,
+            verification_result = {
+                owner: backend_result.owner,
+                repo: backend_result.repo,
             };
-            verificationError = null;
-            
+
+            verification_error = null;
+
             // Update the repo store with the new URL
-            setRepoUrl(repoUrlInput);
+            set_repo_url(repo_url_input);
             // Call loadBranches and loadCommitData and wait for both to complete
             const [branches, commitData] = await Promise.all([
-                load_branches(backendResult.owner, backendResult.repo),
-                load_commit_data(backendResult.owner, backendResult.repo),
+                load_branches(backend_result.owner, backend_result.repo),
+                load_commit_data(backend_result.owner, backend_result.repo),
             ]);
-            
+
             // Navigate to the overview page
             goto(`/overview-page`, {
                 state: {
@@ -121,32 +124,32 @@
                 },
             });
         } catch (error: any) {
-            verificationError = error.message || `Verification failed: ${error}`;
-            verificationResult = null;
+            verification_error = error.message || `Verification failed: ${error}`;
+            verification_result = null;
             console.error("Verification failed:", error);
         }
     }
 
-    function selectOption(option: RepoOption) {
+    function select_option(option: RepoOption) {
         selected = option;
-        dropdownOpen = false;
+        dropdown_open = false;
         // Reset verification status when option changes
-        verificationResult = null;
-        verificationError = null;
+        verification_result = null;
+        verification_error = null;
     }
 
-    function toggleDropdown() {
-        dropdownOpen = !dropdownOpen;
+    function toggle_dropdown() {
+        dropdown_open = !dropdown_open;
     }
 
-    function handleInputKeydown(event: KeyboardEvent) {
+    function handle_input_keydown(event: KeyboardEvent) {
         if (event.key === "Enter") {
-            handleVerification();
+            handle_verification();
         }
     }
 </script>
-<div class="page">
 
+<div class="page">
     <header>
         <div class="container">
             <div class="header-content">
@@ -159,15 +162,19 @@
                         />
                     </a>
                 </div>
-    
+
                 <div class="user-section">
                     <h6 class="white body-accent">{userName}</h6>
-                    <img src={profileImageURL} alt="Profile" class="profile-img" />
-    
+                    <img
+                        src={profile_image_url}
+                        alt="Profile"
+                        class="profile-img"
+                    />
+
                     <button
                         type="button"
                         class="hamburger-btn"
-                        on:click={toggleSidebar}
+                        on:click={toggle_sidebar}
                     >
                         <Icon
                             icon={"tabler:menu-2"}
@@ -179,15 +186,15 @@
             </div>
         </div>
     </header>
-    
+
     <main class="main">
         <div class="repo-start">
             <!-- Repo dropdown -->
             <div class="dropdown">
                 <button
                     type="button"
-                    class={`dropdown-btn ${dropdownOpen ? "show" : "hide"}`}
-                    on:click={toggleDropdown}
+                    class={`dropdown-btn ${dropdown_open ? "show" : "hide"}`}
+                    on:click={toggle_dropdown}
                 >
                     {#if selected}
                         <div class="dropdown-show">
@@ -206,13 +213,13 @@
                     {/if}
                     <img src="/dropdown_icon.png" alt="dropdown icon" />
                 </button>
-    
-                {#if dropdownOpen}
+
+                {#if dropdown_open}
                     <div class="dropdown-content">
                         {#each options as option}
                             <button
                                 class="dropdown-option"
-                                on:click={() => selectOption(option)}
+                                on:click={() => select_option(option)}
                             >
                                 <Icon
                                     icon={`tabler:${option.icon}`}
@@ -227,17 +234,17 @@
                     </div>
                 {/if}
             </div>
-    
+
             <!-- Repo link -->
             <div class="repo-link">
                 <input
                     class="repo-textbox display-body"
                     type="text"
-                    placeholder="enter a git repo..."
-                    bind:value={repoUrlInput}
-                    on:keydown={handleInputKeydown}
+                    placeholder="Enter a link to a remote repository or a path to a local one..."
+                    bind:value={repo_url_input}
+                    on:keydown={handle_input_keydown}
                 />
-                <button class="repo-button" on:click={handleVerification}>
+                <button class="repo-button" on:click={handle_verification}>
                     <Icon
                         icon={"tabler:circle-arrow-right"}
                         class="icon-medium"
@@ -245,24 +252,28 @@
                     />
                 </button>
             </div>
-    
+
             <!-- Verification Feedback -->
             <div class="verification-feedback">
-                {#if verificationResult}
+                {#if verification_result}
                     <p class="success-message white">
-                        Successfully verified! Owner: {verificationResult.owner},
-                        Repo: {verificationResult.repo}
+                        Successfully verified! Owner: {verification_result.owner},
+                        Repo: {verification_result.repo}
                     </p>
                 {/if}
-                {#if verificationError}
-                    <p class="error-message white">{verificationError}</p>
+                {#if verification_error}
+                    <p class="error-message white">{verification_error}</p>
                 {/if}
             </div>
-    
+
             <!-- Repo link list -->
             <div class="repo-bookmark-list">
-                {#each bookmarked_repo as bookmark (bookmark.repo_url)}
-                    <button class="repo-list-btn" type="button" on:click={() => bookmarkedRepo(bookmark.repo_url)}>
+                {#each bookmarked_repos as bookmark (bookmark.repo_url)}
+                    <button
+                        class="repo-list-btn"
+                        type="button"
+                        on:click={() => bookmarked_repo(bookmark.repo_url)}
+                    >
                         <h6 class="display-body repo-list-text white">
                             {bookmark.repo_url}
                         </h6>
@@ -271,9 +282,9 @@
             </div>
         </div>
     </main>
-    
+
     <!-- Sidebar -->
-    <div class={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
+    <div class={`sidebar ${sidebar_open ? "open" : "closed"}`}>
         <div class="sidebar-header">
             <div class="sidebar-title">
                 <Icon
@@ -283,11 +294,15 @@
                 />
                 <h1 class="title sidebar-title-text white">settings</h1>
             </div>
-            <button class="close-button" on:click={toggleSidebar}>
-                <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
+            <button class="close-button" on:click={toggle_sidebar}>
+                <Icon
+                    icon={"tabler:x"}
+                    class="icon-medium"
+                    style="color: white"
+                />
             </button>
         </div>
-    
+
         <div class="bookmark-list">
             <div class="bookmark-header">
                 <Icon
@@ -297,9 +312,13 @@
                 />
                 <h2 class="heading-1 bookmark-text white">bookmarks</h2>
             </div>
-    
-            {#each bookmarked_repo as repo (repo.repo_url)}
-                <button class="bookmark-item" type="button" on:click={() => bookmarkedRepo(repo.repo_url)}>
+
+            {#each bookmarked_repos as repo (repo.repo_url)}
+                <button
+                    class="bookmark-item"
+                    type="button"
+                    on:click={() => bookmarked_repo(repo.repo_url)}
+                >
                     <h6 class="heading-2 repo-name label-secondary">
                         {repo.repo_name}
                     </h6>
@@ -330,7 +349,6 @@
         margin-top: 2rem;
         margin-bottom: 0.8125rem;
         z-index: 500;
-
     }
 
     .header-content {
@@ -340,20 +358,17 @@
         align-items: center;
         justify-content: space-between;
         z-index: 500;
-
     }
 
     .logo-section {
         display: flex;
         z-index: 500;
-
     }
 
     .logo-img {
         height: 20px;
         width: auto;
         z-index: 500;
-
     }
 
     .user-section {
@@ -363,19 +378,16 @@
         padding-top: 8px;
         padding-bottom: 8px;
         z-index: 500;
-
     }
 
     .white {
         color: var(--white);
         z-index: 500;
-
     }
 
     .label-secondary {
         color: var(--label-secondary);
         z-index: 500;
-
     }
 
     .profile-img {
@@ -385,7 +397,6 @@
         margin-right: 0.8125rem;
         object-fit: cover;
         z-index: 500;
-
     }
 
     .hamburger-btn {
@@ -399,7 +410,6 @@
         justify-content: center;
         align-items: center;
         z-index: 500;
-
     }
 
     /* SIDEBAR */
@@ -684,4 +694,3 @@
         font-size: 0.875rem;
     }
 </style>
-
