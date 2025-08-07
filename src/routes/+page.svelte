@@ -203,7 +203,11 @@
                         <!-- This case should not happen with a default selected value -->
                         <h6 class="display-body white">Select an option</h6>
                     {/if}
-                    <img src="/dropdown_icon.png" alt="dropdown icon" />
+                        <Icon
+                            icon={`tabler:chevron-down`}
+                            class="icon-medium"
+                            style="color: white"
+                        />
                 </button>
     
                 {#if dropdownOpen}
