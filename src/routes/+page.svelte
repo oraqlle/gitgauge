@@ -109,10 +109,8 @@
             verification_error = null;
 
             // Call loadBranches and loadCommitData and wait for both to complete
-            const [contributors, branches] = await Promise.all([
-                load_commit_data(backend_result.owner, backend_result.repo),
-                load_branches(backend_result.repo),
-            ]);
+            const contributors = await load_commit_data(backend_result.owner, backend_result.repo);
+            const branches = await load_branches(backend_result.repo);
 
             // Navigate to the overview page
             goto(`/overview-page`, {
