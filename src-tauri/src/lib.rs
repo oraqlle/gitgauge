@@ -37,8 +37,30 @@ async fn get_contributor_info(path: &str, branch: Option<&str>, date_range: Opti
     /*
     date_range: Option<(i64, i64)> - Optional date range in UNIX timestamp format.
      */
-    let repo = Repository::open(path).map_err(|e| e.to_string())?;
+    let repo = match Repository::open(path) {
+        Ok(repo) => {
+            log::info!("Successfully opened repository at {}", path);
+            repo
+        },
+        Err(e) => {
+            return Err("Error opening repository".to_string());
+        }
+    };
+    
+    let mut branches: Vec<String> = Vec::new();
+    for branch in repo.branches(None).map_err(|e| e.to_string())? {
+        let (branch, _branch_type) = branch.map_err(|e| e.to_string())?;
+        if let Some(name) = branch.name().map_err(|e| e.to_string())? {
+            branches.push(name.to_string());
+        }
+    }
 
+    // Ensure the branch exists before proceeding
+    let target_branch = branch.unwrap_or("main");
+    if !branches.contains(&target_branch.to_string()) {
+        log::error!("Branch {} not found in the repository.", target_branch);
+        return Err(format!("Branch {} not found.", target_branch));
+    }
     // Resolve branch reference
     let mut revwalk = repo.revwalk().map_err(|e| e.to_string())?;
     let head = match branch {
@@ -104,9 +126,12 @@ fn clone_progress(cur_progress: usize, total_progress: usize) {
 #[tauri::command]
 async fn bare_clone(url: &str, path: &str) -> Result<(), String> {
     //Check if path is a valid directory
-    if std::path::Path::new(path).exists() {
-        return Err("Path already exists".to_string());
+     if is_repo_cloned(path) {
+        log::info!("Repository already exists at: {}", path);
+        return Ok(());  // Repository is already cloned, no need to clone again
     }
+    log::info!("Cloning repository from {} to {}", url, path);
+
     let mut callbacks = RemoteCallbacks::new();
     callbacks.transfer_progress(|progress| {
         clone_progress(progress.received_objects(), progress.total_objects());
@@ -121,6 +146,8 @@ async fn bare_clone(url: &str, path: &str) -> Result<(), String> {
         .fetch_options(fetch_opts)
         .clone(url, std::path::Path::new(path))
         .map_err(|e| e.to_string())?;
+    
+    log::info!("Repository cloned successfully at: {}", path);
     Ok(())
 }
 #[tauri::command]
@@ -134,10 +161,10 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
+            bare_clone,
             get_branch_names,
             get_contributor_info,
             github_url_verifier::verify_and_extract_source_info,
-            bare_clone,
             is_repo_cloned
         ])
         .run(tauri::generate_context!())

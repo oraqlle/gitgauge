@@ -61,6 +61,7 @@
         owner: string;
         repo: string;
     }
+    
 
     async function bookmarkedRepo(repoUrl: string) {
         repoUrlInput = repoUrl;
@@ -87,7 +88,7 @@
             verificationResult = null;
             return;
         }
-
+        
         try {
             // Try frontend validation first
             const result = verifyAndExtractSourceInfo(repoUrlInput, sourceType);
@@ -103,7 +104,7 @@
                 repo: backendResult.repo,
             };
             verificationError = null;
-
+            
             // Update the repo store with the new URL
             setRepoUrl(repoUrlInput);
             // Call loadBranches and loadCommitData and wait for both to complete
@@ -111,7 +112,7 @@
                 load_branches(backendResult.owner, backendResult.repo),
                 load_commit_data(backendResult.owner, backendResult.repo),
             ]);
-
+            
             // Navigate to the overview page
             goto(`/overview-page`, {
                 state: {
@@ -120,7 +121,7 @@
                 },
             });
         } catch (error: any) {
-            verificationError = error.message || "Verification failed.";
+            verificationError = error.message || `Verification failed: ${error}`;
             verificationResult = null;
             console.error("Verification failed:", error);
         }

@@ -15,11 +15,11 @@
 
     // Initialize from $page.state
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);
-    // let branches: string[] = $state(($page.state as any).branches || []);
-    // let selected_branch = $state("all");
-    // if (branches.length > 0 && !branches.includes(selected_branch)) {
-    //     selected_branch = "all";
-    // }
+    let branches: string[] = $state(($page.state as any).branches || []);
+    let selected_branch = $state("all");
+    if (branches.length > 0 && !branches.includes(selected_branch)) {
+        selected_branch = "all";
+    }
 
     let criteria = ["total commits", "lines of code", "lines/commit"];
     let selectedCriteria = criteria[0];
@@ -30,12 +30,20 @@
     function toggleSidebar() {
         sidebar_open = !sidebar_open;
     }
+    console.log("Passing contributors to Graph:", contributors);
 </script>
 
 <main class="container">
 
     <div class="header-row">
         <!-- Removed branch select dropdown -->
+        <select bind:value={selected_branch} class="branch-select">
+            {#each branches as branch}
+                <option value={branch}
+                    >{branch === "all" ? "All Branches" : branch}</option
+                >
+            {/each}
+        </select>
 
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
@@ -55,9 +63,8 @@
         />
 
     </div>
-
     <Graph {contributors} />
-    <ContributorCards users={contributors} />
+    <ContributorCards {selected_branch} users={contributors} />
 </main>
 
 <!-- Sidebar -->

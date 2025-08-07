@@ -17,12 +17,11 @@ export type Contributor = Readonly<{
 
 // Load branches for a repository
 export async function load_branches(owner: string, repo: string): Promise<string[]> {
-    info(`Loading branches for ${owner}/${repo}...`);
     const repoPath = `gitgauge/${repo}/${owner}`;
     try {
         const real_branches = await invoke<string[]>('get_branch_names', { path: repoPath });
-        info(`Done branches for ${owner}/${repo}...`);
         return ['All', ...real_branches];
+        
     } catch (err) {
         console.error('Failed to load branches: ', err);
         return ['All'];
@@ -38,19 +37,15 @@ export async function load_commit_data(owner: string, repo: string, branch?: str
         info(`Repository is cloned or already exists at ${repoPath}`);
     } catch (err) {
         info(`Failed to clone the repository: ${err}`);
-        console.error("Failed to clone repository:", err);
         return [];
     }
-    console.log('repo: ',repoPath);
 
     try {
         const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: repoPath, branch: branch || 'devel' });
-        info(`Done contributor data for ${owner}/${repo}...`);
-        console.log("Contributor Data:", commit_data);
-        return commit_data;
+        const commit_array = Object.values(commit_data);
+        return commit_array;
     } catch (err) {
         info(`Failed to get contributor data`)
-        console.error('Failed to load contributor data: ', err);
         return [];
     }
 }
