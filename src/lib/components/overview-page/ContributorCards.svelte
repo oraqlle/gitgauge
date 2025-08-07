@@ -36,12 +36,12 @@
             return {
                 username: user.author.login,
                 image: user.author.avatar_url,
-                numCommits,
-                totalLinesOfCode: get_user_total_lines_of_code(user),
-                linesPerCommit: get_user_lines_per_commit(user),
-                totalAdditions: get_user_total_additions(user),
-                totalDeletions: get_user_total_deletions(user),
-                scalingFactor: scalingFactor.toFixed(1),
+                num_commits: numCommits,
+                total_lines_of_code: get_user_total_lines_of_code(user),
+                lines_per_commit: get_user_lines_per_commit(user),
+                total_additions: get_user_total_additions(user),
+                total_deletions: get_user_total_deletions(user),
+                scaling_factor: scalingFactor.toFixed(1),
             };
         }),
     );

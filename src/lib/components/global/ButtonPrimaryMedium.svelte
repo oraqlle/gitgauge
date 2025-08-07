@@ -1,6 +1,10 @@
 <script>
     import Icon from "@iconify/svelte";
-    let { icon = null, label, disabled = false } = $props();
+    
+    let {
+        icon = null,
+        label, disabled = false
+    } = $props();
 </script>
 
 <button class="medium" {disabled}>

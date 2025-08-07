@@ -1,7 +1,10 @@
 <script lang="ts">
-    export let username: string;
-    export let image: string;
-    export let scalingFactor;
+    let {
+        username,
+        image,
+        scaling_factor,
+        content
+    } = $props();
 </script>
 
 <!--
@@ -30,14 +33,14 @@ This is a contributor card component that displays a user's profile information.
         <!-- header -->
         <div class="profile-details">
             <div class="body-accent">{username}</div>
-            {#if scalingFactor !== undefined}
+            {#if scaling_factor !== undefined}
                 <div class="body" style="color: var(--label-secondary)">
-                    scaling: {scalingFactor}
+                    scaling: {scaling_factor}
                 </div>
             {/if}
         </div>
 
-        <slot></slot>
+        {@render content()}
     </div>  
 </div>
 

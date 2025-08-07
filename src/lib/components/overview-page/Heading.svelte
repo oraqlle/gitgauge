@@ -56,8 +56,8 @@
       <ButtonTintedMedium 
         label="Config" 
         icon="settings-2" 
-        labelClass="body-accent" 
-        iconFirst={true} 
+        label_class="body-accent" 
+        icon_first={true}
         width="4rem" 
         on:click={openConfig}
       />
@@ -73,8 +73,8 @@
       <ButtonTintedMedium 
         label="{startDate}  →  {endDate}"
         icon="calendar-month" 
-        labelClass="body" 
-        iconFirst={false} 
+        label_class="body" 
+        icon_first={false} 
         width="16rem" 
         on:click={openCalendar} 
       />

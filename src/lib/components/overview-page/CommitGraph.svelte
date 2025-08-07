@@ -29,16 +29,16 @@
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
             label="commits"
-            labelClass="body"
-            iconFirst={false}
+            label_class="body"
+            icon_first={false}
             icon="chevron-down"
             width=12rem
         />
 
         <ButtonTintedMedium
             label="mean"
-            labelClass="body"
-            iconFirst={false}
+            label_class="body"
+            icon_first={false}
             icon="chevron-down"
             width=12rem
         />
