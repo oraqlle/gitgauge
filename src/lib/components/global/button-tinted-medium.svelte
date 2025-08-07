@@ -2,7 +2,7 @@
     import Icon from "@iconify/svelte";
     export let icon: string | null;
     export let label: string;
-    export let labelClass: string;
+    export let label_class: string;
     export let disabled: boolean = false;
     export let width: string;
     export let iconFirst: boolean;
@@ -17,9 +17,9 @@
                 style="color: currentColor"
             />
         {/if}
-        <div class="label"><span class={labelClass}>{label}</span></div>
+        <div class="label"><span class={label_class}>{label}</span></div>
     {:else}
-        <div class="label"><span class={labelClass}>{label}</span></div>
+        <div class="label"><span class={label_class}>{label}</span></div>
         {#if icon}
             <Icon
                 icon={`tabler:${icon}`}

@@ -5,7 +5,7 @@
   export let label: string;
   export let disabled: boolean = false;
   export let width: string = 'auto';
-  export let iconFirst: boolean = true;
+  export let icon_first: boolean = true;
   export let selected: boolean = false;
 
   
@@ -25,7 +25,7 @@
       : 'var(--label-secondary)'};
   "
 >
-  {#if iconFirst}
+  {#if icon_first}
     {#if icon}
       <Icon
         icon={`tabler:${icon}`}

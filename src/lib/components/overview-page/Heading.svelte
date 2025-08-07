@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createDropdownSelection } from "$lib/stores/dropdown";
+  import { create_dropdown_selection } from "$lib/stores/dropdown";
   import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
   import Icon from "@iconify/svelte";
   import ButtonTintedMedium from "$lib/components/global/button-tinted-medium.svelte";
@@ -11,17 +11,12 @@
   const { repoPath, repoType = "github" } = $props();
 
   let branches: string[] = $state(($page.state as any).branches || []);
-  let branchSelection = createDropdownSelection(branches[0] || "All");
+  let branchSelection = create_dropdown_selection(branches[0] || "All");
 
-  let startDate = '01-01-25';
-  let endDate   = '20-01-25';
+  let start_date = $state('01-01-25');
+  let end_date   = $state('20-01-25');
 
-  function onDateChange(e) {
-    startDate = e.detail.start;
-    endDate   = e.detail.end;
-  }
-
-  let selectedView: string = 'overview';
+  let selected_view: string = $state('overview');
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: 'chart-line' },
@@ -29,15 +24,15 @@
   ];
 
 
-  function selectView(id: string) {
-    selectedView = id;
+  function select_view(id: string) {
+    selected_view = id;
   }
 
-  function openConfig() {
+  function open_config() {
     //config logic
   }
   
-  function openCalendar() {
+  function open_calendar() {
     //calendar logic
     //task for future sprint
   }
@@ -56,10 +51,10 @@
       <ButtonTintedMedium 
         label="Config" 
         icon="settings-2" 
-        labelClass="body-accent" 
+        label_class="body-accent" 
         iconFirst={true} 
         width="4rem" 
-        on:click={openConfig}
+        on:click={open_config}
       />
 
       <!-- branch dropdown btn -->
@@ -71,12 +66,12 @@
 
       <!-- calendar btn -->
       <ButtonTintedMedium 
-        label="{startDate}  →  {endDate}"
+        label="{start_date}  →  {end_date}"
         icon="calendar-month" 
-        labelClass="body" 
+        label_class="body" 
         iconFirst={false} 
         width="16rem" 
-        on:click={openCalendar} 
+        on:click={open_calendar} 
       />
     
     </div>
@@ -89,9 +84,9 @@
         <ButtonUnderlineMedium
           label={tab.label}
           icon={tab.icon}
-          selected={selectedView === tab.id}
+          selected={selected_view === tab.id}
           width=20rem
-          on:click={() => selectView(tab.id)}
+          on:click={() => select_view(tab.id)}
         />
       {/each}
     </div>

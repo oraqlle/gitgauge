@@ -1,4 +1,3 @@
-//import type { User } from '../data/dummyData';
 import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 
@@ -21,7 +20,7 @@ export async function load_branches(owner: string, repo: string): Promise<string
     try {
         const real_branches = await invoke<string[]>('get_branch_names', { path: repoPath });
         return ['All', ...real_branches];
-        
+
     } catch (err) {
         console.error('Failed to load branches: ', err);
         return ['All'];
@@ -31,17 +30,17 @@ export async function load_branches(owner: string, repo: string): Promise<string
 export async function load_commit_data(owner: string, repo: string, branch?: string): Promise<Contributor[]> {
     info(`Loading contributor data for ${owner}/${repo}...`);
 
-    const repoPath = `gitgauge/${repo}/${owner}`;
+    const repo_path = `gitgauge/${repo}/${owner}`;
     try {
-        await invoke('bare_clone', { url: `https://github.com/${owner}/${repo}`, path: repoPath });
-        info(`Repository is cloned or already exists at ${repoPath}`);
+        await invoke('bare_clone', { url: `https://github.com/${owner}/${repo}`, path: repo_path });
+        info(`Repository is cloned or already exists at ${repo_path}`);
     } catch (err) {
         info(`Failed to clone the repository: ${err}`);
         return [];
     }
 
     try {
-        const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: repoPath, branch: branch || 'devel' });
+        const commit_data = await invoke<Contributor[]>('get_contributor_info', { path: repo_path, branch: branch || 'devel' });
         const commit_array = Object.values(commit_data);
         return commit_array;
     } catch (err) {

@@ -13,9 +13,12 @@
   </script>
   
   <div class="grid">
-    {#each contributors as c (c.name)}
-      <a href={c.profile} target="_blank" rel="noopener noreferrer" class="tile-link">
-        <ContributorTile name={c.name} avatarUrl={c.avatar_url} role={c.role} />
+    {#each contributors as contributor (contributor.name)}
+      <a href={contributor.profile} target="_blank" rel="noopener noreferrer" class="tile-link">
+        <ContributorTile
+            name={contributor.name}
+            avatar_url={contributor.avatar_url}
+        />
       </a>
     {/each}
   </div>

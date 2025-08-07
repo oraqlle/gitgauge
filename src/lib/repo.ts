@@ -1,11 +1,10 @@
 export type Repo = {
-  repoPath: string;
-  repoUrl: string;
-  repoType: string
+  repo_path: string;
+  repo_url: string;
+  repo_type: string
 };
 
-
-export function getRepoType(url: string) {
+export function get_repo_type(url: string) {
   const domain = new URL(url).hostname;
 
   if (domain.includes("github.com")) {

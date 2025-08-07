@@ -7,7 +7,7 @@
     import ContributorGrid from '$lib/components/overview-page/ContributorGrid.svelte';
     import Heading from '$lib/components/overview-page/Heading.svelte';
 
-    //dummy data for demo
+    // dummy data for demo
     import { currentRepo } from '$lib/stores/repo';
 
     let profileImageURL = '/mock_profile_img.png';

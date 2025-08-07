@@ -1,7 +1,7 @@
 use git2::{build::RepoBuilder, RemoteCallbacks};
 
 fn clone_progress(cur_progress: usize, total_progress: usize) {
-    println!("Progress: {}/{}", cur_progress, total_progress);
+    println!("\rProgress: {}/{}", cur_progress, total_progress);
 }
 
 #[tauri::command]

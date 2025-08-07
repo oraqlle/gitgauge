@@ -4,33 +4,33 @@
   import 'flatpickr/dist/flatpickr.css';
   import Icon from '@iconify/svelte';
 
-  export let initialStart: string = '';
-  export let initialEnd: string = '';
-  export let dateFormat: string = 'd-m-y';
+  export let initial_start: string = '';
+  export let initial_end: string = '';
+  export let date_format: string = 'd-m-y';
   export let icon: string = 'calendar-month';
-  export let iconFirst: boolean = false;
-  export let labelClass: string = 'body';
+  export let icon_first: boolean = false;
+  export let label_class: string = 'body';
   export let disabled: boolean = false;
   export let width: string = 'auto';
 
-  let start = initialStart;
-  let end = initialEnd;
+  let start = initial_start;
+  let end = initial_end;
 
   const dispatch = createEventDispatcher();
-  let inputEl: HTMLInputElement;
+  let input_elem: HTMLInputElement;
   let picker: flatpickr.Instance;
 
   $: label = (start && end) ? `${start} → ${end}` : 'Select dates';
 
   onMount(() => {
-    picker = flatpickr(inputEl, {
+    picker = flatpickr(input_elem, {
       mode: 'range',
-      dateFormat,
+      dateFormat: date_format,
       defaultDate: [start, end].filter(Boolean),
       onClose: (selectedDates) => {
         if (selectedDates.length === 2) {
           const [s, e] = selectedDates.map(d =>
-            flatpickr.formatDate(d, dateFormat)
+            flatpickr.formatDate(d, date_format)
           );
           start = s;
           end = e;
@@ -48,16 +48,16 @@
   }
 </script>
 
-<input type="text" bind:this={inputEl} class="hidden-input" />
+<input type="text" bind:this={input_elem} class="hidden-input" />
 
 <button class="calendar-button" on:click={open} {disabled} style="width: {width}">
-  {#if iconFirst}
+  {#if icon_first}
     {#if icon}
       <Icon icon={`tabler:${icon}`} class="icon-medium" />
     {/if}
-    <div class="label"><span class={labelClass}>{label}</span></div>
+    <div class="label"><span class={label_class}>{label}</span></div>
   {:else}
-    <div class="label"><span class={labelClass}>{label}</span></div>
+    <div class="label"><span class={label_class}>{label}</span></div>
     {#if icon}
       <Icon icon={`tabler:${icon}`} class="icon-medium" />
     {/if}

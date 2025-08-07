@@ -1,48 +1,62 @@
 <script lang="ts">
-    // export let Contributor: Contributor;
-    export let name: string;
-    export let avatarUrl: string;
-
-    export let contributions: {
-    stats: {
-        numCommits: number;
-        linesOfCode: number;
-        meanLinesPerCommit: number;
-        additions: number;
-        deletions: number;
-        meanCommitsPerDay: number;
+    type Contributions = {
+            stats: {
+                num_commits: number;
+                lines_of_code: number;
+                mean_lines_per_commit: number;
+                additions: number;
+                deletions: number;
+                mean_commits_per_day: number;
+            };
+            scaling: number;
+            analysis: string;
     };
-    scaling: number;
-    analysis: string;
-    } = 
-    {
-        stats: {
-            numCommits: 72,
-            linesOfCode: 94,
-            meanLinesPerCommit: 0.75,
-            additions: 82,
-            deletions: 43,
-            meanCommitsPerDay: 3.2,
+
+    let {
+        name,
+        avatar_url,
+        contributions = {
+            stats: {
+                num_commits: 72,
+                lines_of_code: 94,
+                mean_lines_per_commit: 0.75,
+                additions: 82,
+                deletions: 43,
+                mean_commits_per_day: 3.2,
+            },
+            scaling: 1.1,
+            analysis: "lorem ipsum",
         },
-        scaling: 1.1,
-        analysis: 'lorem ipsum',
-    };
-
-
+    }: {
+        name: string;
+        avatar_url: string;
+        contributions?: Contributions;
+    } = $props();
 </script>
-  
-  <div class="tile">
-    <img src={avatarUrl} alt={name} class="avatar" />
+
+<div class="tile">
+    <img src={avatar_url} alt={name} class="avatar" />
     <div class="profile-preview">
         <div class="heading-1">{name}</div>
         <div class="contributor-stats">
             scaling: {contributions.scaling}
-            <p>  
-                <span style="white-space: nowrap;">{contributions.stats.numCommits} commits</span> &nbsp;&nbsp;&nbsp;
-                <span style="white-space: nowrap;">{contributions.stats.linesOfCode} lines of code</span> &nbsp;&nbsp;&nbsp;
-                <span style="white-space: nowrap;">{contributions.stats.meanLinesPerCommit} lines/commit</span> &nbsp;&nbsp;&nbsp;
-                <span style="white-space: nowrap;">{contributions.stats.meanCommitsPerDay} commits/day</span>
-            </p>  
+            <p>
+                <span style="white-space: nowrap;"
+                    >{contributions.stats.num_commits} commits</span
+                >
+                &nbsp;&nbsp;&nbsp;
+                <span style="white-space: nowrap;"
+                    >{contributions.stats.lines_of_code} lines of code</span
+                >
+                &nbsp;&nbsp;&nbsp;
+                <span style="white-space: nowrap;"
+                    >{contributions.stats.mean_lines_per_commit} lines/commit</span
+                >
+                &nbsp;&nbsp;&nbsp;
+                <span style="white-space: nowrap;"
+                    >{contributions.stats.mean_commits_per_day} commits/day</span
+                >
+            </p>
             <div class="git-changes">
                 <div class="additions">
                     {contributions.stats.additions}++ additions
@@ -53,9 +67,9 @@
             </div>
         </div>
     </div>
-  </div>
-  
-  <style>
+</div>
+
+<style>
     .tile {
         background: var(--background-tile, #222);
         border-radius: 8px;
@@ -76,7 +90,7 @@
         padding-right: 1.5rem;
         text-align: left;
     }
-  
+
     .avatar {
         width: 60px;
         height: 60px;
@@ -84,9 +98,11 @@
         object-fit: cover;
         margin-bottom: 0.75rem;
     }
-  
+
     .contributor-stats {
-        font-family: DM Sans, monospace;
+        font-family:
+            DM Sans,
+            monospace;
         font-size: 0.9rem;
         color: var(--label-tertiary, #aaa);
         line-height: 1.8;
@@ -100,14 +116,12 @@
         white-space: nowrap;
         /* margin-top: 0.5rem; */
     }
-    
+
     .additions {
-        color: lime
+        color: lime;
     }
 
     .deletions {
-        color: coral
+        color: coral;
     }
-
-  </style>
-
+</style>

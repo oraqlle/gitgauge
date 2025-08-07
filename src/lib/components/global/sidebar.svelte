@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { sidebarOpen, closeSidebar } from '$lib/stores/sidebar';
+    import { sidebar_open, close_sidebar } from '$lib/stores/sidebar';
     import { bookmarks } from '$lib/stores/bookmarks';
     import Icon from '@iconify/svelte';
   
   </script>
   
-  <div class={`sidebar ${$sidebarOpen ? 'open' : 'closed'}`}>
+  <div class={`sidebar ${$sidebar_open ? 'open' : 'closed'}`}>
     <div class="sidebar-header">
       <div class="sidebar-title">
         <Icon icon="tabler:chart-line" class="icon-large" style="color: white" />
         <h1 class="title sidebar-title-text white">Settings</h1>
       </div>
-      <button class="close-button" on:click={closeSidebar} aria-label="Close sidebar">
+      <button class="close-button" on:click={close_sidebar} aria-label="Close sidebar">
         <Icon icon="tabler:x" class="icon-medium" style="color: white" />
       </button>
     </div>
@@ -22,7 +22,7 @@
         <h2 class="heading-1 bookmark-text white">Bookmarks</h2>
       </div>
   
-      {#each $bookmarks as repo (repo.repoUrl)}
+      {#each $bookmarks as repo (repo.repoPath)}
         <button class="bookmark-item" type="button">
           <h6 class="heading-2 repo-name label-secondary">{repo.repoPath}</h6>
           <h6 class="caption repo-url label-secondary">{repo.repoUrl}</h6>

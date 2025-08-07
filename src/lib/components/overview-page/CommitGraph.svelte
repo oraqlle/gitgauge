@@ -9,32 +9,36 @@
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { info } from "@tauri-apps/plugin-log";
     import { page } from "$app/stores"; // Import the $page store
-    import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte"
-    import { createDropdownSelection } from "$lib/stores/dropdown";
+    import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
+    import { create_dropdown_selection } from "$lib/stores/dropdown";
     import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
 
     // Initialize from $page.state
-    let contributors: Contributor[] = $state(($page.state as any).commitData || []);
+    let contributors: Contributor[] = $state(
+        ($page.state as any).commitData || [],
+    );
     let branches: string[] = $state(($page.state as any).branches || []);
     let selected_branch = $state("all");
-    if (branches.length > 0 && !branches.includes(selected_branch)) {
-        selected_branch = "all";
-    }
+
+    $effect(() => {
+        if (branches.length > 0 && !branches.includes(selected_branch)) {
+            selected_branch = "all";
+        }
+    });
 
     let criteria = ["total commits", "lines of code", "lines/commit"];
-    let selectedCriteria = criteria[0];
+    let selected_criteria = criteria[0];
 
     let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
 
-    function toggleSidebar() {
+    function toggle_sidebar() {
         sidebar_open = !sidebar_open;
     }
     console.log("Passing contributors to Graph:", contributors);
 </script>
 
 <main class="container">
-
     <div class="header-row">
         <!-- Removed branch select dropdown -->
         <select bind:value={selected_branch} class="branch-select">
@@ -48,20 +52,19 @@
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
             label="commits"
-            labelClass="body"
+            label_class="body"
             iconFirst={false}
             icon="chevron-down"
-            width=12rem
+            width="12rem"
         />
 
         <ButtonTintedMedium
             label="mean"
-            labelClass="body"
+            label_class="body"
             iconFirst={false}
             icon="chevron-down"
-            width=12rem
+            width="12rem"
         />
-
     </div>
     <Graph {contributors} />
     <ContributorCards {selected_branch} users={contributors} />
@@ -78,7 +81,7 @@
             />
             <h1 class="title sidebar-title-text white">settings</h1>
         </div>
-        <button class="close-button" onclick={toggleSidebar}>
+        <button class="close-button" onclick={toggle_sidebar}>
             <Icon icon={"tabler:x"} class="icon-medium" style="color: white" />
         </button>
     </div>
@@ -133,7 +136,6 @@
         align-items: end;
         margin-bottom: 2rem;
         padding: 1rem;
-        
     }
 
     .branch-select {

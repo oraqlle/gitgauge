@@ -11,16 +11,16 @@
   
     let open = false;
   
-    function toggleDropdown() {
+    function toggle_dropdown() {
       if (!disabled) open = !open;
     }
   
-    function selectOption(option: any) {
+    function select_option(option: any) {
       if (selected) selected.set(option);
       open = false;
     }
   
-    function handleClickOutside(event: MouseEvent) {
+    function handle_click_outside(event: MouseEvent) {
       if (!event.target || !(event.target as HTMLElement).closest(".dropdown-wrapper")) {
         open = false;
       }
@@ -28,10 +28,10 @@
   
     import { onMount, onDestroy } from "svelte";
     onMount(() => {
-      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("click", handle_click_outside);
     });
     onDestroy(() => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("click", handle_click_outside);
     });
   </script>
   
@@ -41,7 +41,7 @@
       class="dropdown-toggle"
       aria-haspopup="listbox"
       aria-expanded={open}
-      on:click={toggleDropdown}
+      on:click={toggle_dropdown}
       disabled={disabled}
     >
       <span class="selected-label body">{selected ? getLabel($selected) : "Select an option"}</span>
@@ -59,8 +59,8 @@
             role="option"
             aria-selected={selected && option === $selected}
             class="dropdown-item body {selected && option === $selected ? 'selected' : ''}"
-            on:click={() => selectOption(option)}
-            on:keydown={(e) => e.key === "Enter" && selectOption(option)}
+            on:click={() => select_option(option)}
+            on:keydown={(e) => e.key === "Enter" && select_option(option)}
             tabindex="0"
           >
             {getLabel(option)}
