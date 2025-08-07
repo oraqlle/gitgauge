@@ -2,7 +2,7 @@
     import Heading from "$lib/components/overview-page/Heading.svelte";
     import CommitGraph from "$lib/components/overview-page/CommitGraph.svelte";
     import { currentRepo } from "$lib/stores/repo";
-    import ButtonPrimaryMedium from "$lib/components/global/button-primary-medium.svelte";
+    import ButtonPrimaryMedium from "$lib/components/global/ButtonPrimaryMedium.svelte";
 </script>
 
 <div class="page">

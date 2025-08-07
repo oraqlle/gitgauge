@@ -8,7 +8,7 @@
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
     import { page } from "$app/stores"; // Import the $page store
-    import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
+    import ButtonTintedMedium from "../global/ButtonTintedMedium.svelte";
 
     // Initialize from $page.state
     let contributors: Contributor[] = $state(($page.state as any).commitData || []);

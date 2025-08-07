@@ -3,7 +3,7 @@
     //import layout components
     import Banner from '$lib/components/overview-page/Banner.svelte';
     import UserMenu from '$lib/components/overview-page/UserMenu.svelte';
-    import Sidebar from '$lib/components/global/sidebar.svelte';
+    import Sidebar from '$lib/components/global/Sidebar.svelte';
 
     //dummy data for demo
     import { currentRepo } from '$lib/stores/repo';

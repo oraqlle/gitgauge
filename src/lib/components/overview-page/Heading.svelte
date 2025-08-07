@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { createDropdownSelection } from "$lib/stores/dropdown";
-  import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
+  import DropdownTintedMedium from "$lib/components/global/DropdownTintedMedium.svelte";
   import Icon from "@iconify/svelte";
-  import ButtonTintedMedium from "$lib/components/global/button-tinted-medium.svelte";
-  import ButtonUnderlineMedium from "$lib/components/global/button-underline-medium.svelte"
-  import Calendar from '$lib/components/global/calendar.svelte';
+  import ButtonTintedMedium from "$lib/components/global/ButtonTintedMedium.svelte";
+  import Tab from "$lib/components/global/Tab.svelte"
+  import Calendar from '$lib/components/global/Calendar.svelte';
   import { page } from "$app/stores";
 
   const { repoPath, repoType = "github" } = $props();
@@ -86,7 +86,7 @@
     <div class="page-select-btns">
       <!-- for each tab -->
         {#each tabs as tab}
-        <ButtonUnderlineMedium
+        <Tab
           label={tab.label}
           icon={tab.icon}
           selected={selectedView === tab.id}
