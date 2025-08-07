@@ -1,16 +1,24 @@
 <script>
+    import { page } from "$app/state";
     import Heading from "$lib/components/overview-page/Heading.svelte";
     import CommitGraph from "$lib/components/overview-page/CommitGraph.svelte";
-    import { current_repo } from "$lib/stores/repo";
     import ButtonPrimaryMedium from "$lib/components/global/button-primary-medium.svelte";
+
+    let repo_path = $derived(page.state.repo_path);
+    let repo_type = $derived(page.state.repo_type);
+    let branches = $state(page.state.branches);
+    let contributors = $derived(page.state.contributors);
 </script>
 
 <div class="page">
     <Heading
-        repo_path={$current_repo.repo_path.split("/").pop() || $current_repo.repo_path}
-        repo_type={$current_repo.repo_type}
+        repo_path={repo_path.split("/").pop() || repo_path}
+        repo_type={repo_type}
     />
-    <CommitGraph />
+    <CommitGraph
+        contributors={contributors}
+        branches={branches}
+    />
     <div class="bottom-container">
         <ButtonPrimaryMedium
             icon="table-import"

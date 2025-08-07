@@ -3,9 +3,8 @@
     import { verify_and_extract_source_info } from "$lib/github_url_verifier.js";
     import Icon from "@iconify/svelte";
     import { load_branches, load_commit_data } from "$lib/metrics";
-    import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
-    import { set_repo_url } from "$lib/stores/repo";
+    import { get_repo_type } from "$lib/repo";
     interface RepoBookmark {
         repo_name: string;
         repo_url: string;
@@ -70,18 +69,19 @@
 
     async function handle_verification() {
         if (!selected || !repo_url_input.trim()) {
-            verification_error = "Please select a source type and enter a URL/path.";
+            verification_error =
+                "Please select a source type and enter a URL/path.";
             verification_result = null;
             return;
         }
 
-        let sourceType: 0 | 1 | 2;
+        let source_type: 0 | 1 | 2;
         if (selected.label === "GitHub") {
-            sourceType = 0;
+            source_type = 0;
         } else if (selected.label === "GitLab") {
-            sourceType = 1;
+            source_type = 1;
         } else if (selected.label === "Local") {
-            sourceType = 2;
+            source_type = 2;
         } else {
             verification_error = "Invalid source type selected.";
             verification_result = null;
@@ -92,13 +92,13 @@
             // Try frontend validation first
             const result = verify_and_extract_source_info(
                 repo_url_input,
-                sourceType,
+                source_type,
             );
             const backend_result = await invoke<BackendVerificationResult>(
                 "verify_and_extract_source_info",
                 {
                     urlStr: repo_url_input,
-                    sourceType: sourceType,
+                    sourceType: source_type,
                 },
             );
             verification_result = {
@@ -108,10 +108,8 @@
 
             verification_error = null;
 
-            // Update the repo store with the new URL
-            set_repo_url(repo_url_input);
             // Call loadBranches and loadCommitData and wait for both to complete
-            const [branches, commit_data] = await Promise.all([
+            const [contributors, branches] = await Promise.all([
                 load_commit_data(backend_result.owner, backend_result.repo),
                 load_branches(backend_result.repo),
             ]);
@@ -119,12 +117,16 @@
             // Navigate to the overview page
             goto(`/overview-page`, {
                 state: {
+                    repo_url: repo_url_input,
+                    repo_path: new URL(repo_url_input).pathname.slice(1),
+                    repo_type: get_repo_type(repo_url_input),
                     branches: branches,
-                    commitData: commit_data,
+                    contributors: contributors,
                 },
             });
         } catch (error: any) {
-            verification_error = error.message || `Verification failed: ${error}`;
+            verification_error =
+                error.message || `Verification failed: ${error}`;
             verification_result = null;
             console.error("Verification failed:", error);
         }

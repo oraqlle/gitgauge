@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { page } from "$app/state";
   import { create_dropdown_selection } from "$lib/stores/dropdown";
   import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
   import Icon from "@iconify/svelte";
   import ButtonTintedMedium from "$lib/components/global/button-tinted-medium.svelte";
   import ButtonUnderlineMedium from "$lib/components/global/button-underline-medium.svelte"
-  import Calendar from '$lib/components/global/calendar.svelte';
-  import { page } from "$app/stores";
 
   let { repo_path: repo_path, repo_type: repo_type = "github" } = $props();
 
-  let branches: string[] = $state(($page.state as any).branches || []);
-  let branch_selection = create_dropdown_selection(branches[0] || "All");
+  let branches: string[] = $derived(page.state.branches || []);
+  let branch_selection = $derived(create_dropdown_selection(branches[0] || "All"));
 
   let start_date = $state('01-01-25');
   let end_date   = $state('20-01-25');

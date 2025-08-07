@@ -1,23 +1,17 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
-    import {
-        load_branches,
-        load_commit_data,
-        type Contributor,
-    } from "$lib/metrics";
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import { info } from "@tauri-apps/plugin-log";
-    import { page } from "$app/stores"; // Import the $page store
     import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
     import { create_dropdown_selection } from "$lib/stores/dropdown";
     import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
+    import type { Contributor } from "$lib/metrics";
 
-    // Initialize from $page.state
-    let contributors: Contributor[] = $state(
-        ($page.state as any).commitData || [],
-    );
-    let branches: string[] = $state(($page.state as any).branches || []);
+    let {
+        contributors,
+        branches,
+    }: { contributors: Contributor[]; branches: String[] } = $props();
+
     let selected_branch = $state("all");
 
     $effect(() => {
@@ -35,7 +29,6 @@
     function toggle_sidebar() {
         sidebar_open = !sidebar_open;
     }
-    console.log("Passing contributors to Graph:", $state.snapshot(contributors));
 </script>
 
 <main class="container">
@@ -43,9 +36,9 @@
         <!-- Removed branch select dropdown -->
         <select bind:value={selected_branch} class="branch-select">
             {#each branches as branch}
-                <option value={branch}
-                    >{branch === "all" ? "All Branches" : branch}</option
-                >
+                <option value={branch}>
+                    {branch === "all" ? "All Branches" : branch}
+                </option>
             {/each}
         </select>
 

@@ -28,11 +28,11 @@ pub async fn get_contributor_info(
     branch: Option<&str>,
     date_range: Option<(i64, i64)>,
 ) -> Result<HashMap<String, Contributor>, String> {
-    let canonacal_path = std::path::Path::new(path)
+    let canonical_path = std::path::Path::new(path)
         .canonicalize()
         .map_err(|e| e.to_string())?;
 
-    let repo = match Repository::open(canonacal_path) {
+    let repo = match Repository::open(canonical_path) {
         Ok(repo) => {
             log::info!("Successfully opened repository at {}", path);
             repo
@@ -52,26 +52,22 @@ pub async fn get_contributor_info(
         }
     }
 
-    // Ensure the branch exists before proceeding
-    let target_branch = branch.unwrap_or("main");
-    if !branches.contains(&target_branch.to_string()) {
-        log::error!("Branch: {} not found in the repository.", target_branch);
-        return Err(format!(
-            "Branch: {} not found in the repository.",
-            target_branch
-        ));
-    }
-
     // Resolve branch reference
     let mut revwalk = repo.revwalk().map_err(|e| e.to_string())?;
     let head = match branch {
-        Some(b) => repo
-            .find_branch(b, BranchType::Local)
-            .map_err(|e| e.to_string())?
-            .get()
-            .target()
-            .ok_or(git2::Error::from_str("Invalid branch head"))
-            .map_err(|e| e.to_string())?,
+        Some(target) => {
+            // Ensure the branch exists before proceeding
+            if !branches.contains(&target.to_string()) {
+                log::error!("Branch: {} not found in the repository.", target);
+                return Err(format!("Branch: {} not found in the repository.", target));
+            }
+            repo.find_branch(target, BranchType::Local)
+                .map_err(|e| e.to_string())?
+                .get()
+                .target()
+                .ok_or(git2::Error::from_str("Invalid branch head"))
+                .map_err(|e| e.to_string())?
+        }
         None => repo
             .head()
             .map_err(|e| e.to_string())?

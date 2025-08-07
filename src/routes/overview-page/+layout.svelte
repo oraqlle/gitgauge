@@ -1,24 +1,23 @@
 <script lang="ts">
+    import { page } from "$app/state";
 
     //import layout components
     import Banner from '$lib/components/overview-page/Banner.svelte';
     import UserMenu from '$lib/components/overview-page/UserMenu.svelte';
     import Sidebar from '$lib/components/global/sidebar.svelte';
-    import ContributorGrid from '$lib/components/overview-page/ContributorGrid.svelte';
-    import Heading from '$lib/components/overview-page/Heading.svelte';
 
-    // dummy data for demo
-    import { current_repo } from '$lib/stores/repo';
-
-    let profileImageURL = '/mock_profile_img.png';
-    let userName = 'Baaset Moslih';
-
+    let profile_image_url = '/mock_profile_img.png';
+    let user_name = 'Baaset Moslih';
+     
+    let repo_url = $derived(page.state.repo_url);
+    let repo_path = $derived(page.state.repo_path);
+    let repo_type = $derived(page.state.repo_type);
 
 </script>
 
 <header class="header">
-    <Banner repo_url={$current_repo.repo_url} repo_path={$current_repo.repo_path}/>
-    <UserMenu {userName} {profileImageURL} />
+    <Banner repo_url={repo_url} repo_path={repo_path}/>
+    <UserMenu username={user_name} profile_image_url={profile_image_url} />
 </header>
 
 <main class="body">

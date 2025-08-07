@@ -2,15 +2,14 @@
   import Icon from '@iconify/svelte';
   import { sidebar_open, open_sidebar } from '$lib/stores/sidebar';
 
-  export let userName: string;
-  export let profileImageURL: string;
+  let { username, profile_image_url } = $props();
 
 </script>
   
   <!-- user menu: user name, avatar, and sidebar toggle button -->
 <div class="user-menu">
-  <h6 class="body-accent user-name">{userName}</h6>
-  <img src="{profileImageURL}" alt="Profile" class="profile-img" />
+  <h6 class="body-accent user-name">{username}</h6>
+  <img src="{profile_image_url}" alt="Profile" class="profile-img" />
 
   <button class="hamburger-btn" on:click={open_sidebar} aria-expanded={$sidebar_open}>
     <Icon icon="tabler:menu-2" class="icon-medium" />
