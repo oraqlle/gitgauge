@@ -23,30 +23,30 @@
     let commit_mean = get_average_commits(users);
     let sd = get_sd(users);
 
-    let peopleWithMetrics = $derived(
+    let people_with_metrics = $derived(
         users.map((user: Contributor) => {
-            const numCommits = get_user_total_commits(user);
-            const scalingFactor = calculate_scaling_factor(
-                numCommits,
+            const num_commits = get_user_total_commits(user);
+            const scaling_factor = calculate_scaling_factor(
+                num_commits,
                 commit_mean,
                 sd,
             );
             return {
-                username: user.author.login,
-                image: user.author.avatar_url,
-                numCommits,
-                totalLinesOfCode: get_user_total_lines_of_code(user),
-                linesPerCommit: get_user_lines_per_commit(user),
-                totalAdditions: get_user_total_additions(user),
-                totalDeletions: get_user_total_deletions(user),
-                scalingFactor: scalingFactor.toFixed(1),
+                username: user.bitmap_hash,
+                image: user.bitmap,
+                num_commits: num_commits,
+                total_lines_of_code: get_user_total_lines_of_code(user),
+                lines_per_commit: get_user_lines_per_commit(user),
+                total_additions: get_user_total_additions(user),
+                total_deletions: get_user_total_deletions(user),
+                scaling_factor: scaling_factor.toFixed(1),
             };
         }),
     );
 </script>
 
 <div class="cards-row">
-    {#each peopleWithMetrics as person}
+    {#each people_with_metrics as person}
         <div class="profile-card">
             <div class="profile-header-row">
                 <img
@@ -58,27 +58,27 @@
                     <div class="profile-header-info">
                         <div class="profile-title">{person.username}</div>
                         <div class="profile-scaling">
-                            scaling: {person.scalingFactor}
+                            scaling: {person.scaling_factor}
                         </div>
                     </div>
                     <div class="profile-metrics-main">
                         <div class="profile-metrics-row">
-                            <span>{person.numCommits} commits</span>
+                            <span>{person.num_commits} commits</span>
                             <span class="metrics-separator">&nbsp;&nbsp;</span>
-                            <span>{person.totalLinesOfCode} lines of code</span>
+                            <span>{person.total_lines_of_code} lines of code</span>
                         </div>
                         <div class="profile-metrics-row">
-                            <span>{person.linesPerCommit} lines/commit</span>
+                            <span>{person.lines_per_commit} lines/commit</span>
                             <span class="metrics-separator">&nbsp;&nbsp;</span>
                             <span class="metrics-seperator">&nbsp;&nbsp;</span>
                         </div>
                         <div class="profile-metrics-row">
                             <span class="metrics-additions"
-                                >{person.totalAdditions}++ additions</span
+                                >{person.total_additions}++ additions</span
                             >
                             <span class="metrics-separator">&nbsp;&nbsp;</span>
                             <span class="metrics-deletions"
-                                >{person.totalDeletions}-- deletions</span
+                                >{person.total_deletions}-- deletions</span
                             >
                         </div>
                     </div>

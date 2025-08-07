@@ -66,8 +66,8 @@
         let userTotalCommits: any[] = [];
         users.forEach(user => {
             userTotalCommits.push({
-                username: user.author.login,
-                image: user.author.avatar_url,
+                username: user.bitmap_hash,
+                image: user.bitmap,
                 numCommits: user.total_commits
             });
         });

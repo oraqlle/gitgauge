@@ -8,7 +8,7 @@
     import Heading from '$lib/components/overview-page/Heading.svelte';
 
     // dummy data for demo
-    import { currentRepo } from '$lib/stores/repo';
+    import { current_repo } from '$lib/stores/repo';
 
     let profileImageURL = '/mock_profile_img.png';
     let userName = 'Baaset Moslih';
@@ -17,7 +17,7 @@
 </script>
 
 <header class="header">
-    <Banner repoUrl={$currentRepo.repoUrl} repoPath={$currentRepo.repoPath}/>
+    <Banner repo_url={$current_repo.repo_url} repo_path={$current_repo.repo_path}/>
     <UserMenu {userName} {profileImageURL} />
 </header>
 

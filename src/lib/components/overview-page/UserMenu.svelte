@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  import { sidebarOpen, openSidebar } from '$lib/stores/sidebar';
+  import { sidebar_open, open_sidebar } from '$lib/stores/sidebar';
 
   export let userName: string;
   export let profileImageURL: string;
@@ -12,7 +12,7 @@
   <h6 class="body-accent user-name">{userName}</h6>
   <img src="{profileImageURL}" alt="Profile" class="profile-img" />
 
-  <button class="hamburger-btn" on:click={openSidebar} aria-expanded={$sidebarOpen}>
+  <button class="hamburger-btn" on:click={open_sidebar} aria-expanded={$sidebar_open}>
     <Icon icon="tabler:menu-2" class="icon-medium" />
   </button>
 </div>

@@ -35,7 +35,7 @@
     function toggle_sidebar() {
         sidebar_open = !sidebar_open;
     }
-    console.log("Passing contributors to Graph:", contributors);
+    console.log("Passing contributors to Graph:", $state.snapshot(contributors));
 </script>
 
 <main class="container">

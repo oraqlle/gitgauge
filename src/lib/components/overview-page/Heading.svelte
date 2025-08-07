@@ -8,10 +8,10 @@
   import Calendar from '$lib/components/global/calendar.svelte';
   import { page } from "$app/stores";
 
-  const { repoPath, repoType = "github" } = $props();
+  let { repo_path: repo_path, repo_type: repo_type = "github" } = $props();
 
   let branches: string[] = $state(($page.state as any).branches || []);
-  let branchSelection = create_dropdown_selection(branches[0] || "All");
+  let branch_selection = create_dropdown_selection(branches[0] || "All");
 
   let start_date = $state('01-01-25');
   let end_date   = $state('20-01-25');
@@ -42,8 +42,8 @@
 <div class="page-heading">
   <div class="top-container">
     <div class="display-title">
-      {repoPath}
-      <Icon icon={`tabler:brand-${repoType}`} class="icon-xlarge" style="color: white" />
+      {repo_path}
+      <Icon icon={`tabler:brand-${repo_type}`} class="icon-xlarge" style="color: white" />
     </div>
 
     <div class="heading-btns">
@@ -60,7 +60,7 @@
       <!-- branch dropdown btn -->
       <DropdownTintedMedium 
         options={branches} 
-        selected={branchSelection.selected}
+        selected={branch_selection.selected}
         disabled={false}
       />
 

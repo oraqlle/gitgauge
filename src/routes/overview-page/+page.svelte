@@ -1,12 +1,15 @@
 <script>
     import Heading from "$lib/components/overview-page/Heading.svelte";
     import CommitGraph from "$lib/components/overview-page/CommitGraph.svelte";
-    import { currentRepo } from "$lib/stores/repo";
+    import { current_repo } from "$lib/stores/repo";
     import ButtonPrimaryMedium from "$lib/components/global/button-primary-medium.svelte";
 </script>
 
 <div class="page">
-    <Heading repoPath={$currentRepo.repoPath.split("/").pop() || $currentRepo.repoPath} repoType={$currentRepo.repoType} />
+    <Heading
+        repo_path={$current_repo.repo_path.split("/").pop() || $current_repo.repo_path}
+        repo_type={$current_repo.repo_type}
+    />
     <CommitGraph />
     <div class="bottom-container">
         <ButtonPrimaryMedium

@@ -22,10 +22,10 @@
         <h2 class="heading-1 bookmark-text white">Bookmarks</h2>
       </div>
   
-      {#each $bookmarks as repo (repo.repoPath)}
+      {#each $bookmarks as repo (repo.repo_path)}
         <button class="bookmark-item" type="button">
-          <h6 class="heading-2 repo-name label-secondary">{repo.repoPath}</h6>
-          <h6 class="caption repo-url label-secondary">{repo.repoUrl}</h6>
+          <h6 class="heading-2 repo-name label-secondary">{repo.repo_path}</h6>
+          <h6 class="caption repo-url label-secondary">{repo.repo_url}</h6>
         </button>
       {/each}
     </div>

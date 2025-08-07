@@ -2,19 +2,19 @@
     import Icon from '@iconify/svelte';
     import { bookmarks } from '$lib/stores/bookmarks';
     import type { Repo } from '$lib/repo';
-    import { getRepoType } from '$lib/repo';
+    import { get_repo_type } from '$lib/repo';
 
-    export let repoUrl: string;
-    export let repoPath: string;
+    export let repo_url: string;
+    export let repo_path: string;
 
-    let bookmarked = bookmarks.contains(repoUrl);
+    let bookmarked = bookmarks.contains(repo_url);
 
     function toggleBookmark() {
       bookmarked = !bookmarked;
       const bookmark: Repo = {
-        "repoPath": repoUrl.split('/').pop()?.replace('.git', '') || repoUrl,
-        "repoUrl": repoUrl,
-        "repoType": getRepoType(repoUrl)
+        "repo_path": repo_url.split('/').pop()?.replace('.git', '') || repo_url,
+        "repo_url": repo_url,
+        "repo_type": get_repo_type(repo_url)
       }
       bookmarks.toggle(bookmark);
     }
@@ -28,7 +28,7 @@
 
   <!-- repo pathway display -->
   <div class="repo-pathway">
-      {repoPath}
+      {repo_path}
   </div>
 
   <!-- bookmark toggle -->

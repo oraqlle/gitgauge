@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use git2::{BranchType, Repository, Sort};
+use serde::{Deserialize, Serialize};
 
 use std::collections::HashMap;
 
@@ -21,19 +21,27 @@ pub struct Contributor {
     pub bitmap: String, // tmp until using actual bitmap type
 }
 
+// date_range: Option<(i64, i64)> - Optional date range in UNIX timestamp format
 #[tauri::command]
 pub async fn get_contributor_info(
     path: &str,
     branch: Option<&str>,
     date_range: Option<(i64, i64)>,
 ) -> Result<HashMap<String, Contributor>, String> {
-    // date_range: Option<(i64, i64)> - Optional date range in UNIX timestamp format
-    let repo = match Repository::open(path) {
+    let canonacal_path = std::path::Path::new(path)
+        .canonicalize()
+        .map_err(|e| e.to_string())?;
+
+    let repo = match Repository::open(canonacal_path) {
         Ok(repo) => {
             log::info!("Successfully opened repository at {}", path);
             repo
-        },
-        Err(e) => return Err(format!("Error: {e}. Occurred when attempting to opening repository.")),
+        }
+        Err(e) => {
+            return Err(format!(
+                "Error: {e}. Occurred when attempting to opening repository."
+            ))
+        }
     };
 
     let mut branches: Vec<String> = Vec::new();
@@ -48,7 +56,10 @@ pub async fn get_contributor_info(
     let target_branch = branch.unwrap_or("main");
     if !branches.contains(&target_branch.to_string()) {
         log::error!("Branch: {} not found in the repository.", target_branch);
-        return Err(format!("Branch: {} not found in the repository.", target_branch));
+        return Err(format!(
+            "Branch: {} not found in the repository.",
+            target_branch
+        ));
     }
 
     // Resolve branch reference
@@ -89,12 +100,15 @@ pub async fn get_contributor_info(
         let email = author_signature.email().unwrap_or("").to_string();
         let gravatar_hash = md5::compute(email.clone().trim().to_lowercase());
         let gravatar_login = author_signature.name().unwrap_or("Unknown").to_string();
-        let gravatar_url = format!("https://www.gravatar.com/avatar/{:x}?d=identicon", gravatar_hash);
-
+        let gravatar_url = format!(
+            "https://www.gravatar.com/avatar/{:x}?d=identicon",
+            gravatar_hash
+        );
 
         let commit_tree = commit.tree().map_err(|e| e.to_string())?;
         let parent_tree = if commit.parent_count() > 0 {
-            Some(commit
+            Some(
+                commit
                     .parent(0)
                     .map_err(|e| e.to_string())?
                     .tree()
@@ -120,8 +134,8 @@ pub async fn get_contributor_info(
                 total_commits: 0,
                 additions: 0,
                 deletions: 0,
-                bitmap_hash: gravatar_login, // tmp use gravatar
-                bitmap: gravatar_url // tmp use gravatar
+                bitmap_hash: gravatar_login, // tmp use to store gravatar login
+                bitmap: gravatar_url,        // tmp use to store gravatar url
             });
 
         entry.total_commits += 1;
@@ -131,4 +145,3 @@ pub async fn get_contributor_info(
 
     Ok(contributors)
 }
-
