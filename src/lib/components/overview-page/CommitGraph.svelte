@@ -2,9 +2,7 @@
     import Icon from "@iconify/svelte";
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
-    import { create_dropdown_selection } from "$lib/stores/dropdown";
-    import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
+    import ButtonTintedMedium from "../global/ButtonTintedMedium.svelte";
     import type { Contributor } from "$lib/metrics";
 
     let {
@@ -22,7 +20,6 @@
 
     let criteria = ["total commits", "lines of code", "lines/commit"];
     let selected_criteria = criteria[0];
-
     let sidebar_open = $state(false);
     let bookmarked_repo: { repo_name: string; repo_url: string }[] = [];
 
@@ -33,20 +30,12 @@
 
 <main class="container">
     <div class="header-row">
-        <!-- Removed branch select dropdown -->
-        <select bind:value={selected_branch} class="branch-select">
-            {#each branches as branch}
-                <option value={branch}>
-                    {branch === "all" ? "All Branches" : branch}
-                </option>
-            {/each}
-        </select>
 
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
             label="commits"
             label_class="body"
-            iconFirst={false}
+            icon_first={false}
             icon="chevron-down"
             width="12rem"
         />
@@ -54,13 +43,13 @@
         <ButtonTintedMedium
             label="mean"
             label_class="body"
-            iconFirst={false}
+            icon_first={false}
             icon="chevron-down"
             width="12rem"
         />
     </div>
     <Graph {contributors} />
-    <ContributorCards {selected_branch} users={contributors} />
+    <ContributorCards users={contributors} selected_branch={""} />
 </main>
 
 <!-- Sidebar -->

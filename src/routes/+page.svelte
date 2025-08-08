@@ -12,7 +12,7 @@
 
     let sidebar_open = false;
     let profile_image_url = "/mock_profile_img.png";
-    let userName = "Baaset Moslih";
+    let user_name = "Baaset Moslih";
 
     function toggle_sidebar() {
         sidebar_open = !sidebar_open;
@@ -164,7 +164,7 @@
                 </div>
 
                 <div class="user-section">
-                    <h6 class="white body-accent">{userName}</h6>
+                    <h6 class="white body-accent">{user_name}</h6>
                     <img
                         src={profile_image_url}
                         alt="Profile"
@@ -174,7 +174,7 @@
                     <button
                         type="button"
                         class="hamburger-btn"
-                        on:click={toggle_sidebar}
+                        onclick={toggle_sidebar}
                     >
                         <Icon
                             icon={"tabler:menu-2"}
@@ -194,7 +194,7 @@
                 <button
                     type="button"
                     class={`dropdown-btn ${dropdown_open ? "show" : "hide"}`}
-                    on:click={toggle_dropdown}
+                    onclick={toggle_dropdown}
                 >
                     {#if selected}
                         <div class="dropdown-show">
@@ -211,7 +211,11 @@
                         <!-- This case should not happen with a default selected value -->
                         <h6 class="display-body white">Select an option</h6>
                     {/if}
-                    <img src="/dropdown_icon.png" alt="dropdown icon" />
+                        <Icon
+                            icon={`tabler:chevron-down`}
+                            class="icon-medium"
+                            style="color: white"
+                        />
                 </button>
 
                 {#if dropdown_open}
@@ -219,7 +223,7 @@
                         {#each options as option}
                             <button
                                 class="dropdown-option"
-                                on:click={() => select_option(option)}
+                                onclick={() => select_option(option)}
                             >
                                 <Icon
                                     icon={`tabler:${option.icon}`}
@@ -242,9 +246,9 @@
                     type="text"
                     placeholder="Enter a link to a remote repository or a path to a local one..."
                     bind:value={repo_url_input}
-                    on:keydown={handle_input_keydown}
+                    onkeydown={handle_input_keydown}
                 />
-                <button class="repo-button" on:click={handle_verification}>
+                <button class="repo-button" onclick={handle_verification}>
                     <Icon
                         icon={"tabler:circle-arrow-right"}
                         class="icon-medium"
@@ -272,7 +276,7 @@
                     <button
                         class="repo-list-btn"
                         type="button"
-                        on:click={() => bookmarked_repo(bookmark.repo_url)}
+                        onclick={() => bookmarked_repo(bookmark.repo_url)}
                     >
                         <h6 class="display-body repo-list-text white">
                             {bookmark.repo_url}
@@ -294,7 +298,7 @@
                 />
                 <h1 class="title sidebar-title-text white">settings</h1>
             </div>
-            <button class="close-button" on:click={toggle_sidebar}>
+            <button class="close-button" onclick={toggle_sidebar}>
                 <Icon
                     icon={"tabler:x"}
                     class="icon-medium"
@@ -317,7 +321,7 @@
                 <button
                     class="bookmark-item"
                     type="button"
-                    on:click={() => bookmarked_repo(repo.repo_url)}
+                    onclick={() => bookmarked_repo(repo.repo_url)}
                 >
                     <h6 class="heading-2 repo-name label-secondary">
                         {repo.repo_name}

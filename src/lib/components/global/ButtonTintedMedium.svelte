@@ -1,15 +1,17 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
-    export let icon: string | null;
-    export let label: string;
-    export let label_class: string;
-    export let disabled: boolean = false;
-    export let width: string;
-    export let iconFirst: boolean;
+    let {
+        icon = null,
+        label,
+        label_class = "body",
+        disabled = false,
+        width = "100%",
+        icon_first = true,
+    } = $props();
 </script>
 
 <button class="medium" {disabled} style="width: {width}">
-    {#if iconFirst}
+    {#if icon_first}
         {#if icon}
             <Icon
                 icon={`tabler:${icon}`}

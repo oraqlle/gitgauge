@@ -11,7 +11,7 @@
         <Icon icon="tabler:chart-line" class="icon-large" style="color: white" />
         <h1 class="title sidebar-title-text white">Settings</h1>
       </div>
-      <button class="close-button" on:click={close_sidebar} aria-label="Close sidebar">
+      <button class="close-button" onclick={close_sidebar} aria-label="Close sidebar">
         <Icon icon="tabler:x" class="icon-medium" style="color: white" />
       </button>
     </div>
@@ -112,4 +112,3 @@
       color: var(--white);
     }
   </style>
-  
