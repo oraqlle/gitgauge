@@ -25,30 +25,30 @@
     let commit_mean = get_average_commits(users);
     let sd = get_sd(users);
 
-    let peopleWithMetrics = $derived(
+    let people_with_metrics = $derived(
         users.map((user: Contributor) => {
-            const numCommits = get_user_total_commits(user);
-            const scalingFactor = calculate_scaling_factor(
-                numCommits,
+            const num_commits = get_user_total_commits(user);
+            const scaling_factor = calculate_scaling_factor(
+                num_commits,
                 commit_mean,
                 sd,
             );
             return {
-                username: user.author.login,
-                image: user.author.avatar_url,
-                num_commits: numCommits,
+                username: user.bitmap_hash,
+                image: user.bitmap,
+                num_commits: num_commits,
                 total_lines_of_code: get_user_total_lines_of_code(user),
                 lines_per_commit: get_user_lines_per_commit(user),
                 total_additions: get_user_total_additions(user),
                 total_deletions: get_user_total_deletions(user),
-                scaling_factor: scalingFactor.toFixed(1),
+                scaling_factor: scaling_factor.toFixed(1),
             };
         }),
     );
 </script>
 
 <div class="cards-row">
-    {#each peopleWithMetrics as person}
+    {#each people_with_metrics as person}
         <ContributorStatsCard {...person}/>
     {/each}
 </div>

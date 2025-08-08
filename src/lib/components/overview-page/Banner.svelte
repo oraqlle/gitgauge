@@ -1,23 +1,28 @@
 <script lang="ts">
-		import Icon from '@iconify/svelte';
-		import { bookmarks } from '$lib/stores/bookmarks';
-		import type { Repo } from '$lib/repo';
-		import { getRepoType } from '$lib/repo';
+    import Icon from '@iconify/svelte';
+    import { bookmarks } from '$lib/stores/bookmarks';
+    import type { Repo } from '$lib/repo';
+    import { get_repo_type } from '$lib/repo';
 
-		export let repoUrl: string;
-		export let repoPath: string;
+    let {
+        repo_url,
+        repo_path,
+    }: {
+        repo_url: string;
+        repo_path: string;
+    } = $props();
 
-		let bookmarked = bookmarks.contains(repoUrl);
+    let bookmarked = $state(bookmarks.contains(repo_url));
 
-		function toggleBookmark() {
-			bookmarked = !bookmarked;
-			const bookmark: Repo = {
-				"repoPath": repoUrl.split('/').pop()?.replace('.git', '') || repoUrl,
-				"repoUrl": repoUrl,
-				"repoType": getRepoType(repoUrl)
-			}
-			bookmarks.toggle(bookmark);
-		}
+    function toggle_bookmark() {
+      bookmarked = !bookmarked;
+      const bookmark: Repo = {
+        "repo_path": repo_url.split('/').pop()?.replace('.git', '') || repo_url,
+        "repo_url": repo_url,
+        "repo_type": get_repo_type(repo_url)
+      }
+      bookmarks.toggle(bookmark);
+    }
 </script>
 
 <div class="topbar">
@@ -26,16 +31,16 @@
 		<img src="/submark.png" alt="logo" class="logo-img" color=""/>
 	</a>
 
-	<!-- repo pathway display -->
-	<div class="repo-pathway">
-			{repoPath}
-	</div>
+  <!-- repo pathway display -->
+  <div class="repo-pathway">
+      {repo_path}
+  </div>
 
 	<!-- bookmark toggle -->
 	<button
 		type="button"
 		class="bookmark-btn"
-		on:click={toggleBookmark}
+		onclick={toggle_bookmark}
 		aria-pressed={bookmarked}
 	>
 		<Icon

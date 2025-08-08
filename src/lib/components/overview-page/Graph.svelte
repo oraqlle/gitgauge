@@ -9,33 +9,34 @@
     } from "../../metrics";
 
     let { contributors }: { contributors: Contributor[] } = $props();
-    let chartContainer: HTMLElement;
+
+    let chart_container: HTMLElement;
     let chart: echarts.ECharts;
-    let filteredPeople: any[] = [];
-    let minCommits: number = 0;
-    let maxCommits: number = 1;
-    let xMin: number = 0;
-    let xMax: number = 1;
+    let filtered_people: any[] = [];
+    let min_commits: number = 0;
+    let max_commits: number = 1;
+    let x_min: number = 0;
+    let x_max: number = 1;
     let commit_mean: number = 0;
     let sd: number = 0;
     let ref_point_values: number[] = [];
-    let refPoints: { label: string, value: number }[] = [];
-    let resizeHandler: () => void;
+    let ref_points: { label: string, value: number }[] = [];
+    let resize_handler: () => void;
 
     $effect(() => {
-        filteredPeople = getUserCommits(contributors);
+        filtered_people = get_user_commits(contributors);
     });
     $effect(() => {
-        minCommits = filteredPeople.length > 0 ? Math.min(...filteredPeople.map((p: any) => p.numCommits)) : 0;
+        min_commits = filtered_people.length > 0 ? Math.min(...filtered_people.map((p: any) => p.num_commits)) : 0;
     });
     $effect(() => {
-        maxCommits = filteredPeople.length > 0 ? Math.max(...filteredPeople.map((p: any) => p.numCommits)) : 1;
+        max_commits = filtered_people.length > 0 ? Math.max(...filtered_people.map((p: any) => p.num_commits)) : 1;
     });
     $effect(() => {
-        xMin = minCommits === maxCommits ? minCommits - 1 : minCommits - 1;
+        x_min = min_commits === max_commits ? min_commits - 1 : min_commits - 1;
     });
     $effect(() => {
-        xMax = minCommits === maxCommits ? maxCommits + 1 : maxCommits + 1;
+        x_max = min_commits === max_commits ? max_commits + 1 : max_commits + 1;
     });
     $effect(() => {
         commit_mean = get_average_commits(contributors);
@@ -47,7 +48,7 @@
         ref_point_values = get_ref_points(commit_mean, sd);
     });
     $effect(() => {
-        refPoints = sd === 0
+        ref_points = sd === 0
             ? [{ label: 'mean', value: ref_point_values[2] }]
             : [
                 { label: '-2σ', value: ref_point_values[0] },
@@ -58,22 +59,22 @@
             ];
     });
     $effect(() => {
-        if (chart) setChartOptions();
+        if (chart) set_chart_options();
     });
 
-    function getUserCommits(users: Contributor[]) {
+    function get_user_commits(users: Contributor[]) {
         if (users.length === 0) return [];
-        let userTotalCommits: any[] = [];
+        let user_total_commits: any[] = [];
         users.forEach(user => {
-            userTotalCommits.push({
-                username: user.author.login,
-                image: user.author.avatar_url,
+            user_total_commits.push({
+                username: user.bitmap_hash,
+                image: user.bitmap,
                 numCommits: user.total_commits
             });
         });
-        const sortedCommits = userTotalCommits.sort((a, b) => a.numCommits - b.numCommits);
+        const sorted_commits = user_total_commits.sort((a, b) => a.numCommits - b.numCommits);
         const groups = new Map<number, any[]>();
-        sortedCommits.forEach(user => {
+        sorted_commits.forEach(user => {
             if (!groups.has(user.numCommits)) {
                 groups.set(user.numCommits, []);
             }
@@ -95,49 +96,49 @@
         return result;
     }
 
-    function updateGraphics() {
+    function update_graphics() {
         if (!chart) return;
-        const gridTop = chart.convertToPixel({gridIndex: 0}, [0, 6])[1];
-        const xAxisY = chart.convertToPixel({gridIndex: 0}, [0, 0])[1];
+        const grid_top = chart.convertToPixel({gridIndex: 0}, [0, 6])[1];
+        const x_axis_y = chart.convertToPixel({gridIndex: 0}, [0, 0])[1];
 
-        const fullHeight = xAxisY - gridTop;
-        const tintHeight = fullHeight * 0.9;
+        const full_height = x_axis_y - grid_top;
+        const tint_height = full_height * 0.9;
 
-        const marginLeft = 40; // px
-        const marginRight = 40; // px
-        const containerWidth = chartContainer.clientWidth;
-        const drawableWidth = containerWidth - marginLeft - marginRight;
+        const margin_left = 40; // px
+        const margin_right = 40; // px
+        const container_width = chart_container.clientWidth;
+        const drawable_width = container_width - margin_left - margin_right;
 
-        function xScale(value: number) {
-            return marginLeft + ((value - xMin) / (xMax - xMin)) * drawableWidth;
+        function x_scale(value: number) {
+            return margin_left + ((value - x_min) / (x_max - x_min)) * drawable_width;
     }
 
         // Clamp function to ensure tints stay inside drawable area
-        function clampTint(x: number, width: number) {
-            const clampedX = Math.max(x, marginLeft);
-            const maxWidth = Math.min(width - (clampedX - x), containerWidth - marginRight - clampedX);
+        function clamp_tint(x: number, width: number) {
+            const clampedX = Math.max(x, margin_left);
+            const maxWidth = Math.min(width - (clampedX - x), container_width - margin_right - clampedX);
             return { x: clampedX, width: maxWidth };
         }
 
         // Calculate pixel positions of ref points (commit counts)
-        const xMinus2Sigma = xScale(ref_point_values[0]);
-        const xMinusSigma = xScale(ref_point_values[1]);
-        const xPlusSigma = xScale(ref_point_values[3]);
-        const xPlus2Sigma = xScale(ref_point_values[4]);
+        const x_minus2sigma = x_scale(ref_point_values[0]);
+        const x_minus_sigma = x_scale(ref_point_values[1]);
+        const x_plus_sigma = x_scale(ref_point_values[3]);
+        const x_plus2sigma = x_scale(ref_point_values[4]);
 
         // Clamp tints within bounds
-        const leftTint = clampTint(xMinus2Sigma, xMinusSigma - xMinus2Sigma);
-        const middleTint = clampTint(xMinusSigma, xPlusSigma - xMinusSigma);
-        const rightTint = clampTint(xPlusSigma, xPlus2Sigma - xPlusSigma);
+        const left_tint = clamp_tint(x_minus2sigma, x_minus_sigma - x_minus2sigma);
+        const middle_tint = clamp_tint(x_minus_sigma, x_plus_sigma - x_minus_sigma);
+        const right_tint = clamp_tint(x_plus_sigma, x_plus2sigma - x_plus_sigma);
 
         // White tint between -σ and +σ
-        const tintBetween1Sigma = {
+        const tint_between1sigma = {
             type: 'rect',
             shape: {
-                x: middleTint.x,
-                y: xAxisY-tintHeight,
-                width: middleTint.width,
-                height: tintHeight
+                x: middle_tint.x,
+                y: x_axis_y-tint_height,
+                width: middle_tint.width,
+                height: tint_height
             },
             style: {
                 fill: 'rgba(255, 255, 255, 0.20)'
@@ -146,13 +147,13 @@
             z: 1
         };
 
-        const tintBetween2SigmaLeft = {
+        const tint_between2sigma_left = {
             type: 'rect',
             shape: {
-                x: leftTint.x,
-                y: xAxisY-tintHeight,
-                width: leftTint.width,
-                height: tintHeight
+                x: left_tint.x,
+                y: x_axis_y-tint_height,
+                width: left_tint.width,
+                height: tint_height
             },
             style: {
                 fill: 'rgba(255, 255, 255, 0.1)'
@@ -161,13 +162,13 @@
             z: 1
         };
 
-        const tintBetween2SigmaRight = {
+        const tint_between2sigma_right = {
             type: 'rect',
             shape: {
-                x: rightTint.x,
-                y: xAxisY-tintHeight,
-                width: rightTint.width,
-                height: tintHeight
+                x: right_tint.x,
+                y: x_axis_y-tint_height,
+                width: right_tint.width,
+                height: tint_height
             },
             style: {
                 fill: 'rgba(255, 255, 255, 0.1)'
@@ -176,7 +177,7 @@
             z: 1
         };
 
-        const refLineGraphics = refPoints.map((ref) => {
+        const ref_line_graphics = ref_points.map((ref) => {
             const x = chart.convertToPixel({gridIndex: 0}, [ref.value, 0])[0];
             return {
                 type: 'group',
@@ -185,9 +186,9 @@
                         type: 'line',
                         shape: {
                             x1: x,
-                            y1: gridTop,
+                            y1: grid_top,
                             x2: x,
-                            y2: xAxisY
+                            y2: x_axis_y
                         },
                         style: {
                             stroke: '#fff',
@@ -208,13 +209,13 @@
                             textVerticalAlign: 'bottom'
                         },
                         x: x,
-                        y: gridTop - 8,
+                        y: grid_top - 8,
                         z:2
                     }
                 ]
             };
         });
-        const userGraphics = filteredPeople.map((person: any) => {
+        const user_graphics = filtered_people.map((person: any) => {
             const [baseX, y] = chart.convertToPixel({gridIndex: 0}, [person.numCommits, 1]);
             const x = baseX + (person.offsetIndex ? person.offsetIndex * 16 : 0);
             return {
@@ -244,15 +245,15 @@
             };
         });
         chart.setOption({ graphic: [
-            tintBetween2SigmaLeft,
-            tintBetween1Sigma,
-            tintBetween2SigmaRight, 
-            ...refLineGraphics, 
-            ...userGraphics
+            tint_between2sigma_left,
+            tint_between1sigma,
+            tint_between2sigma_right, 
+            ...ref_line_graphics, 
+            ...user_graphics
         ] });
     }
 
-    function setChartOptions() {
+    function set_chart_options() {
         const option = {
             backgroundColor: 'transparent',  //#222',
             grid: {
@@ -264,8 +265,8 @@
             },
             xAxis: {
                 type: 'value',
-                min: xMin,
-                max: xMax,
+                min: x_min,
+                max: x_max,
                 name: 'Total Commits',
                 nameTextStyle: {
                     fontSize: 20,
@@ -303,14 +304,14 @@
             series: [
                 {
                     type: 'scatter',
-                    data: filteredPeople.map((p: any) => [p.numCommits, 1]),
+                    data: filtered_people.map((p: any) => [p.numCommits, 1]),
                     symbolSize: 0,
                     z: 3
                 },
                 {
                     name: 'hoverPoints',
                     type: 'scatter',
-                    data: filteredPeople.map((p: any) => [p.numCommits, 1, p.username]),
+                    data: filtered_people.map((p: any) => [p.numCommits, 1, p.username]),
                     symbolSize: 32,
                     z: 10,
                     itemStyle: {
@@ -333,7 +334,7 @@
                 formatter: function (params: any) {
                     if (params.seriesName === 'hoverPoints') {
                         const username = params.data[2];
-                        const person = filteredPeople.find((p: any) => p.username === username);
+                        const person = filtered_people.find((p: any) => p.username === username);
                         if (!person) return username;
                         return `
                           <div style="text-align: left;">
@@ -348,25 +349,25 @@
             graphic: []
         };
         chart.setOption(option, true);
-        updateGraphics();
+        update_graphics();
     }
 
     onMount(() => {
-        chart = echarts.init(chartContainer);
-        setChartOptions();
-        resizeHandler = () => {
+        chart = echarts.init(chart_container);
+        set_chart_options();
+        resize_handler = () => {
             chart.resize();
-            updateGraphics();
+            update_graphics();
         };
-        window.addEventListener('resize', resizeHandler);
+        window.addEventListener('resize', resize_handler);
     });
     onDestroy(() => {
-        window.removeEventListener('resize', resizeHandler);
+        window.removeEventListener('resize', resize_handler);
         chart.dispose();
     });
 </script>
 
-<div bind:this={chartContainer} class="chart-container"></div>
+<div bind:this={chart_container} class="chart-container"></div>
 
 <style>
     .chart-container {
