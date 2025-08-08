@@ -2,8 +2,6 @@
     import Icon from "@iconify/svelte";
     import Graph from "$lib/components/overview-page/Graph.svelte";
     import ContributorCards from "$lib/components/overview-page/ContributorCards.svelte";
-    import DropdownTintedMedium from "$lib/components/global/dropdown-tinted-medium.svelte";
-    import { create_dropdown_selection } from "$lib/stores/dropdown";
     import ButtonTintedMedium from "../global/button-tinted-medium.svelte";
     import type { Contributor } from "$lib/metrics";
 
@@ -11,14 +9,6 @@
         contributors,
         branches,
     }: { contributors: Contributor[]; branches: String[] } = $props();
-
-    let selected_branch = $state("all");
-
-    $effect(() => {
-        if (branches.length > 0 && !branches.includes(selected_branch)) {
-            selected_branch = "all";
-        }
-    });
 
     let criteria = ["total commits", "lines of code", "lines/commit"];
     let selected_criteria = criteria[0];
@@ -34,13 +24,7 @@
 <main class="container">
     <div class="header-row">
         <!-- Removed branch select dropdown -->
-        <select bind:value={selected_branch} class="branch-select">
-            {#each branches as branch}
-                <option value={branch}>
-                    {branch === "all" ? "All Branches" : branch}
-                </option>
-            {/each}
-        </select>
+      
 
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
@@ -60,7 +44,7 @@
         />
     </div>
     <Graph {contributors} />
-    <ContributorCards {selected_branch} users={contributors} />
+    <ContributorCards users={contributors} />
 </main>
 
 <!-- Sidebar -->
