@@ -10,14 +10,6 @@
         branches,
     }: { contributors: Contributor[]; branches: String[] } = $props();
 
-    let selected_branch = $state("all");
-
-    $effect(() => {
-        if (branches.length > 0 && !branches.includes(selected_branch)) {
-            selected_branch = "all";
-        }
-    });
-
     let criteria = ["total commits", "lines of code", "lines/commit"];
     let selected_criteria = criteria[0];
     let sidebar_open = $state(false);
@@ -30,7 +22,6 @@
 
 <main class="container">
     <div class="header-row">
-
         <!-- faking the dropdown button -->
         <ButtonTintedMedium
             label="commits"
