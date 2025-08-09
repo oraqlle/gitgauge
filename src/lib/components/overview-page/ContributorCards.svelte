@@ -48,8 +48,14 @@
 
     // Sort users by scaling factor in descending order
     function people_with_metrics_sorted() {
-        return people_with_metrics.sort((a, b) =>
-            Number(b.scaling_factor) - Number(a.scaling_factor));
+        return people_with_metrics.sort((a, b) => {
+            let scaling_a = Number(a.scaling_factor);
+            let scaling_b = Number(b.scaling_factor);
+            if (scaling_a === scaling_b) {
+                return b.num_commits - a.num_commits;
+            }
+            return scaling_b - scaling_a
+        });
     }
 
 </script>
