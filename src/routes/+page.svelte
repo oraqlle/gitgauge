@@ -466,7 +466,7 @@
         background-color: transparent; /*#181818; */
         border: none;
         margin: none;
-        padding: 0.5rem;
+        padding: 0.5rem 0.5rem 0.5rem 0px;
         text-align: left;
         cursor: pointer;
         color: unset;
