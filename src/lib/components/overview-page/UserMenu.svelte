@@ -8,7 +8,7 @@
 	<!-- user menu: user name, avatar, and sidebar toggle button -->
 <div class="user-menu">
   <h6 class="body-accent user-name">{username}</h6>
-  <img src="{profile_image_url}" alt="Profile" class="profile-img" />
+  <img src="{profile_image_url}" alt="{username}" class="profile-img" />
 
   <button class="hamburger-btn" onclick={open_sidebar} aria-expanded={$sidebar_open}>
     <Icon icon="tabler:menu-2" class="icon-medium" />

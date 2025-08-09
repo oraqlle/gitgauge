@@ -27,10 +27,7 @@
 
 <style>
     .header {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-        padding-top: 1.5rem;
-        margin-bottom: 0.8125rem;
+        padding: 2rem 2rem 0.0rem 2rem;
         height: 1.375rem;
         display: flex;
         justify-content: space-between;
