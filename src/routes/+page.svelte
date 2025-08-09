@@ -5,12 +5,18 @@
     import { load_branches, load_commit_data } from "$lib/metrics";
     import { goto } from "$app/navigation";
     import { get_repo_type } from "$lib/repo";
+    import RepoDropdown from "$lib/components/global/RepoDropdown.svelte";
+    import { repo_options } from "$lib/stores/repo";
+    import type { RepoOption } from "$lib/stores/repo";
+    import { set_repo_url } from "$lib/stores/repo";
+    
     interface RepoBookmark {
         repo_name: string;
         repo_url: string;
     }
 
-    let sidebar_open = false;
+    let sidebar_open = $state(false);
+
     let profile_image_url = "/mock_profile_img.png";
     let user_name = "Baaset Moslih";
 
@@ -37,25 +43,12 @@
         },
     ];
 
-    //
-    interface RepoOption {
-        label: string;
-        icon: string;
-    }
+    let selected: RepoOption = $state(repo_options[0]); // Default to GitHub
 
-    let dropdown_open = false;
+    let repo_url_input: string = $state("");
 
-    const options: RepoOption[] = [
-        { label: "GitHub", icon: "brand-github" },
-        { label: "GitLab", icon: "brand-gitlab" },
-        { label: "Local", icon: "folder-code" },
-    ];
-
-    let selected: RepoOption = options[0]; // Default to GitHub
-
-    let repo_url_input: string = "";
-    let verification_result: { owner: string; repo: string } | null = null;
-    let verification_error: string | null = null;
+    let verification_message: string = $state("");
+    let verification_error: boolean = $state(false);
 
     interface BackendVerificationResult {
         owner: string;
@@ -67,79 +60,57 @@
         handle_verification();
     }
 
-    async function handle_verification() {
-        if (!selected || !repo_url_input.trim()) {
-            verification_error =
-                "Please select a source type and enter a URL/path.";
-            verification_result = null;
-            return;
-        }
+    function reset_verification_result() {
+        verification_message = "";
+        verification_error = false;
+    }
 
-        let source_type: 0 | 1 | 2;
-        if (selected.label === "GitHub") {
-            source_type = 0;
-        } else if (selected.label === "GitLab") {
-            source_type = 1;
-        } else if (selected.label === "Local") {
-            source_type = 2;
-        } else {
-            verification_error = "Invalid source type selected.";
-            verification_result = null;
+    async function handle_verification() {
+        console.log("handleVerification called with:", repo_url_input, selected);
+        reset_verification_result();
+        
+        if (!selected || !repo_url_input.trim()) {
+            verification_error = true;
+            verification_message =
+                "Please select a source type and enter a URL/path.";
             return;
         }
 
         try {
             // Try frontend validation first
-            const result = verify_and_extract_source_info(
-                repo_url_input,
-                source_type,
-            );
-            const backend_result = await invoke<BackendVerificationResult>(
+            const result = verify_and_extract_source_info(repo_url_input, selected.source_type);
+
+            const backendResult = await invoke<BackendVerificationResult>(
                 "verify_and_extract_source_info",
                 {
                     urlStr: repo_url_input,
-                    sourceType: source_type,
+                    sourceType: selected.source_type,
                 },
             );
-            verification_result = {
-                owner: backend_result.owner,
-                repo: backend_result.repo,
-            };
 
-            verification_error = null;
-
+            verification_message =
+                `Successfully verified! Owner: ${backendResult.owner}, Repo: ${backendResult.repo}`
+        
+            // Update the repo store with the new URL
+            set_repo_url(repo_url_input);
             // Call loadBranches and loadCommitData and wait for both to complete
-            const contributors = await load_commit_data(backend_result.owner, backend_result.repo);
-            const branches = await load_branches(backend_result.repo);
+            const [branches, commitData] = await Promise.all([
+                load_branches(backendResult.repo),
+                load_commit_data(backendResult.owner, backendResult.repo),
+            ]);
 
             // Navigate to the overview page
             goto(`/overview-page`, {
                 state: {
-                    repo_url: repo_url_input,
-                    repo_path: new URL(repo_url_input).pathname.slice(1),
-                    repo_type: get_repo_type(repo_url_input),
                     branches: branches,
-                    contributors: contributors,
+                    commitData: commitData,
                 },
             });
         } catch (error: any) {
-            verification_error =
-                error.message || `Verification failed: ${error}`;
-            verification_result = null;
+            verification_error = true
+            verification_message = `${error.message || "Verification failed."}`
             console.error("Verification failed:", error);
         }
-    }
-
-    function select_option(option: RepoOption) {
-        selected = option;
-        dropdown_open = false;
-        // Reset verification status when option changes
-        verification_result = null;
-        verification_error = null;
-    }
-
-    function toggle_dropdown() {
-        dropdown_open = !dropdown_open;
     }
 
     function handle_input_keydown(event: KeyboardEvent) {
@@ -190,54 +161,7 @@
     <main class="main">
         <div class="repo-start">
             <!-- Repo dropdown -->
-            <div class="dropdown">
-                <button
-                    type="button"
-                    class={`dropdown-btn ${dropdown_open ? "show" : "hide"}`}
-                    onclick={toggle_dropdown}
-                >
-                    {#if selected}
-                        <div class="dropdown-show">
-                            <Icon
-                                icon={`tabler:${selected.icon}`}
-                                class="icon-medium"
-                                style="color: white"
-                            />
-                            <h6 class="display-body white dropdown-text">
-                                {selected.label}
-                            </h6>
-                        </div>
-                    {:else}
-                        <!-- This case should not happen with a default selected value -->
-                        <h6 class="display-body white">Select an option</h6>
-                    {/if}
-                        <Icon
-                            icon={`tabler:chevron-down`}
-                            class="icon-medium"
-                            style="color: white"
-                        />
-                </button>
-
-                {#if dropdown_open}
-                    <div class="dropdown-content">
-                        {#each options as option}
-                            <button
-                                class="dropdown-option"
-                                onclick={() => select_option(option)}
-                            >
-                                <Icon
-                                    icon={`tabler:${option.icon}`}
-                                    class="icon-medium"
-                                    style="color: white"
-                                />
-                                <h6 class="display-body white dropdown-text">
-                                    {option.label}
-                                </h6>
-                            </button>
-                        {/each}
-                    </div>
-                {/if}
-            </div>
+            <RepoDropdown bind:selected={selected} action={reset_verification_result}/>
 
             <!-- Repo link -->
             <div class="repo-link">
@@ -258,17 +182,7 @@
             </div>
 
             <!-- Verification Feedback -->
-            <div class="verification-feedback">
-                {#if verification_result}
-                    <p class="success-message white">
-                        Successfully verified! Owner: {verification_result.owner},
-                        Repo: {verification_result.repo}
-                    </p>
-                {/if}
-                {#if verification_error}
-                    <p class="error-message white">{verification_error}</p>
-                {/if}
-            </div>
+
 
             <!-- Repo link list -->
             <div class="repo-bookmark-list">
