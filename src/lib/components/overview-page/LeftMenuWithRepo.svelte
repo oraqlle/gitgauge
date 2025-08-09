@@ -1,7 +1,7 @@
 <script lang="ts">
     import Icon from '@iconify/svelte';
     import { bookmarks } from '$lib/stores/bookmarks';
-	import Banner from './LeftMenu.svelte';
+	import LeftMenu from './LeftMenu.svelte';
     import type { Repo } from '$lib/repo';
     import { get_repo_type } from '$lib/repo';
 
@@ -26,7 +26,24 @@
     }
 </script>
 
-<Banner>
+<!--
+@component
+This is a banner component that displays the repository path and a bookmark
+toggle button.
+
+- Usage:
+  ```svelte
+	<LeftMenuWithRepo
+		repo_url={repo_url}
+		repo_path={repo_path}
+	/>
+  ```
+- Props:
+	- `repo_url`: The URL of the repository.
+	- `repo_path`: The path of the repository.
+-->
+
+<LeftMenu>
 	{#snippet content()}
 		<!-- repo pathway display -->
 		<div class="repo-pathway">
@@ -46,7 +63,7 @@
 			/>
 		</button>
 	{/snippet}
-</Banner>
+</LeftMenu>
 
 <style>
 	.repo-pathway {

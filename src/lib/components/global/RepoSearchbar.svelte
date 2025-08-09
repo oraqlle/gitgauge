@@ -14,7 +14,28 @@
     }
 </script>
 
-<div class={["repo-link", {error}]}>
+<!--
+@component
+This is a repository searchbar component that allows users to enter a git
+repository URL.
+
+- Usage:
+  ```svelte
+    <RepoLinkInput
+        bind:repo_URL_input={repo_URL_input}
+        on_submit={handle_submit}
+        error={error}
+    />
+  ```
+- Props:
+    - `repo_URL_input`: A bindable string that holds the repository URL input
+                        by the user.
+    - `on_submit`: A function that is called when the user submits the input.
+    - `error`: A boolean indicating whether there is an error with the input.
+                If true, the input will be styled to indicate an error.
+-->
+
+<div class={["repo-searchbar", {error}]}>
     <input
         class="repo-textbox display-body"
         type="text"
@@ -32,7 +53,7 @@
 </div>
 
 <style>
-    .repo-link {
+    .repo-searchbar {
         height: 1.25rem;
         width: 33rem;
         display: flex;
@@ -46,7 +67,7 @@
         border-color: transparent;
     }
 
-    .repo-link.error {
+    .repo-searchbar.error {
         border-color: var(--wonderland--ff748b);
         border-style: ridge;
         border-width: 0.125rem;

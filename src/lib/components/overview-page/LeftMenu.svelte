@@ -6,6 +6,21 @@
     } = $props();
 </script>
 
+<!--
+@component
+This is the left menu component that contains the logo and optional content.
+- Usage:
+  ```svelte
+	<LeftMenu>
+		{#snippet content()}
+			<!-- Optional content can be passed here -->
+		{/snippet}
+	</LeftMenu>
+  ```
+- Props:
+	- `content`: Optional content to be rendered in the topbar.
+-->
+
 <div class="topbar">
 	{#if content}
 		<!-- Logo / Home Link -->

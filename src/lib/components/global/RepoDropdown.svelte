@@ -21,6 +21,22 @@
     }
 </script>
 
+<!--
+@component
+This is a dropdown component that allows users to select a repository type.
+
+- Usage:
+  ```svelte
+    <RepoDropdown
+        bind:selected={selected_repository}
+        action={reset_verification_result}
+    />
+  ```
+- Props:
+    - `selected`: The currently selected repository type option.
+    - `action`: A function to call when a new option is selected.
+-->
+
 {#snippet DropdownItem(repo_option: RepoOption)}
     <Icon
         icon={`tabler:${repo_option.icon}`}

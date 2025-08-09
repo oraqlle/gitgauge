@@ -16,6 +16,30 @@
     } = $props();
 </script>
 
+<!--
+@component
+This is the header component that contains the left menu and user menu.
+
+This component displays a left menu containing a title for the repository
+where relevant, and otherwise displays the full app logo. The user menu
+contains the user's name and profile image.
+
+- Usage:
+  ```svelte
+    <Banner
+        repo_url={repo_url}
+        repo_path={repo_path}
+        user_name={user_name}
+        profile_image_url={profile_image_url}
+    />
+  ```
+- Props:
+    - `repo_url`: The URL of the repository (optional).
+    - `repo_path`: The path of the repository (optional).
+    - `user_name`: The name of the user.
+    - `profile_image_url`: The URL of the user's profile image.
+-->
+
 <div class="header">
     {#if repo_url && repo_path}
         <LeftMenuWithRepo {repo_url} {repo_path} />
