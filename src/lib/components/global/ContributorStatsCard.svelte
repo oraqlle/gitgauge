@@ -26,7 +26,7 @@ contributor statistics.
 
 <ContributorCard {username} {image} scaling_factor={scaling_factor}>
   {#snippet content()}
-    <div class="contents">
+    <div class="contents body">
       <div>{num_commits} commits</div>
       <div>{total_lines_of_code} lines of code</div>
       <div>{lines_per_commit} lines/commit</div>
