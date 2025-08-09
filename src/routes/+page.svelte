@@ -11,6 +11,8 @@
     import { set_repo_url } from "$lib/stores/repo";
   import ErrorMessage from "$lib/components/global/ErrorMessage.svelte";
   import RepoSearchbar from "$lib/components/global/RepoSearchbar.svelte";
+  import Banner from "$lib/components/overview-page/Banner.svelte";
+  import Sidebar from "$lib/components/global/Sidebar.svelte";
     
     interface RepoBookmark {
         repo_name: string;
@@ -118,41 +120,8 @@
 </script>
 
 <div class="page">
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-section">
-                    <a href="/" class="cursor-pointer">
-                        <img
-                            class="logo-img"
-                            src="/secondary_logo.png"
-                            alt="Your Company"
-                        />
-                    </a>
-                </div>
-
-                <div class="user-section">
-                    <h6 class="white body-accent">{user_name}</h6>
-                    <img
-                        src={profile_image_url}
-                        alt="Profile"
-                        class="profile-img"
-                    />
-
-                    <button
-                        type="button"
-                        class="hamburger-btn"
-                        onclick={toggle_sidebar}
-                    >
-                        <Icon
-                            icon={"tabler:menu-2"}
-                            class="icon-medium"
-                            style="color: white"
-                        />
-                    </button>
-                </div>
-            </div>
-        </div>
+    <header class="header">
+        <Banner/>
     </header>
 
     <main class="main">
@@ -191,54 +160,8 @@
             </div>
         </div>
     </main>
-
-    <!-- Sidebar -->
-    <div class={`sidebar ${sidebar_open ? "open" : "closed"}`}>
-        <div class="sidebar-header">
-            <div class="sidebar-title">
-                <Icon
-                    icon={"tabler:chart-line"}
-                    class="icon-large"
-                    style="color: white"
-                />
-                <h1 class="title sidebar-title-text white">settings</h1>
-            </div>
-            <button class="close-button" onclick={toggle_sidebar}>
-                <Icon
-                    icon={"tabler:x"}
-                    class="icon-medium"
-                    style="color: white"
-                />
-            </button>
-        </div>
-
-        <div class="bookmark-list">
-            <div class="bookmark-header">
-                <Icon
-                    icon={"tabler:star-filled"}
-                    class="icon-medium"
-                    style="color: white"
-                />
-                <h2 class="heading-1 bookmark-text white">bookmarks</h2>
-            </div>
-
-            {#each bookmarked_repos as repo (repo.repo_url)}
-                <button
-                    class="bookmark-item"
-                    type="button"
-                    onclick={() => bookmarked_repo(repo.repo_url)}
-                >
-                    <h6 class="heading-2 repo-name label-secondary">
-                        {repo.repo_name}
-                    </h6>
-                    <h6 class="caption repo-url label-secondary">
-                        {repo.repo_url}
-                    </h6>
-                </button>
-            {/each}
-        </div>
-    </div>
 </div>
+<Sidebar />
 
 <style>
     .align-with-searchbar {
@@ -264,7 +187,6 @@
         margin-bottom: 0.8125rem;
         z-index: 500;
     }
-
     .header-content {
         position: relative;
         display: flex;
