@@ -9,6 +9,7 @@
     import { repo_options } from "$lib/stores/repo";
     import type { RepoOption } from "$lib/stores/repo";
     import { set_repo_url } from "$lib/stores/repo";
+  import ErrorMessage from "$lib/components/global/ErrorMessage.svelte";
     
     interface RepoBookmark {
         repo_name: string;
@@ -80,7 +81,7 @@
             // Try frontend validation first
             const result = verify_and_extract_source_info(repo_url_input, selected.source_type);
 
-            const backendResult = await invoke<BackendVerificationResult>(
+            const backend_result = await invoke<BackendVerificationResult>(
                 "verify_and_extract_source_info",
                 {
                     urlStr: repo_url_input,
@@ -89,21 +90,23 @@
             );
 
             verification_message =
-                `Successfully verified! Owner: ${backendResult.owner}, Repo: ${backendResult.repo}`
+                `Successfully verified! Owner: ${backend_result.owner}, Repo: ${backend_result.repo}`
         
             // Update the repo store with the new URL
             set_repo_url(repo_url_input);
             // Call loadBranches and loadCommitData and wait for both to complete
-            const [branches, commitData] = await Promise.all([
-                load_branches(backendResult.repo),
-                load_commit_data(backendResult.owner, backendResult.repo),
-            ]);
+            // Call loadBranches and loadCommitData and wait for both to complete
+            const contributors = await load_commit_data(backend_result.owner, backend_result.repo);
+            const branches = await load_branches(backend_result.repo);
 
             // Navigate to the overview page
             goto(`/overview-page`, {
                 state: {
+                    repo_url: repo_url_input,
+                    repo_path: new URL(repo_url_input).pathname.slice(1),
+                    repo_type: get_repo_type(repo_url_input),
                     branches: branches,
-                    commitData: commitData,
+                    contributors: contributors,
                 },
             });
         } catch (error: any) {
@@ -160,6 +163,16 @@
 
     <main class="main">
         <div class="repo-start">
+            <div></div>
+
+            <!-- Verification Feedback -->
+            <div class="align-with-searchbar">
+                <ErrorMessage
+                    verification_message={verification_message}
+                    error={verification_error}
+                />
+            </div>
+            
             <!-- Repo dropdown -->
             <RepoDropdown bind:selected={selected} action={reset_verification_result}/>
 
@@ -181,9 +194,7 @@
                 </button>
             </div>
 
-            <!-- Verification Feedback -->
-
-
+            <div></div>
             <!-- Repo link list -->
             <div class="repo-bookmark-list">
                 {#each bookmarked_repos as bookmark (bookmark.repo_url)}
@@ -250,6 +261,11 @@
 </div>
 
 <style>
+    .align-with-searchbar {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
     /* MAIN PAGE CONTENT */
     .main {
         height: calc(100vh - 4.1875rem);
@@ -427,76 +443,6 @@
         row-gap: 10px;
     }
 
-    /* REPO DROPDOWN */
-    .dropdown {
-        position: relative;
-        width: 13rem;
-        height: 2.625em;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-    }
-
-    .dropdown-btn {
-        width: 100%;
-        height: inherit;
-        padding: 0.625rem 0.75rem 0.625rem 1rem;
-        background: #222;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .dropdown-btn.hide {
-        border-radius: 12px;
-    }
-
-    .dropdown-btn.show {
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-    }
-
-    .dropdown-btn.show::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 1px;
-        background-color: #fff;
-    }
-
-    .dropdown-show {
-        display: flex;
-        align-items: center;
-    }
-
-    .dropdown-content {
-        width: inherit;
-        background-color: #222;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-    }
-
-    .dropdown-option {
-        width: inherit;
-        height: 42px;
-        padding: 0.625rem 0.75rem 0.625rem 1rem;
-        background: #222;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-    }
-
-    .dropdown-text {
-        margin-left: 0.5rem;
-    }
-
     /* REPO TEXTBOX */
     .repo-link {
         height: 1.5rem;
@@ -543,8 +489,6 @@
     /* Repo link list */
     .repo-bookmark-list {
         background: transparent;
-        grid-column: 2;
-        grid-row: 2;
         padding-left: 1.5rem;
         padding-right: 1.5rem;
         margin: 0px;
@@ -597,18 +541,7 @@
     }
 
     .verification-feedback {
-        grid-column: 1 / -1; /* Span across both columns */
         /* Add some margin or padding if needed */
         margin-top: 5px;
-    }
-
-    .success-message {
-        color: var(--accent-primary); /* Or your desired success color */
-        font-size: 0.875rem;
-    }
-
-    .error-message {
-        color: var(--functional-red-100); /* Or your desired error color */
-        font-size: 0.875rem;
     }
 </style>
