@@ -13,6 +13,7 @@
 	import RepoSearchbar from "$lib/components/global/RepoSearchbar.svelte";
 	import Banner from "$lib/components/overview-page/Banner.svelte";
 	import Sidebar from "$lib/components/global/Sidebar.svelte";
+  	import RepoBookmarkList from "$lib/components/global/RepoBookmarkList.svelte";
 	
 	interface RepoBookmark {
 		repo_name: string;
@@ -53,7 +54,7 @@
 		repo: string;
 	}
 
-	async function bookmarked_repo(repo_url: string) {
+	async function select_bookmarked_repo(repo_url: string) {
 		repo_url_input = repo_url;
 		handle_verification();
 	}
@@ -119,7 +120,7 @@
 	</header>
 
 	<main class="main">
-		<div class="repo-start">
+		<div class="repo-menu">
 			<div></div>
 
 			<!-- Verification Feedback -->
@@ -139,19 +140,10 @@
 			<div></div>
 
 			<!-- Repo link list -->
-			<div class="repo-bookmark-list align-with-searchbar">
-				{#each bookmarked_repos as bookmark (bookmark.repo_url)}
-					<button
-						class="repo-list-btn"
-						type="button"
-						onclick={() => bookmarked_repo(bookmark.repo_url)}
-					>
-						<h6 class="display-body repo-list-text">
-							{bookmark.repo_url}
-						</h6>
-					</button>
-				{/each}
-			</div>
+			<RepoBookmarkList
+				bookmarked_repos={bookmarked_repos} 
+				onclick={select_bookmarked_repo}
+			/>
 		</div>
 	</main>
 </div>
@@ -162,8 +154,7 @@
 		padding-left: 1.5rem;
 		padding-right: 1.5rem;
 	}
-
-	/* MAIN PAGE CONTENT */
+	
 	.main {
 		height: calc(100vh - 4.1875rem);
 		display: flex;
@@ -171,69 +162,13 @@
 		align-items: center;
 		z-index: 500;
 	}
-	
-	/* REPO SECTION */
-	.repo-start {
-		/* width: ; */
+
+	.repo-menu {
 		display: grid;
 		grid-template-columns: 13rem 35.5rem; /* 2 columns */
 		grid-template-rows: auto auto auto; /* 3 rows for dropdown, input, feedback */
 		column-gap: 1rem;
 		row-gap: 10px;
-	}
-
-	/* Repo link list */
-	.repo-bookmark-list {
-		background: transparent;
-		padding-left: 1.5rem;
-		padding-right: 1.5rem;
-		margin: 0px;
-		/* width: 693px; */
-		display: grid;
-		grid-template-columns: 32.5rem;
-		grid-template-rows: repeat(5);
-		row-gap: 1rem;
-
-		/* let the list overflow and can be scrolll */
-		max-height: 10.875rem; /* adjust height to fit your layout */
-		overflow-y: auto; /* enables vertical scrolling */
-		overflow-x: hidden;
-		scroll-padding-bottom: 10.875rem;
-
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-
-		-webkit-mask-image: linear-gradient(
-			to bottom,
-			black 0%,
-			rgba(0, 0, 0, 0.2) 80%,
-			transparent 100%
-		);
-		mask-image: linear-gradient(
-			to bottom,
-			black 0%,
-			rgba(0, 0, 0, 0.2) 80%,
-			transparent 100%
-		);
-		mask-size: 100% 100%;
-		mask-repeat: no-repeat;
-	}
-
-	.repo-list-btn {
-		height: 22px;
-		width: inherit;
-		background-color: transparent; /*#181818; */
-		border: none;
-		margin: none;
-		padding: 0.5rem 0.5rem 0.5rem 0px;
-		text-align: left;
-		cursor: pointer;
-		color: unset;
-	}
-
-	.repo-list-text {
-		height: inherit;
-		margin: 0px;
 	}
 
 </style>
