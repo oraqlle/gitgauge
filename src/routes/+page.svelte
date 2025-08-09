@@ -10,6 +10,7 @@
     import type { RepoOption } from "$lib/stores/repo";
     import { set_repo_url } from "$lib/stores/repo";
   import ErrorMessage from "$lib/components/global/ErrorMessage.svelte";
+  import RepoSearchbar from "$lib/components/global/RepoSearchbar.svelte";
     
     interface RepoBookmark {
         repo_name: string;
@@ -95,7 +96,6 @@
             // Update the repo store with the new URL
             set_repo_url(repo_url_input);
             // Call loadBranches and loadCommitData and wait for both to complete
-            // Call loadBranches and loadCommitData and wait for both to complete
             const contributors = await load_commit_data(backend_result.owner, backend_result.repo);
             const branches = await load_branches(backend_result.repo);
 
@@ -177,24 +177,10 @@
             <RepoDropdown bind:selected={selected} action={reset_verification_result}/>
 
             <!-- Repo link -->
-            <div class="repo-link">
-                <input
-                    class="repo-textbox display-body"
-                    type="text"
-                    placeholder="Enter a link to a remote repository or a path to a local one..."
-                    bind:value={repo_url_input}
-                    onkeydown={handle_input_keydown}
-                />
-                <button class="repo-button" onclick={handle_verification}>
-                    <Icon
-                        icon={"tabler:circle-arrow-right"}
-                        class="icon-medium"
-                        style="color: white"
-                    />
-                </button>
-            </div>
+            <RepoSearchbar on_submit={handle_verification} bind:repo_URL_input={repo_url_input} error={verification_error}/>
 
             <div></div>
+            
             <!-- Repo link list -->
             <div class="repo-bookmark-list">
                 {#each bookmarked_repos as bookmark (bookmark.repo_url)}
