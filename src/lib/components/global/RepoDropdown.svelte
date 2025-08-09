@@ -90,14 +90,13 @@ This is a dropdown component that allows users to select a repository type.
         width: 13rem;
         height: 2.625em;
         border-radius: 12px;
-        background: #222;
     }
 
     .dropdown-btn {
         width: 100%;
         height: inherit;
         padding: 0.625rem 0.75rem 0.5rem 0rem;
-        background: #222;
+        background: var(--tint-00);
         border: none;
         cursor: pointer;
         display: flex;
@@ -140,7 +139,7 @@ This is a dropdown component that allows users to select a repository type.
 
     .dropdown-content {
         width: inherit;
-        background-color: #222;
+        background-color: var(--tint-00);
         border-bottom-left-radius: 12px;
         border-bottom-right-radius: 12px;
     }
