@@ -10,13 +10,13 @@
 	{#if content}
 		<!-- Logo / Home Link -->
 		<a href="/" class="logo-section">
-			<img src="/submark.png" alt="logo" class="logo-img" color=""/>
+			<img src="/submark.svg" alt="gitgauge logo" class="logo-img" color=""/>
 		</a>
 		{@render content()}
 	{:else}
-		<!-- Logo / Home Link -->
+		<!-- Secondary Logo / Home Link -->
 		<a href="/" class="logo-section">
-			<img src="/submark.png" alt="logo" class="logo-img" color=""/>
+			<img src="/secondary_logo.svg" alt="gitgauge logo" class="logo-img" color=""/>
 		</a>
 	{/if}
 </div>
