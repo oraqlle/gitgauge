@@ -13,12 +13,12 @@
     let repo_path = $derived(page.state.repo_path);
 </script>
 
-<header class="header">
-    <Banner {repo_url} {repo_path} />
-    <UserMenu username={user_name} {profile_image_url} />
-</header>
 
-<main class="body">
+<main class="page">
+    <header class="header">
+        <Banner {repo_url} {repo_path} />
+        <UserMenu username={user_name} {profile_image_url} />
+    </header>
     {@render children()}
 </main>
 
@@ -33,9 +33,5 @@
         height: 1.375rem;
         display: flex;
         justify-content: space-between;
-    }
-
-    .body {
-        height: calc(100vh - 1.375rem);
     }
 </style>

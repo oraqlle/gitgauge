@@ -31,10 +31,10 @@
 		<img src="/submark.png" alt="logo" class="logo-img" color=""/>
 	</a>
 
-  <!-- repo pathway display -->
-  <div class="repo-pathway">
-      {repo_path}
-  </div>
+	<!-- repo pathway display -->
+	<div class="repo-pathway">
+		{repo_path}
+	</div>
 
 	<!-- bookmark toggle -->
 	<button
@@ -68,8 +68,6 @@
 
 	.logo-img {
 		height: 0.9375rem;
-		/* margin-top: 2px; */
-
 	}
 
 	.repo-pathway {
