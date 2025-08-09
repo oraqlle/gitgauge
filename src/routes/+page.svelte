@@ -115,12 +115,6 @@
             console.error("Verification failed:", error);
         }
     }
-
-    function handle_input_keydown(event: KeyboardEvent) {
-        if (event.key === "Enter") {
-            handle_verification();
-        }
-    }
 </script>
 
 <div class="page">
@@ -180,16 +174,16 @@
             <RepoSearchbar on_submit={handle_verification} bind:repo_URL_input={repo_url_input} error={verification_error}/>
 
             <div></div>
-            
+
             <!-- Repo link list -->
-            <div class="repo-bookmark-list">
+            <div class="repo-bookmark-list align-with-searchbar">
                 {#each bookmarked_repos as bookmark (bookmark.repo_url)}
                     <button
                         class="repo-list-btn"
                         type="button"
                         onclick={() => bookmarked_repo(bookmark.repo_url)}
                     >
-                        <h6 class="display-body repo-list-text white">
+                        <h6 class="display-body repo-list-text">
                             {bookmark.repo_url}
                         </h6>
                     </button>
@@ -429,49 +423,6 @@
         row-gap: 10px;
     }
 
-    /* REPO TEXTBOX */
-    .repo-link {
-        height: 1.5rem;
-        width: 33rem;
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        background-color: #222;
-        padding: 0.5625rem 1.125rem 0.5625rem 1.5rem;
-        border-radius: 12px;
-    }
-
-    .repo-textbox {
-        flex: 1;
-        margin-right: 0.5rem;
-        background-color: #222;
-        border: none;
-        height: 24px;
-        padding: 0px;
-        width: 350px;
-        color: white;
-    }
-
-    .repo-textbox::placeholder {
-        font-size: 1.063rem;
-        font-family: DM Sans;
-        font-weight: 400;
-        word-wrap: break-word;
-    }
-
-    .repo-textbox:focus {
-        outline: none;
-    }
-
-    .repo-button {
-        background-color: inherit;
-        border: none;
-        padding: 0px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-    }
-
     /* Repo link list */
     .repo-bookmark-list {
         background: transparent;
@@ -488,7 +439,6 @@
         max-height: 10.875rem; /* adjust height to fit your layout */
         overflow-y: auto; /* enables vertical scrolling */
         overflow-x: hidden;
-        /* padding-bottom: 84px;  */
         scroll-padding-bottom: 10.875rem;
 
         scrollbar-width: none;
@@ -519,6 +469,7 @@
         padding: 0.5rem;
         text-align: left;
         cursor: pointer;
+        color: unset;
     }
 
     .repo-list-text {
@@ -526,8 +477,4 @@
         margin: 0px;
     }
 
-    .verification-feedback {
-        /* Add some margin or padding if needed */
-        margin-top: 5px;
-    }
 </style>
