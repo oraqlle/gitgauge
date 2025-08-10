@@ -33,40 +33,39 @@
 </button>
 
 <style>
-.label {
-    text-align: center;
-    justify-content: space-between; 
-    display: flex;
-}
+    .label {
+        text-align: center;
+        justify-content: space-between;
+        display: flex;
+    }
 
-button {
-    all: unset;
-    display: inline-flex;
-    align-items: center;
-    background-color: var(--tint-00);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    justify-content: space-between; 
+    button {
+        all: unset;
+        display: inline-flex;
+        align-items: center;
+        background-color: var(--tint-00);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        justify-content: space-between;
+    }
 
-}
+    button.medium {
+        gap: 4px;
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+    }
 
-button.medium {
-    gap: 4px;
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
-}
+    button:hover {
+        background-color: var(--tint-01);
+    }
 
-button:hover {
-    background-color: var(--tint-01);
-}
+    button:active {
+        background-color: var(--tint-02);
+    }
 
-button:active {
-    background-color: var(--tint-02);
-}
-
-button:disabled {
-    background-color: var(--tint-00);
-    cursor: not-allowed;
-    color: var(--label-secondary);
-}
+    button:disabled {
+        background-color: var(--tint-00);
+        cursor: not-allowed;
+        color: var(--label-secondary);
+    }
 </style>

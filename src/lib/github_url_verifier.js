@@ -44,7 +44,7 @@ export function verify_and_extract_source_info(url_string, source_type) {
                 return { owner, repo };
             } catch (e) {
                 if (e instanceof TypeError && e.message.includes('Invalid URL')) { // Catch URL constructor errors
-                     throw new Error(`Invalid GitHub URL format: ${url_string}`);
+                    throw new Error(`Invalid GitHub URL format: ${url_string}`);
                 }
                 throw e; // Re-throw other errors (like custom ones)
             }
@@ -58,7 +58,7 @@ export function verify_and_extract_source_info(url_string, source_type) {
                 }
 
                 const path_segments = url.pathname.split('/').filter(segment => segment.length > 0);
-                
+
                 if (path_segments.length === 0) {
                     throw new Error('GitLab URL path is empty.');
                 }
@@ -88,8 +88,8 @@ export function verify_and_extract_source_info(url_string, source_type) {
                 }
                 return { owner, repo };
             } catch (e) {
-                 if (e instanceof TypeError && e.message.includes('Invalid URL')) {
-                     throw new Error(`Invalid GitLab URL format: ${url_string}`);
+                if (e instanceof TypeError && e.message.includes('Invalid URL')) {
+                    throw new Error(`Invalid GitLab URL format: ${url_string}`);
                 }
                 throw e;
             }
@@ -111,9 +111,9 @@ export function verify_and_extract_source_info(url_string, source_type) {
 
             const repo = segments.pop();
             const owner = segments.join('/');
-            
+
             if (!repo) { // Should not happen if segments.length > 0 initially
-                 throw new Error('Could not determine file/directory name from local path.');
+                throw new Error('Could not determine file/directory name from local path.');
             }
 
             return { owner: owner || '.', repo }; // Use '.' for owner if no parent path after splitting

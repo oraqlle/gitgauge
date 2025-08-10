@@ -10,7 +10,7 @@
     let contributors = $derived(page.state.contributors);
 </script>
 
-<div class="page">
+<div class="main">
     <Heading repo_path={repo_path.split("/").pop() || repo_path} {repo_type} />
     <CommitGraph {contributors} {branches} />
     <div class="bottom-container">

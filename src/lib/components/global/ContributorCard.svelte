@@ -1,10 +1,5 @@
 <script lang="ts">
-    let {
-        username,
-        image,
-        scaling_factor,
-        content
-    } = $props();
+    let { username, image, scaling_factor, content } = $props();
 </script>
 
 <!--
@@ -24,11 +19,7 @@ This is a contributor card component that displays a user's profile information.
 -->
 
 <div class="profile-card">
-    <img
-        class="profile-avatar"
-        src={image}
-        alt={username}
-    />
+    <img class="profile-avatar" src={image} alt={username} />
     <div class="contents">
         <!-- header -->
         <div class="profile-details">
@@ -41,7 +32,7 @@ This is a contributor card component that displays a user's profile information.
         </div>
 
         {@render content()}
-    </div>  
+    </div>
 </div>
 
 <style>
@@ -80,5 +71,5 @@ This is a contributor card component that displays a user's profile information.
         flex-direction: column;
         align-items: flex-start;
     }
-
 </style>
+

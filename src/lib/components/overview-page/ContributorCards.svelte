@@ -45,11 +45,23 @@
             };
         }),
     );
+
+    // Sort users by scaling factor in descending order
+    function people_with_metrics_sorted() {
+        return people_with_metrics.sort((a, b) => {
+            let scaling_a = Number(a.scaling_factor);
+            let scaling_b = Number(b.scaling_factor);
+            if (scaling_a === scaling_b) {
+                return b.num_commits - a.num_commits;
+            }
+            return scaling_b - scaling_a;
+        });
+    }
 </script>
 
 <div class="cards-row">
-    {#each people_with_metrics as person}
-        <ContributorStatsCard {...person}/>
+    {#each people_with_metrics_sorted() as person}
+        <ContributorStatsCard {...person} />
     {/each}
 </div>
 
@@ -63,4 +75,3 @@
         margin-top: 3rem;
     }
 </style>
-
